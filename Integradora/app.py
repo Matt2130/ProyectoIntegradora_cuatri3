@@ -31,7 +31,7 @@ def login_required(role):
 def init_db():
     global engine
     if engine is None:
-        engine = create_engine('mysql+pymysql://root:@localhost/integradora')
+        engine = create_engine('mysql+pymysql://root:pass123@localhost/integradora')
         #mysql+pymysql://<usuario>:<contraseña>@<host>/<nombre_base_de_datos>
         #Manuel
         #mysql+pymysql://root:'pass123'@localhost/integradora
@@ -59,9 +59,19 @@ def contactos():
                 html += '<div class="contacto_contenedor">'
                 for url, nombre in zip(redes, nombre_columnas):
                     if url:
+                        if nombre == 'Email':
+                            link = f"mailto:{url}"
+                        elif nombre == 'Whatsapp':
+                            link = f"https://wa.me/{url}"
+                        elif nombre == 'Phone':
+                            link = f"tel:{url}"
+                        else:
+                            # Link para redes sociales como Facebook, Instagram, etc.
+                            link = url
+                        
                         html += f"""
                         <div class="elementos">
-                            <a href="{url}">
+                            <a target="_blank" href="{link}">
                                 <img src="static/image/{nombre}.svg" alt="{nombre}" class="{nombre}">
                             </a>
                         </div>
@@ -69,7 +79,8 @@ def contactos():
                 html += '</div><hr>'
 
             return Response(html, mimetype='text/html')
-    except:
+    except Exception as e:
+        print(e)
         return Response("Error 404", mimetype='text/html')
 
 @app.route('/api/texto_vision_mision')
