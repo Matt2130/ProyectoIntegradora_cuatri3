@@ -796,9 +796,6 @@ def registrar_season():
         # Manejo de errores (nimodillo)
         return jsonify({"message": f"Error al registrar: {str(e)}"}), 500
 
-#ruta para guardar las imagenes subidas
-app.config['UPLOAD_FOLDER'] = 'static/image/imagenes_productos' 
-
 @app.route('/registrar_producto', methods=['POST'])
 def registrar_producto():
     init_db()
@@ -815,43 +812,43 @@ def registrar_producto():
     
 
     try:
-        with engine.connect() as connection:
-            #Guarda la imagen
-            image = request.files.get('image')
-            
+        # Guardar la imagen
+        image = request.files.get('image')
+        if image and image.filename.endswith(('.png', '.jpg', '.jpeg')):
             unique_filename = f"{modelo}.png"
-
-            image_path = f"{app.config['UPLOAD_FOLDER']}/{unique_filename}"
-            
+            image_path = f"static/image/imagenes_productos/{unique_filename}"
             image.save(image_path)
+            #return jsonify({"message": "Registro exitoso"}), 200
 
-            #image_url = url_for('static', filename=f'image/imagenes_productos/{unique_filename}', _external=True)
-            # Iniciar una transacción
-            connection.execute(text("START TRANSACTION;"))
+            with engine.connect() as connection:
+                # Iniciar transacción
+                connection.execute(text("START TRANSACTION;"))
 
-            sql_query = """
-            INSERT INTO `products` (`Material_composition`, `Model`, `FK_id_season`, `Size`, `Name`, `Description`, `Price_per_unit`, `Color`, `url_imagen`, `FK_Id_user`) 
-            VALUES (:materia, :modelo, :temporada, :tamaño, :nombre, :descripcion, :precio_lot, :color, :image_url, :user);
-            """
+                sql_query = """
+                INSERT INTO `products` (`Material_composition`, `Model`, `FK_id_season`, `Size`, `Name`, `Description`, `Price_per_unit`, `Color`, `url_imagen`, `FK_Id_user`) 
+                VALUES (:materia, :modelo, :temporada, :tamaño, :nombre, :descripcion, :precio_lot, :color, :image_path, :user_id);
+                """
 
-            # Ejecutar la consulta con los datos
-            connection.execute(text(sql_query), {
-                "temporada": temporada,
-                "tamaño": tamaño,
-                "nombre": nombre,
-                "descripcion": descripcion,
-                "precio_lot": precio_lot,
-                "color": color,
-                "materia": materia, 
-                "image_url": unique_filename,
-                "modelo":modelo,
-                "user":session['id_usuario']
-            })
+                # Ejecutar consulta con la ruta absoluta
+                connection.execute(text(sql_query), {
+                    "materia": materia,
+                    "modelo": modelo,
+                    "temporada": temporada,
+                    "tamaño": tamaño,
+                    "nombre": nombre,
+                    "descripcion": descripcion,
+                    "precio_lot": precio_lot,
+                    "color": color,
+                    "image_path": unique_filename,  # Ruta absoluta
+                    "user_id": session['id_usuario']
+                })
 
-            # Confirmar la transacción
-            connection.execute(text("COMMIT;"))
+                # Confirmar transacción
+                connection.execute(text("COMMIT;"))
 
-        return jsonify({"message": "Registro exitoso"}), 200
+            return jsonify({"message": "Registro exitoso"}), 200
+        else:
+            return jsonify({"message": "El archivo debe ser una imagen válida (.png, .jpg, .jpeg)"}), 400
     except Exception as e:
         # Hacer rollback en caso de error
         with engine.connect() as connection:
@@ -860,9 +857,6 @@ def registrar_producto():
         # Manejo de errores (nimodillo)
         return jsonify({"message": f"Error al registrar: {str(e)}"}), 500
     
-    # evuelve la respuesta con la URL de la imagen
-    #return jsonify({"message": f"Imagen guardada exitosamente. URL:{image_url}"}), 200
-
 #Eliminación
 @app.route('/eliminar_season', methods=['POST'])
 def eliminar_season():
@@ -1333,50 +1327,50 @@ def buscador_producto_edit():
 
             <div class="izquierda">
                 <label for="image">Imagen del producto:
-                    <input type="file" name="image" id="image" accept="image/*">
+                    <input type="file" name="image" id="imaged" accept="image/*">
                 </label>
                 <br>
                 <img src="{direccion_imagen}" alt="{contenido[8]}" style="width:300px;height:auto;">
                 <br>
                 <label for="modelo">Modelo:
-                    <input type="text" name="modelo" id="modelo" value="{contenido[1]}">
+                    <input type="text" name="modelo" id="modelod" value="{contenido[1]}">
                 </label>
                 <br>
                 <label for="temporada">Temporada:
-                    <input type="text" name="temporada" id="temporada" value="{contenido[2]}">
+                    <input type="text" name="temporada" id="temporadad" value="{contenido[2]}">
                 </label>
                 <br>
                 <label for="tamaño">Tamaño:
-                    <input type="text" name="tamaño" id="tamaño" value="{contenido[3]}">
+                    <input type="text" name="tamaño" id="tamañod" value="{contenido[3]}">
                 </label>
                 <br>
                 <label for="nombre">Nombre:
-                    <input type="text" name="nombre" id="nombre" value="{contenido[4]}">
+                    <input type="text" name="nombre" id="nombred" value="{contenido[4]}">
                 </label>
                 <br>
             </div>
 
             <div class="derecha">
                 <label for="descripcion">Descripción:
-                    <textarea name="descripcion" id="descripcion">{contenido[5]}</textarea>
+                    <textarea name="descripcion" id="descripciond">{contenido[5]}</textarea>
                 </label>
                 <br>
                 <label for="precio_lot">Precio (lote):
-                    <input type="number" name="precio_lot" id="precio_lot" value="{contenido[6]}">
+                    <input type="number" name="precio_lot" id="precio_lotd" value="{contenido[6]}">
                 </label>
                 <br>
                 <label for="color">Color:
-                    <input type="text" name="color" id="color" value="{contenido[7]}">
+                    <input type="text" name="color" id="colord" value="{contenido[7]}">
                 </label>
                 <br>
                 <label for="materia">Material de composición:
-                    <input type="text" name="materia" id="materia" value="{contenido[0]}">
+                    <input type="text" name="materia" id="materiad" value="{contenido[0]}">
                 </label>
                 <br>
             </div>
 
             <br>
-            <button id="registrar" onclick="editarproducto({contenido[10]})">Editar</button>
+            <button id="registrar" onclick="editarsqlcontenido({contenido[10]})">Editar</button>
             """
 
             return Response(html, mimetype='text/html')
@@ -1628,6 +1622,92 @@ def actualizar_temporada():
 
         # Manejo de errores (nimodillo)
         return jsonify({"message": f"Error al actualizar: {str(e)}"}), 500
+
+import os
+
+@app.route('/actualizar_producto', methods=['POST'])
+def actualizar_producto():
+    init_db()
+
+    # Captura los datos del formulario
+    modelo = request.form.get('modelo')
+    temporada = request.form.get('temporada')
+    tamaño = request.form.get('tamaño')
+    nombre = request.form.get('nombre')
+    descripcion = request.form.get('descripcion')
+    precio_lot = request.form.get('precio_lot')
+    color = request.form.get('color')
+    materia = request.form.get('materia')
+    producto_id = request.form.get('producto_id')  # Suponiendo que pasamos el ID del producto que se va a actualizar
+
+    try:
+        # Obtener el nombre de la imagen actual
+        
+        imagen_actual = request.form.get('imagen_actual')  # Se pasa el nombre de la imagen actual del producto
+
+        # Guardar la nueva imagen (si se sube una nueva)
+        image = request.files.get('image')
+        if image and image.filename.endswith(('.png', '.jpg', '.jpeg')):
+            # Eliminar la imagen anterior si existe
+            if imagen_actual:
+                imagen_anterior_path = os.path.join("static", "image", "imagenes_productos", imagen_actual)
+                if os.path.exists(imagen_anterior_path):
+                    os.remove(imagen_anterior_path)  # Eliminar la imagen anterior
+
+            # Crear un nombre único para la nueva imagen
+            unique_filename = f"{modelo}.png"
+            image_path = os.path.join("static", "image", "imagenes_productos", unique_filename)
+            image.save(image_path)  # Guardar la nueva imagen
+        else:
+            # Si no se sube una nueva imagen, se mantiene la imagen existente
+            unique_filename = imagen_actual
+
+        with engine.connect() as connection:
+            # Iniciar transacción
+            connection.execute(text("START TRANSACTION;"))
+
+            # Consulta SQL para actualizar el producto
+            sql_query = """
+            UPDATE `products` 
+            SET 
+                `Material_composition` = :materia,
+                `Model` = :modelo,
+                `FK_id_season` = :temporada,
+                `Size` = :tamaño,
+                `Name` = :nombre,
+                `Description` = :descripcion,
+                `Price_per_unit` = :precio_lot,
+                `Color` = :color,
+                `url_imagen` = :image_path
+            WHERE `id` = :producto_id;
+            """
+
+            # Ejecutar la consulta de actualización
+            connection.execute(text(sql_query), {
+                "materia": materia,
+                "modelo": modelo,
+                "temporada": temporada,
+                "tamaño": tamaño,
+                "nombre": nombre,
+                "descripcion": descripcion,
+                "precio_lot": precio_lot,
+                "color": color,
+                "image_path": unique_filename,  # Ruta de la imagen (nueva o actual)
+                "producto_id": producto_id  # ID del producto que se va a actualizar
+            })
+
+            # Confirmar transacción
+            connection.execute(text("COMMIT;"))
+
+        return jsonify({"message": "Producto actualizado exitosamente"}), 200
+    except Exception as e:
+        # Hacer rollback en caso de error
+        with engine.connect() as connection:
+            connection.execute(text("ROLLBACK;"))
+
+        # Manejo de errores
+        return jsonify({"message": f"Error al actualizar el producto: {str(e)}"}), 500
+
 
 #inicio de secion y cerrar seción
 @app.route('/login', methods=['POST'])

@@ -252,7 +252,7 @@ function editarsqlcontenido(idw){
     formData.append('materia', materia);
     formData.append('id', id);
 
-    fetch('/actualizar_user', {
+    fetch('/actualizar_producto', {
         method: 'POST',
         body: formData 
     })
