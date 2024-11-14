@@ -23,6 +23,9 @@
             <ul>
                 <li><a href="/">inicio</a></li>
                 <li><a href="/catalogo">Productos</a></li>
+                {% if inicio %}
+                    <li><a href="/administrador">Administrar</a></li>
+                {% endif %}
             </ul>
             {% if inicio %}
                 <button id="salir">Cerrar sesión</button>

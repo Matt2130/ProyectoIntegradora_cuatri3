@@ -1654,7 +1654,10 @@ def login():
                 session['permiso_usuario'] = result[0]
                 session['id_usuario'] = result[1]
                 session['usuario_usuario'] = result[2]
-
+                
+                if session['permiso_usuario']=="administrador":
+                    session['permiso_admin'] = True
+                    
                 # Redirige según el rol
                 if session['permiso_usuario'] == 'administrador':
                     return jsonify({"redirect": "/administrador"})
@@ -1672,13 +1675,14 @@ def logout():
     session.clear()
 
     session['inicio_cesion'] = False
+    session['permiso_admin'] = False
     # Redirigir a la página de inicio o a donde desees
     return jsonify({"redirect": "/"}) # Redirige a la página principal
 
 #Direccionamientos####################################################################
 @app.route('/')
 def home():
-    return render_template('index.html', inicio=session['inicio_cesion'])
+    return render_template('index.html', inicio=session['inicio_cesion'], admin=session['permiso_admin'])
 
 def login_required(role):
     def decorator(f):
@@ -1758,7 +1762,7 @@ def cliente():
 #######################################################################################################################
 @app.route('/catalogo')
 def catalogo():
-    return render_template('catalogo.html', inicio=session['inicio_cesion'])
+    return render_template('catalogo.html', inicio=session['inicio_cesion'], admin=session['permiso_admin'])
 
 @app.route('/producto', methods=['GET'])
 def producto():
@@ -1770,12 +1774,15 @@ def producto():
         result = connection.execute(text(sql_query), {"id": id_producto})
         contenido = result.fetchone()
     #print(sesion_activa)
-    return render_template('producto.html',cont=contenido, inicio=session['inicio_cesion'])
+    return render_template('producto.html',cont=contenido, inicio=session['inicio_cesion'], admin=session['permiso_admin'])
 
 @app.before_request
 def inicializar_variable():
     if 'inicio_cesion' not in session:
-        session['inicio_cesion'] = True
+        session['inicio_cesion'] = False
+        
+    if 'permiso_admin' not in session:
+        session['permiso_admin'] = False
         
 ################################################################################################################################
 @app.route('/inicio_usuario')
@@ -1789,7 +1796,7 @@ def iniciar_sesion():
 
 @app.errorhandler(404)
 def pagina_no_encontrada(error):
-    return render_template('error404.html'), 404
+    return render_template('error404.html', inicio=session['inicio_cesion'], admin=session['permiso_admin']), 404
 
 # Inicio del servidor
 if __name__ == '__main__':

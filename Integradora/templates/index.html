@@ -29,6 +29,9 @@
                 <li><a href="#acercadenosotros">Acerca de nosotros</a></li>
                 <li><a href="#ubicacion">Ubicacion</a></li>
                 <li><a href="/catalogo">Productos</a></li>
+                {% if admin %}
+                    <li><a href="/administrador">Administrar</a></li>
+                {% endif %}
             </ul>
             {% if inicio %}
                 <button id="salir">Cerrar sesión</button>
