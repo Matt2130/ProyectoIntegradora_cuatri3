@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 07-11-2024 a las 05:28:48
+-- Tiempo de generación: 14-11-2024 a las 00:58:37
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -108,12 +108,9 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`Id_product`, `Material_composition`, `Model`, `FK_id_season`, `Size`, `Name`, `Description`, `Price_per_unit`, `Color`, `url_imagen`, `FK_Id_user`) VALUES
-(11, 'algodón', 'clásico', 12, 'M', 'sábanas', 'Sábanas suaves de algodón', 200, 'blanco', '', 39),
-(12, 'poliéster', 'premium', 11, 'L', 'edredón', 'Edredón cálido para invierno', 350, 'azul', '', 39),
-(13, 'algodón y poliéster', 'moderno', 10, 'S', 'cobertor', 'Cobertor ligero para verano', 150, 'gris', '', 39),
-(14, 'lana', 'lujo', 1, 'XL', 'manta', 'Manta de lana para otoño', 250, 'beige', '', 39),
-(16, '', '', 1, '', '', '', 0, '', '', 39),
-(17, '', '', 1, '', '', '', 0, '', '', 39);
+(19, '1', 'gojo', 1, '1', '1', '1', 1, '1', 'gojo.png', 39),
+(20, '1', 'tablet', 1, '1', '1', '1', 1, '1', 'tablet.png', 39),
+(21, 'Energia', 'Satoru', 1, '25', 'Test', 'Prueba de registro con imagenes, y con datos un poco más realistas', 25, 'Azul azulado', 'Satoru.png', 39);
 
 -- --------------------------------------------------------
 
@@ -159,7 +156,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`Id_user`, `User`, `Password`, `Email`, `Name`, `Surname`, `Lastname`, `Rol`, `Estado`) VALUES
-(21, 'testuser', 'cliente', 'cliente.hotmail.com', 'Test', 'User', 'Example', 'cliente', 'Activo'),
+(21, 'testuser', 'cliente', 'cliente.hotmail.com', 'Test', 'User', 'Example', 'administrador', 'Inactivo'),
 (39, 'admin', 'admin', 'admin@hotmail.com', 'Mario', 'a', 'z', 'administrador', 'Activo'),
 (40, 'testuser', 'testpassword', 'testuser@example.com', 'Test', 'User', 'Example', 'cliente', 'Inactivo');
 
@@ -196,7 +193,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `products`
 --
 ALTER TABLE `products`
-  MODIFY `Id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `Id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT de la tabla `season_specification`

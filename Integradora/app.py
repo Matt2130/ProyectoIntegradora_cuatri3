@@ -1647,6 +1647,8 @@ def login():
                 "password": password
             }).fetchone()
             
+            session['inicio_cesion'] = True
+            
             if result:
                 #Almacenar los datos del usuario
                 session['permiso_usuario'] = result[0]
@@ -1669,14 +1671,14 @@ def login():
 def logout():
     session.clear()
 
-    sesion_activa = ""
+    session['inicio_cesion'] = False
     # Redirigir a la página de inicio o a donde desees
     return jsonify({"redirect": "/"}) # Redirige a la página principal
 
 #Direccionamientos####################################################################
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_template('index.html', inicio=session['inicio_cesion'])
 
 def login_required(role):
     def decorator(f):
@@ -1752,9 +1754,11 @@ def administrador():
 def cliente():
     return render_template('index.html')
 
+
+#######################################################################################################################
 @app.route('/catalogo')
 def catalogo():
-    return render_template('catalogo.html')
+    return render_template('catalogo.html', inicio=session['inicio_cesion'])
 
 @app.route('/producto', methods=['GET'])
 def producto():
@@ -1766,8 +1770,14 @@ def producto():
         result = connection.execute(text(sql_query), {"id": id_producto})
         contenido = result.fetchone()
     #print(sesion_activa)
-    return render_template('producto.html',cont=contenido)
+    return render_template('producto.html',cont=contenido, inicio=session['inicio_cesion'])
 
+@app.before_request
+def inicializar_variable():
+    if 'inicio_cesion' not in session:
+        session['inicio_cesion'] = True
+        
+################################################################################################################################
 @app.route('/inicio_usuario')
 def inicio_usuario():
     return render_template('registro_Inicio.html')

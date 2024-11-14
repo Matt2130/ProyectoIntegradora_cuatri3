@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='image/favicon.ico') }}" type="image/x-icon">
     <script src="{{ url_for('static', filename='js/footer.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/menu.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <header id="header">
@@ -20,14 +22,14 @@
         <nav id="menu">
             <ul>
                 <li><a href="/">inicio</a></li>
+                <li><a href="/catalogo">Productos</a></li>
             </ul>
-            {% if inicio_secion %}
+            {% if inicio %}
                 <button id="salir">Cerrar sesión</button>
             {% else %}
                 <button id="iniciar" onclick="window.location.href='/inicio_usuario'">Iniciar sesión</button>
                 <button id="registrarse" onclick="window.location.href='/inicio_usuario'">Registrarse</button>
             {% endif %}
-            <p>Estado de la sesión: {{ inicio_secion }}</p>
         </nav>
     </header>
     <main>

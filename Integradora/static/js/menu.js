@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Verificar el estado de la sesión al cargar la página
+    /* 
     fetch('/check_session', { // Solicitud para comprobar el estado de la sesión
         method: 'GET'
     })
@@ -12,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
     .catch(error => {
         console.error('Error al comprobar la sesión:', error);
     });
-
+    */
     
     // Escuchar el evento click en el botón de salir
     document.getElementById('salir').addEventListener('click', function() {
@@ -26,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
             cancelButtonColor: '#d33',
             cancelButtonText: 'Cancelar',
             confirmButtonColor: '#fed800',
-            confirmButtonText: 'Eliminar',
+            confirmButtonText: 'Salir',
             background: '#bfbfbf', // Fondo blanco de la alerta
             backdrop: 'rgba(0,0,0,0.7)', // Fondo oscuro con transparencia
             customClass: {
@@ -48,33 +49,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .then(data => {
                     // Redirigir a la URL especificada en el JSON de respuesta
-                    window.location.href = data.redirect; // Cambia aquí según la ruta que desees
+                    Secioncerrada()
+                    //window.location.reload();
+                    //window.location.href = data.redirect; // Cambia aquí según la ruta que desees
                 })
                 .catch(error => {
                     console.error('Error:', error); // Manejo de errores
                 });
             }
         });
-        /*
-        fetch('/logout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error al cerrar sesión');
-            }
-            return response.json(); // Esperar la respuesta JSON
-        })
-        .then(data => {
-            // Redirigir a la URL especificada en el JSON de respuesta
-            window.location.href = data.redirect; // Cambia aquí según la ruta que desees
-        })
-        .catch(error => {
-            console.error('Error:', error); // Manejo de errores
-        });
-         */
     });
 });
+///////////////
+function Secioncerrada() {
+    Swal.fire({
+        icon: 'success',
+        iconColor: '#2b8c4b',
+        title: '¡Bienvenido!',
+        text: 'Sessión finalizada',
+        timer: 2000,
+        showConfirmButton: false,
+        background: '#bfbfbf', // Fondo blanco de la alerta
+        backdrop: 'rgba(0,0,0,0.7)', // Fondo oscuro con transparencia
+        customClass: {
+            popup: 'mi-alerta-redondeada'
+        }
+    }).then(() => {
+        window.location.reload();
+    });
+}

@@ -11,6 +11,8 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='image/favicon.ico') }}" type="image/x-icon">
     <script src="{{ url_for('static', filename='js/footer.js') }}"></script>
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/menu.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <header id="header">
@@ -28,8 +30,12 @@
                 <li><a href="#ubicacion">Ubicacion</a></li>
                 <li><a href="/catalogo">Productos</a></li>
             </ul>
-            <button id="iniciar" onclick="window.location.href='/inicio_sesion'">Iniciar sesión</button>
-            <button id="registrarse" onclick="window.location.href='/inicio_usuario'">Registrarse</button>
+            {% if inicio %}
+                <button id="salir">Cerrar sesión</button>
+            {% else %}
+                <button id="iniciar" onclick="window.location.href='/inicio_usuario'">Iniciar sesión</button>
+                <button id="registrarse" onclick="window.location.href='/inicio_usuario'">Registrarse</button>
+            {% endif %}
         </nav>
     </header>
 

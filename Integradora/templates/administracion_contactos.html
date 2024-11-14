@@ -11,6 +11,7 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='image/favicon.ico') }}" type="image/x-icon">
     <script src="{{ url_for('static', filename='js/administracion_contactos.js') }}"></script>
     <script src="{{ url_for('static', filename='js/menu.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <header id="header">
@@ -25,6 +26,7 @@
 
         <nav id="menu">
             <ul>
+                <li><a href="/">inicio</a></li>
                 <li><a href="/catalogo">Productos</a></li>
             </ul>
             <button id="salir">Cerrar secion</button>
