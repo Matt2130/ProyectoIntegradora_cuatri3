@@ -1,6 +1,7 @@
 from flask import Flask, make_response, redirect, url_for, render_template, session, request, jsonify, Response
 from sqlalchemy import create_engine, text
 from functools import wraps
+import os
 #Se eliminara pero es para hacer pruebas
 import time
 
@@ -816,7 +817,15 @@ def registrar_producto():
         image = request.files.get('image')
         if image and image.filename.endswith(('.png', '.jpg', '.jpeg')):
             unique_filename = f"{modelo}.png"
-            image_path = f"static/image/imagenes_productos/{unique_filename}"
+            image_path = f"Integradora/static/image/imagenes_productos/{unique_filename}"
+            #image_path = f"static/image/imagenes_productos/{unique_filename}"
+            """
+            #Coso opara ver donde esta guardando las imagenes cuando truene la funcion
+            import os
+            image_dir = os.path.dirname(image_path)
+            if not os.path.exists(image_dir):
+                os.makedirs(image_dir)
+            """
             image.save(image_path)
             #return jsonify({"message": "Registro exitoso"}), 200
 
@@ -1623,8 +1632,6 @@ def actualizar_temporada():
         # Manejo de errores (nimodillo)
         return jsonify({"message": f"Error al actualizar: {str(e)}"}), 500
 
-import os
-
 @app.route('/actualizar_producto', methods=['POST'])
 def actualizar_producto():
     init_db()
@@ -1638,30 +1645,46 @@ def actualizar_producto():
     precio_lot = request.form.get('precio_lot')
     color = request.form.get('color')
     materia = request.form.get('materia')
-    producto_id = request.form.get('producto_id')  # Suponiendo que pasamos el ID del producto que se va a actualizar
+    producto_id = request.form.get('id')
 
     try:
-        # Obtener el nombre de la imagen actual
-        
-        imagen_actual = request.form.get('imagen_actual')  # Se pasa el nombre de la imagen actual del producto
+        # Abrir conexión para consultar la imagen actual
+        with engine.connect() as connection:
+            sql_query = text("""
+                SELECT url_imagen
+                FROM products
+                WHERE Id_product = :producto_id
+            """)
+            result = connection.execute(sql_query, {"producto_id": producto_id}).fetchone()
+
+            # Obtener el nombre de la imagen actual
+            imagen_actual = result['url_imagen'] if result else None
 
         # Guardar la nueva imagen (si se sube una nueva)
         image = request.files.get('image')
         if image and image.filename.endswith(('.png', '.jpg', '.jpeg')):
             # Eliminar la imagen anterior si existe
             if imagen_actual:
-                imagen_anterior_path = os.path.join("static", "image", "imagenes_productos", imagen_actual)
+                imagen_anterior_path = os.path.join("Integradora","static", "image", "imagenes_productos", imagen_actual)
                 if os.path.exists(imagen_anterior_path):
                     os.remove(imagen_anterior_path)  # Eliminar la imagen anterior
 
             # Crear un nombre único para la nueva imagen
             unique_filename = f"{modelo}.png"
             image_path = os.path.join("static", "image", "imagenes_productos", unique_filename)
+            """
+            #Coso opara ver donde esta guardando las imagenes cuando truene la funcion
+            import os
+            image_dir = os.path.dirname(image_path)
+            if not os.path.exists(image_dir):
+                os.makedirs(image_dir)
+            """
             image.save(image_path)  # Guardar la nueva imagen
         else:
             # Si no se sube una nueva imagen, se mantiene la imagen existente
             unique_filename = imagen_actual
 
+        # Abrir una nueva conexión para actualizar el producto
         with engine.connect() as connection:
             # Iniciar transacción
             connection.execute(text("START TRANSACTION;"))
@@ -1678,8 +1701,9 @@ def actualizar_producto():
                 `Description` = :descripcion,
                 `Price_per_unit` = :precio_lot,
                 `Color` = :color,
-                `url_imagen` = :image_path
-            WHERE `id` = :producto_id;
+                `url_imagen` = :image_path,
+                `FK_Id_user` = :user_id
+            WHERE `Id_product` = :producto_id;
             """
 
             # Ejecutar la consulta de actualización
@@ -1693,9 +1717,52 @@ def actualizar_producto():
                 "precio_lot": precio_lot,
                 "color": color,
                 "image_path": unique_filename,  # Ruta de la imagen (nueva o actual)
+                "user_id": session['id_usuario'],  # ID del usuario que está realizando la actualización
                 "producto_id": producto_id  # ID del producto que se va a actualizar
             })
+            ###########################
+            #print(producto_id)
+            '''
+            params = {
+                "materia": materia,
+                "modelo": modelo,
+                "temporada": temporada,
+                "tamaño": tamaño,
+                "nombre": nombre,
+                "descripcion": descripcion,
+                "precio_lot": precio_lot,
+                "color": color,
+                "image_path": unique_filename,
+                "user_id": session['id_usuario'],
+                "producto_id": producto_id
+            }
 
+            # Usar la misma consulta con placeholders (parámetros)
+            sql_query = """
+                        UPDATE `products` 
+                        SET 
+                            `Material_composition` = :materia,
+                            `Model` = :modelo,
+                            `FK_id_season` = :temporada,
+                            `Size` = :tamaño,
+                            `Name` = :nombre,
+                            `Description` = :descripcion,
+                            `Price_per_unit` = :precio_lot,
+                            `Color` = :color,
+                            `url_imagen` = :image_path,
+                            `FK_Id_user` = :user_id
+                        WHERE `Id_product` = :producto_id;
+                        """
+
+            # Imprimir la consulta final con los parámetros sustituidos
+            print("Consulta SQL con valores sustituidos:")
+            formatted_query = sql_query
+            for key, value in params.items():
+                formatted_query = formatted_query.replace(f":{key}", repr(value))
+
+            print(formatted_query)
+            '''
+            ############################
             # Confirmar transacción
             connection.execute(text("COMMIT;"))
 
