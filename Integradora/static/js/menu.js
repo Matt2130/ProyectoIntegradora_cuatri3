@@ -65,8 +65,8 @@ function Secioncerrada() {
     Swal.fire({
         icon: 'success',
         iconColor: '#2b8c4b',
-        title: '¡Bienvenido!',
-        text: 'Sessión finalizada',
+        title: 'Saliendo...',
+        text: 'Sesión cerrada',
         timer: 2000,
         showConfirmButton: false,
         background: '#bfbfbf', // Fondo blanco de la alerta

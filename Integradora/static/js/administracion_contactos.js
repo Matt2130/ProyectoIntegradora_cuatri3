@@ -15,42 +15,84 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function eliminarProducto(param) {
-    const confirmacion = confirm("¿Estás seguro de que deseas eliminar este usuario? (Ya no sera reversible esta operación)");
+    // Mostrar alerta de confirmación
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "Esta acción eliminará los contactos. No podrás recuperarlos.",
+        icon: 'warning',
+        iconColor: '#000000',
+        showCancelButton: true,
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#fed800',
+        confirmButtonText: 'Eliminar',
+        background: '#bfbfbf',
+        backdrop: 'rgba(0,0,0,0.7)',
+        customClass: {
+            popup: 'mi-alerta-redondeada'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Mostrar pantalla de carga
+            document.getElementById('loading').style.display = 'flex';
+        
+            // Enviar solicitud de eliminación
+            fetch('/eliminar_contacto', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ parametro: param })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud');
+                }
+                return response.json();
+            })
+            .then(() => {
+                // Ocultar pantalla de carga y mostrar alerta de éxito
+                document.getElementById('loading').style.display = 'none';
+                Swal.fire({
+                    title: 'Eliminado',
+                    text: 'Contacto eliminado correctamente',
+                    icon: 'success',
+                    iconColor: '#2b8c4b',
+                    background: '#bfbfbf',
+                    showConfirmButton: false,
+                    backdrop: 'rgba(0,0,0,0.7)',
+                    timer: 4000,
+                    customClass: {
+                        popup: 'mi-alerta-redondeada'
+                    }
+                }).then(() => {
+                    window.location.href = '/administrador_contact';
+                })
 
-    if (confirmacion){
-        // Mostrar la pantalla de carga
-        document.getElementById('loading').style.display = 'flex';
-    
-        // Enviar solo el parámetro 'param' a Flask
-        fetch('/eliminar_contacto', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ parametro: param })
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error en la solicitud');
-            }
-            return response.json();
-        })
-        .then(() => {
-            // Ocultar la pantalla de carga y mostrar alerta de éxito
-            document.getElementById('loading').style.display = 'none';
-            alert("Eliminación exitosa");
-            window.open('/administrador_contact', '_self'); // Redirige después del éxito
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert("Error al eliminar: " + error.message); // Mostrar alerta de error
-        })
-        .finally(() => {
-            // Asegurarse de ocultar la pantalla de carga en cualquier caso
-            document.getElementById('loading').style.display = 'none';
-        });
-    }
+                setTimeout(() => {
+                    window.open('/administrador_contact', '_self');
+                }, 500);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al eliminar el contacto',
+                    textColor: '#fed800',
+                    icon: 'error',
+                    iconColor: '#ec221f',
+                    background: '#bfbfbf',
+                    backdrop: 'rgba(0,0,0,0.7)',
+                    showConfirmButton: true,
+                });
+            })
+            .finally(() => {
+                document.getElementById('loading').style.display = 'none';
+            });
+        }
+    });
 }
+
 //Modal registrar
 function abrirModal() {
     var modal = document.getElementById("miModal");
@@ -69,6 +111,7 @@ function abrirModal() {
     }
 }
 ////////////////////////////////////////////////////////////////////////////////
+
 function registrarcontactos(){
     //console.log(3456789);
     
@@ -103,12 +146,14 @@ function registrarcontactos(){
         return response.json();
     })
     .then(data => {
-        alert(data.message); 
-        window.location.href = '/administrador_contact';
+        ActualizarProducto();
+/*         alert(data.message); 
+        window.location.href = '/administrador_contact'; */
     })
     .catch(error => {
         console.error('Error:', error);
-        alert("Error al registrar: " + error.message);
+/*         alert("Error al registrar: " + error.message); */
+        showServerErrorAlert();
     });
     
 }
@@ -186,11 +231,66 @@ function actualizartabalcontactos(idw){
         return response.json();
     })
     .then(data => {
-        alert(data.message); 
-        window.location.href = '/administrador_contact';
+        ActualizarProducto();
+        /* alert(data.message); */ 
+        //window.location.href = '/administrador_contact';
     })
     .catch(error => {
         console.error('Error:', error);
-        alert("Error al actualizar: " + error.message);
+/*         alert("Error al actualizar: " + error.message); */
+        showServerErrorAlert();
     });
+}
+
+function ActualizarProducto() {
+    Swal.fire({
+        title: 'Actualización Exitosa',
+        icon: 'success',
+        iconColor: '#2b8c4b',
+        showConfirmButton: false,
+        timer: 2000,
+        background: '#bfbfbf', // Fondo blanco de la alerta
+        backdrop: 'rgba(0,0,0,0.7)', // Fondo oscuro con transparencia
+        customClass: {
+            popup: 'mi-alerta-redondeada'  // Clase personalizada
+        }
+    }).then(() => {
+        window.location.href = '/administrador_contact';
+    });
+}
+
+// Alerta de error en el servidor
+function showServerErrorAlert() {
+    Swal.fire({
+        icon: 'error',
+        iconColor: '#ec221f',
+        title: 'Error en el servidor',
+        text: 'Hubo un problema al procesar tu solicitud. Intenta nuevamente más tarde',
+        showConfirmButton: false,
+        showCancelButton: true,
+        cancelButtonColor: '#fed800',
+        cancelButtonText: 'OK',
+        background: '#bfbfbf', // Fondo blanco de la alerta
+        backdrop: 'rgba(0,0,0,0.7)', // Fondo oscuro con transparencia
+        customClass: {
+            popup: 'mi-alerta-redondeada'
+        }
+    });
+}
+
+function RegistrarProducto() {
+    Swal.fire({
+        title: 'Registro Exitoso',
+        icon: 'success',
+        iconColor: '#2b8c4b',
+        showConfirmButton: false,
+        timer: 2000,
+        background: '#bfbfbf', // Fondo blanco de la alerta
+        backdrop: 'rgba(0,0,0,0.7)', // Fondo oscuro con transparencia
+        customClass: {
+            popup: 'mi-alerta-redondeada'  // Clase personalizada
+        }
+    }).then(() => {
+        window.location.href = '/administrador_content';
+    })
 }

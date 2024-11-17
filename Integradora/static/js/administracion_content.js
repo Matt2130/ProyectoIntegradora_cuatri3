@@ -13,41 +13,81 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function eliminarProducto(param) {
-    const confirmacion = confirm("¿Estás seguro de que deseas eliminar este usuario? (Ya no sera reversible esta operación)");
-    console.log(param);
-    if (confirmacion){
-        // Mostrar la pantalla de carga
-        document.getElementById('loading').style.display = 'flex';
-    
-        // Enviar solo el parámetro 'param' a Flask
-        fetch('/eliminar_contenido', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ parametro: param })
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error en la solicitud');
-            }
-            return response.json();
-        })
-        .then(() => {
-            // Ocultar la pantalla de carga y mostrar alerta de éxito
-            document.getElementById('loading').style.display = 'none';
-            alert("Eliminación exitosa");
-            window.open('/administrador_content', '_self'); // Redirige después del éxito
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert("Error al eliminar: " + error.message); // Mostrar alerta de error
-        })
-        .finally(() => {
-            // Asegurarse de ocultar la pantalla de carga en cualquier caso
-            document.getElementById('loading').style.display = 'none';
-        });
-    }
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "Esta acción eliminará el contenido. ¡No podrás recuperarlo!",
+        icon: 'warning',
+        iconColor: '#000000',
+        showCancelButton: true,
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#fed800',
+        confirmButtonText: 'Eliminar',
+        background: '#bfbfbf',
+        backdrop: 'rgba(0,0,0,0.7)',
+        customClass: {
+            popup: 'mi-alerta-redondeada'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Mostrar la pantalla de carga
+            document.getElementById('loading').style.display = 'flex';
+
+            // Enviar solo el parámetro 'param' a Flask
+            fetch('/eliminar_contenido', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ parametro: param })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud');
+                }
+                return response.json();
+            })
+            .then(() => {
+                // Ocultar la pantalla de carga y mostrar alerta de éxito
+                document.getElementById('loading').style.display = 'none';
+                Swal.fire({
+                    title: 'Eliminado',
+                    text: 'Contenido eliminado correctamente.',
+                    icon: 'success',
+                    iconColor: '#2b8c4b',
+                    background: '#bfbfbf',
+                    confirmButtonColor: '#fed800',
+                    showConfirmButton: false,
+                    backdrop: 'rgba(0,0,0,0.7)',
+                    timer: 2000, // La alerta de éxito se cerrará automáticamente
+                    customClass: {
+                        popup: 'mi-alerta-redondeada'
+                    }
+                }).then(() => {
+                    // Redirigir después del éxito
+                    window.location.href = '/administrador_content';
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('loading').style.display = 'none';
+                Swal.fire({
+                    title: 'Error',
+                    text: "Error al eliminar: " + error.message,
+                    icon: 'error',
+                    background: '#bfbfbf',
+                    confirmButtonColor: '#d33',
+                    customClass: {
+                        popup: 'mi-alerta-redondeada'
+                    }
+                });
+            })
+            .finally(() => {
+                // Asegurarse de ocultar la pantalla de carga en cualquier caso
+                document.getElementById('loading').style.display = 'none';
+            });
+        }
+    });
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -183,8 +223,9 @@ function editarsqlcontenido(idw){
         return response.json();
     })
     .then(data => {
-        alert(data.message); 
-        window.location.href = '/administrador_content';
+        ActualizarProducto();
+/*         alert(data.message); 
+        window.location.href = '/administrador_content'; */
     })
     .catch(error => {
         console.error('Error:', error);
@@ -195,7 +236,7 @@ function editarsqlcontenido(idw){
 function registrarcontenido(){
     const titulo = document.getElementById('titulo').value;
     const descripcion = document.getElementById('descripcion').value;
-    //console.log(titulo + descripcion);
+
     fetch('/registrar_contenido', {
         method: 'POST',
         headers: {
@@ -213,8 +254,9 @@ function registrarcontenido(){
         return response.json();
     })
     .then(data => {
-        alert(data.message); 
-        window.location.href = '/administrador_content';
+        RegistrarProducto();        
+        /* alert(data.message); */ 
+        /*window.location.href = '/administrador_content';*/
     })
     .catch(error => {
         console.error('Error:', error);
@@ -242,4 +284,38 @@ function toggleExpand(event, element) {
         });
         element.classList.toggle("expanded"); // Alterna el estado del div clicado
     }
+}
+
+function ActualizarProducto() {
+    Swal.fire({
+        title: 'Actualización Exitosa',
+        icon: 'success',
+        iconColor: '#2b8c4b',
+        showConfirmButton: false,
+        timer: 2000,
+        background: '#bfbfbf', // Fondo blanco de la alerta
+        backdrop: 'rgba(0,0,0,0.7)', // Fondo oscuro con transparencia
+        customClass: {
+            popup: 'mi-alerta-redondeada'  // Clase personalizada
+        }
+    }).then(() => {
+        window.location.href = '/administrador_content';
+    });
+}
+
+function RegistrarProducto() {
+    Swal.fire({
+        title: 'Registro Exitoso',
+        icon: 'success',
+        iconColor: '#2b8c4b',
+        showConfirmButton: false,
+        timer: 2000,
+        background: '#bfbfbf', // Fondo blanco de la alerta
+        backdrop: 'rgba(0,0,0,0.7)', // Fondo oscuro con transparencia
+        customClass: {
+            popup: 'mi-alerta-redondeada'  // Clase personalizada
+        }
+    }).then(() => {
+        window.location.href = '/administrador_content';
+    })
 }

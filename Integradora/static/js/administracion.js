@@ -12,44 +12,83 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => console.error('Error:', error));
 });
 
-
 function eliminarProducto(param) {
-    const confirmacion = confirm("¿Estás seguro de que deseas eliminar este usuario? (Ya no sera reversible esta operación)");
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "Esta acción eliminará el producto. ¡No podrás recuperarlo!",
+        icon: 'warning',
+        iconColor: '#000000',
+        showCancelButton: true,
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#fed800',
+        confirmButtonText: 'Eliminar',
+        background: '#bfbfbf',
+        backdrop: 'rgba(0,0,0,0.7)',
+        customClass: {
+            popup: 'mi-alerta-redondeada'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Mostrar la pantalla de carga
+            document.getElementById('loading').style.display = 'flex';
 
-    if (confirmacion){
-        // Mostrar la pantalla de carga
-        document.getElementById('loading').style.display = 'flex';
-    
-        // Enviar solo el parámetro 'param' a Flask
-        fetch('/eliminar_producto', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ parametro: param })
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error en la solicitud');
-            }
-            return response.json();
-        })
-        .then(() => {
-            // Ocultar la pantalla de carga y mostrar alerta de éxito
-            document.getElementById('loading').style.display = 'none';
-            alert("Eliminación exitosa");
-            window.open('/administrador_productos', '_self'); // Redirige después del éxito
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert("Error al eliminar: " + error.message); // Mostrar alerta de error
-        })
-        .finally(() => {
-            // Asegurarse de ocultar la pantalla de carga en cualquier caso
-            document.getElementById('loading').style.display = 'none';
-        });
-    }
+            // Enviar solo el parámetro 'param' a Flask
+            fetch('/eliminar_producto', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ parametro: param })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud');
+                }
+                return response.json();
+            })
+            .then(() => {
+                // Ocultar la pantalla de carga y mostrar alerta de éxito
+                document.getElementById('loading').style.display = 'none';
+                Swal.fire({
+                    title: 'Eliminado',
+                    text: 'Producto eliminado correctamente.',
+                    icon: 'success',
+                    iconColor: '#2b8c4b',
+                    background: '#bfbfbf',
+                    confirmButtonColor: '#fed800',
+                    backdrop: 'rgba(0,0,0,0.7)',
+                    timer: 4000, // La alerta de éxito se cerrará automáticamente
+                    customClass: {
+                        popup: 'mi-alerta-redondeada'
+                    }
+                }).then(() => {
+                    // Redirigir después del éxito
+                    window.open('/administrador_productos', '_self');
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('loading').style.display = 'none';
+                Swal.fire({
+                    title: 'Error',
+                    text: "Error al eliminar: " + error.message,
+                    icon: 'error',
+                    background: '#bfbfbf',
+                    confirmButtonColor: '#d33',
+                    customClass: {
+                        popup: 'mi-alerta-redondeada'
+                    }
+                });
+            })
+            .finally(() => {
+                // Asegurarse de ocultar la pantalla de carga en cualquier caso
+                document.getElementById('loading').style.display = 'none';
+            });
+        }
+    });
 }
+
 /////////////////////////////////////////////////////////////////////////////////////////
 //Buscador
 function buscador() {
@@ -139,12 +178,14 @@ function registrarproducto() {
         return response.json();
     })
     .then(data => {
-        alert(data.message); 
-        window.location.href = '/administrador_productos';
+        RegistrarProducto();
+/*         alert(data.message); 
+        window.location.href = '/administrador_productos'; */
     })
     .catch(error => {
         console.error('Error:', error);
-        alert("Error al registrar: " + error.message);
+        showServerErrorAlert();
+  /*       alert("Error al registrar: " + error.message); */
     });
 }
 //Modal para detalles
@@ -263,11 +304,66 @@ function editarsqlcontenido(idw){
         return response.json();
     })
     .then(data => {
-        alert(data.message); 
-        window.location.href = '/administrador_productos';
+        ActualizarProducto();
+/*         alert(data.message); 
+        window.location.href = '/administrador_productos'; */
     })
     .catch(error => {
         console.error('Error:', error);
-        alert("Error al registrar: " + error.message);
+/*         alert("Error al registrar: " + error.message); */
+        showServerErrorAlert();
+    });
+}
+
+// Alerta de error en el servidor
+function showServerErrorAlert() {
+    Swal.fire({
+        icon: 'error',
+        iconColor: '#ec221f',
+        title: 'Error en el servidor',
+        text: 'Hubo un problema al procesar tu solicitud. Intenta nuevamente más tarde',
+        showConfirmButton: false,
+        showCancelButton: true,
+        cancelButtonColor: '#fed800',
+        cancelButtonText: 'OK',
+        background: '#bfbfbf', // Fondo blanco de la alerta
+        backdrop: 'rgba(0,0,0,0.7)', // Fondo oscuro con transparencia
+        customClass: {
+            popup: 'mi-alerta-redondeada'
+        }
+    });
+}
+
+function RegistrarProducto() {
+    Swal.fire({
+        title: 'Registro Exitoso',
+        icon: 'success',
+        iconColor: '#2b8c4b',
+        showConfirmButton: false,
+        timer: 2000,
+        background: '#bfbfbf', // Fondo blanco de la alerta
+        backdrop: 'rgba(0,0,0,0.7)', // Fondo oscuro con transparencia
+        customClass: {
+            popup: 'mi-alerta-redondeada'  // Clase personalizada
+        }
+    }).then(() => {
+        window.location.href = '/administrador_content';
+    })
+}
+
+function ActualizarProducto() {
+    Swal.fire({
+        title: 'Actualización Exitosa',
+        icon: 'success',
+        iconColor: '#2b8c4b',
+        showConfirmButton: false,
+        timer: 2000,
+        background: '#bfbfbf', // Fondo blanco de la alerta
+        backdrop: 'rgba(0,0,0,0.7)', // Fondo oscuro con transparencia
+        customClass: {
+            popup: 'mi-alerta-redondeada'  // Clase personalizada
+        }
+    }).then(() => {
+        window.location.href = '/administrador_content';
     });
 }

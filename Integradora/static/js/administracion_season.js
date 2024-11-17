@@ -38,7 +38,6 @@ function eliminarProducto(param) {
         }
     }).then((result) => {
         if (result.isConfirmed) {
-            // Aquí puedes agregar la lógica para eliminar el producto de tu base de datos
             // Mostrar la pantalla de carga
             document.getElementById('loading').style.display = 'flex';
         
@@ -279,9 +278,10 @@ function RegistrarProducto() {
         }
     })
 }
+ 
 function ActualizarProducto() {
     Swal.fire({
-        title: 'Actualización Exitoso',
+        title: 'Actualización Exitosa',
         icon: 'success',
         iconColor: '#2b8c4b',
         showConfirmButton: false,

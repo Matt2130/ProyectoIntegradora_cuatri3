@@ -158,7 +158,33 @@ button:hover{
     display: block;
 }
 
-
+@media screen and (min-width:1500px){
+    .main{
+        width: 60vw;
+        height: 40vw;
+        overflow: hidden;
+    }
+    .login {
+        height: 40vw;
+        transform: translateY(-2vw);
+        transition: .8s ease-in-out;
+    }
+    input{
+        width: 40%;
+        height: 1vw;
+        background: #e0dede;
+        font-size: .9rem;
+        text-align: center;
+        display: flex;
+        margin: 20px auto;
+        padding: .5vw;
+        border: none;
+        border-radius: 5px;
+    }
+    #chk:checked ~ .login{
+        transform: translateY(-8vw);
+    }
+}
 
 @media screen and (min-width:1350px){
     .main{
