@@ -859,6 +859,55 @@ def registrar_comentario():
         # Manejo de errores (nimodillo)
         return jsonify({"message": f"Error al registrar: {str(e)}"}), 500
 
+@app.route('/registrar_contactos', methods=['POST'])
+def registrar_contactos():
+    init_db()
+
+    data = request.get_json()
+    facebook = data.get('facebook')
+    instagram = data.get('instagram')
+    tik_tok = data.get('tik_tok')
+    email = data.get('email')
+    twitter = data.get('twitter')
+    whatsapp = data.get('whatsapp')
+    phone = data.get('phone')
+
+    #time.sleep(5)  #Espera 5 segundos para testear pantalla de carga
+
+    # Intento de insertar datos
+    try:
+        with engine.connect() as connection:
+            # Iniciar una transacción
+            connection.execute(text("START TRANSACTION;"))
+
+            sql_query = """
+                INSERT INTO `contacts` (`Facebook`, `Instagram`, `Tik_tok`, `Email`, `Twitter`, `Whatsapp`, `Phone`) 
+                VALUES (:facebook, :instagram, :tik_tok, :email, :twitter, :whatsapp, :phone);
+            """
+
+            # Ejecutar la consulta con los datos
+            connection.execute(text(sql_query), {
+                "facebook": facebook,
+                "instagram": instagram,
+                "tik_tok": tik_tok,
+                "email": email,
+                "twitter": twitter,
+                "whatsapp": whatsapp,
+                "phone": phone
+            })
+
+            # Confirmar la transacción
+            connection.execute(text("COMMIT;"))
+
+        return jsonify({"message": "Registro exitoso"}), 200
+    except Exception as e:
+        # Hacer rollback en caso de error
+        with engine.connect() as connection:
+            connection.execute(text("ROLLBACK;"))
+
+        # Manejo de errores (nimodillo)
+        return jsonify({"message": f"Error al registrar: {str(e)}"}), 500
+
 @app.route('/registrar_season', methods=['POST'])
 def registrar_season():
     init_db()
@@ -1874,7 +1923,6 @@ def actualizar_producto():
         # Manejo de errores
         return jsonify({"message": f"Error al actualizar el producto: {str(e)}"}), 500
 
-
 #inicio de secion y cerrar seción
 @app.route('/login', methods=['POST'])
 def login():
@@ -1999,11 +2047,6 @@ def administrador():
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = '0'
     return response
-
-@app.route('/cliente')
-def cliente():
-    return render_template('index.html')
-
 
 #######################################################################################################################
 @app.route('/catalogo')
