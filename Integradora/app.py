@@ -31,7 +31,7 @@ def login_required(role):
 def init_db():
     global engine
     if engine is None:
-        engine = create_engine('mysql+pymysql://root:pass123@localhost/integradora')
+        engine = create_engine('mysql+pymysql://root:@localhost/integradora')
         #mysql+pymysql://<usuario>:<contraseña>@<host>/<nombre_base_de_datos>
         #Manuel
         #mysql+pymysql://root:'pass123'@localhost/integradora
@@ -683,6 +683,49 @@ def buscador_productos():
     except:
         return Response("Error 404", mimetype='text/html')
 
+@app.route('/api/comentarios_producto', methods=['POST','GET'])
+def comentarios_producto():
+    informacion = request.get_json()
+    id = informacion.get('id')
+    
+    #print(id)
+    try:
+        init_db()
+        with engine.connect() as connection:
+            sql_query = """
+                SELECT users.User, comments.Punctuation, comments.Comment 
+                FROM products 
+                INNER JOIN comments ON products.Id_product=comments.FK_Id_product 
+                INNER JOIN users ON comments.FK_Id_customer=users.Id_user 
+                WHERE  products.Id_product=:id;
+            """
+            result = connection.execute(text(sql_query), {"id": id})
+            contenido = result.fetchall()
+            
+            html = """
+            
+            """
+            for info in contenido:
+                html += f"""
+                <div class="comentario-usuario">
+                    <p>{info[0]}</p>
+                    Puntuación:{info[1]}
+                </div>
+                <div class="comentario-texto">
+                    <div id="comentario">
+                        {info[2]}
+                    </div>
+                </div>
+                <hr>
+                """
+            html += """
+                
+            """
+            
+            return Response(html, mimetype='text/html')
+    except:
+        return Response("Error 404", mimetype='text/html')
+    
 #Registros
 @app.route('/registro_usuario', methods=['POST'])
 def signup():
@@ -772,6 +815,50 @@ def registrar_contenido():
         # Manejo de errores (nimodillo)
         return jsonify({"message": f"Error al registrar: {str(e)}"}), 500
 
+@app.route('/registrar_comentario', methods=['POST'])
+def registrar_comentario():
+    init_db()
+
+    data = request.get_json()
+    id_produto = data.get('id')
+    calificacion = data.get('calificacion')
+    comentario = data.get('comentario')
+
+    #time.sleep(5)  #Espera 5 segundos para testear pantalla de carga
+    
+    # Intento de insertar datos
+    try:
+        with engine.connect() as connection:
+            # Iniciar una transacción
+            connection.execute(text("START TRANSACTION;"))
+
+            sql_query = """
+                INSERT INTO `comments` (`Punctuation`, `Comment`, `FK_Id_customer`, `FK_Id_product`) 
+                VALUES (:calificacion, :comentario, :id_usuario, :id_produto);
+            """
+
+            #print(f"Ejecutando consulta: {sql_query}")
+
+            # Ejecutar la consulta
+            connection.execute(text(sql_query), {
+                "calificacion": calificacion,
+                "comentario": comentario,
+                "id_usuario":session['id_usuario'],
+                "id_produto": id_produto,
+            })
+
+            # Finalizar transacción
+            connection.execute(text("COMMIT;"))
+
+        return jsonify({"message": "Registro exitoso"}), 200
+    except Exception as e:
+        # Hacer rollback en caso de error
+        with engine.connect() as connection:
+            connection.execute(text("ROLLBACK;"))
+
+        # Manejo de errores (nimodillo)
+        return jsonify({"message": f"Error al registrar: {str(e)}"}), 500
+
 @app.route('/registrar_season', methods=['POST'])
 def registrar_season():
     init_db()
@@ -780,7 +867,7 @@ def registrar_season():
     temporada = data.get('temporada')
 
     #time.sleep(5)  #Espera 5 segundos para testear pantalla de carga
-
+    
     # Intento de insertar datos
     try:
         with engine.connect() as connection:
@@ -828,7 +915,7 @@ def registrar_producto():
         image = request.files.get('image')
         if image and image.filename.endswith(('.png', '.jpg', '.jpeg')):
             unique_filename = f"{modelo}.png"
-            image_path = f"Integradora/static/image/imagenes_productos/{unique_filename}"
+            image_path = f"static/image/imagenes_productos/{unique_filename}"
             #image_path = f"static/image/imagenes_productos/{unique_filename}"
             """
             #Coso opara ver donde esta guardando las imagenes cuando truene la funcion
@@ -836,6 +923,7 @@ def registrar_producto():
             image_dir = os.path.dirname(image_path)
             if not os.path.exists(image_dir):
                 os.makedirs(image_dir)
+
             """
             image.save(image_path)
             #return jsonify({"message": "Registro exitoso"}), 200

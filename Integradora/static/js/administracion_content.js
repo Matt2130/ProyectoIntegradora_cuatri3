@@ -195,7 +195,7 @@ function editarsqlcontenido(idw){
 function registrarcontenido(){
     const titulo = document.getElementById('titulo').value;
     const descripcion = document.getElementById('descripcion').value;
-
+    //console.log(titulo + descripcion);
     fetch('/registrar_contenido', {
         method: 'POST',
         headers: {
