@@ -6,7 +6,8 @@ import os
 import time
 
 
-app = Flask(__name__)
+#app = Flask(__name__)
+app = Flask(__name__, static_folder="static")
 
 # Establecer la clave secreta
 app.secret_key = '12345'  # Cambia esto por una clave única
@@ -693,7 +694,7 @@ def comentarios_producto():
         init_db()
         with engine.connect() as connection:
             sql_query = """
-                SELECT users.User, comments.Punctuation, comments.Comment 
+                SELECT users.User, comments.Punctuation, comments.Comment, users.Id_user, comments.Id_coment
                 FROM products 
                 INNER JOIN comments ON products.Id_product=comments.FK_Id_product 
                 INNER JOIN users ON comments.FK_Id_customer=users.Id_user 
@@ -710,6 +711,13 @@ def comentarios_producto():
                 <div class="comentario-usuario">
                     <p>{info[0]}</p>
                     Puntuación:{info[1]}
+                    """
+                if session['id_usuario'] == info[3]:
+                    html += f"""
+                    <button onclick="editarComentario({info[4]})">Editar</button>
+                    <button onclick="eliminarComentario({info[4]})">Eliminar</button>
+                    """
+                html +=f"""
                 </div>
                 <div class="comentario-texto">
                     <div id="comentario">
@@ -964,16 +972,27 @@ def registrar_producto():
         image = request.files.get('image')
         if image and image.filename.endswith(('.png', '.jpg', '.jpeg')):
             unique_filename = f"{modelo}.png"
-            image_path = f"static/image/imagenes_productos/{unique_filename}"
+            image_path = os.path.join("Integradora","static", "image", "imagenes_productos", unique_filename)
             #image_path = f"static/image/imagenes_productos/{unique_filename}"
+            '''
+            image_dir = os.path.join("static", "image", "imagenes_productos")
+
+            # Verificar si la carpeta existe
+            if not os.path.exists(image_dir):
+                # Crear la carpeta (y subcarpetas si no existen)
+                os.makedirs(image_dir)
+            # Generar la ruta completa de la imagen
+            unique_filename = f"{modelo}.png"
+            image_path = os.path.join(image_dir, unique_filename)
+            '''
             """
             #Coso opara ver donde esta guardando las imagenes cuando truene la funcion
             import os
             image_dir = os.path.dirname(image_path)
             if not os.path.exists(image_dir):
                 os.makedirs(image_dir)
-
             """
+            
             image.save(image_path)
             #return jsonify({"message": "Registro exitoso"}), 200
 
@@ -1200,6 +1219,43 @@ def eliminar_producto():
         # Manejo de errores (nimodillo)
         return jsonify({"message": f"Error al eliminar: {str(e)}"}), 500
 
+@app.route('/eliminar_comentario_producto', methods=['POST'])
+def eliminar_comentario_producto():
+    init_db()
+
+    identificador = request.get_json()
+    id = identificador.get('parametro')
+    
+    #time.sleep(5)  #Espera 5 segundos para testear pantalla de carga
+
+    # Intento de insertar datos
+    try:
+        with engine.connect() as connection:
+            # Iniciar una transacción
+            connection.execute(text("START TRANSACTION;"))
+
+            sql_query = """
+                DELETE FROM comments WHERE `comments`.`Id_coment`=:identificados;
+            """
+            print(f"Ejecutando consulta: {sql_query}")
+
+            # Ejecutar la consulta
+            connection.execute(text(sql_query), {
+                "identificados": id
+            })
+
+            # Finalizar transacción
+            connection.execute(text("COMMIT;"))
+
+        return jsonify({"message": "Eliminacion exitosa"}), 200
+    except Exception as e:
+        # Hacer rollback en caso de error
+        with engine.connect() as connection:
+            connection.execute(text("ROLLBACK;"))
+
+        # Manejo de errores (nimodillo)
+        return jsonify({"message": f"Error al eliminar: {str(e)}"}), 500
+    
 #Solicitar datos para edición
 @app.route('/api/buscador_content_edit', methods=['POST'])
 def buscador_content_edit():
@@ -2072,7 +2128,10 @@ def inicializar_variable():
         
     if 'permiso_admin' not in session:
         session['permiso_admin'] = False
-        
+    
+    if 'id_usuario' not in session:
+        session['id_usuario'] = None
+    
 ################################################################################################################################
 @app.route('/inicio_usuario')
 def inicio_usuario():

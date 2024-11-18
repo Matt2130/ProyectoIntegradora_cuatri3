@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 14-11-2024 a las 00:58:37
+-- Tiempo de generación: 18-11-2024 a las 01:56:20
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -34,6 +34,16 @@ CREATE TABLE `comments` (
   `FK_Id_customer` int(11) NOT NULL,
   `FK_Id_product` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `comments`
+--
+
+INSERT INTO `comments` (`Id_coment`, `Punctuation`, `Comment`, `FK_Id_customer`, `FK_Id_product`) VALUES
+(1, 1, '1', 39, 21),
+(2, 1, '1', 39, 21),
+(3, 1, '1', 39, 21),
+(4, 5, 'Ta guapo', 21, 21);
 
 -- --------------------------------------------------------
 
@@ -109,8 +119,13 @@ CREATE TABLE `products` (
 
 INSERT INTO `products` (`Id_product`, `Material_composition`, `Model`, `FK_id_season`, `Size`, `Name`, `Description`, `Price_per_unit`, `Color`, `url_imagen`, `FK_Id_user`) VALUES
 (19, '1', 'gojo', 1, '1', '1', '1', 1, '1', 'gojo.png', 39),
-(20, '1', 'tablet', 1, '1', '1', '1', 1, '1', 'tablet.png', 39),
-(21, 'Energia', 'Satoru', 1, '25', 'Test', 'Prueba de registro con imagenes, y con datos un poco más realistas', 25, 'Azul azulado', 'Satoru.png', 39);
+(20, '2', '4', 12, '5', '61', '71', 8, '9', 'tablet.png', 21),
+(21, 'Energia', 'Satoru', 1, '25', 'Test', 'Prueba de registro con imagenes, y con datos un poco más realistas', 25, 'Azul azulado', 'Satoru.png', 39),
+(25, 'bits', 'hola', 1, '25', 'Mario', 'xcvbcfgb', 50, 'red', 'hola.png', 39),
+(26, '5', '5', 1, '5', '5', '5', 5, '5', '5.png', 39),
+(27, '0', '10', 10, '1', '01', '0', 10, '1', '10.png', 39),
+(28, '10', '10', 10, '10', '10', '10', 10, '10', '10.png', 39),
+(29, '0', 'asd', 10, '10', '10', '10', 10, '1', 'asd.png', 39);
 
 -- --------------------------------------------------------
 
@@ -156,13 +171,31 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`Id_user`, `User`, `Password`, `Email`, `Name`, `Surname`, `Lastname`, `Rol`, `Estado`) VALUES
-(21, 'testuser', 'cliente', 'cliente.hotmail.com', 'Test', 'User', 'Example', 'administrador', 'Inactivo'),
+(21, 'testuser', 'cliente', 'cliente@hotmail.com', 'Test', 'User', 'Example', 'cliente', 'Inactivo'),
 (39, 'admin', 'admin', 'admin@hotmail.com', 'Mario', 'a', 'z', 'administrador', 'Activo'),
 (40, 'testuser', 'testpassword', 'testuser@example.com', 'Test', 'User', 'Example', 'cliente', 'Inactivo');
 
 --
 -- Índices para tablas volcadas
 --
+
+--
+-- Indices de la tabla `comments`
+--
+ALTER TABLE `comments`
+  ADD PRIMARY KEY (`Id_coment`);
+
+--
+-- Indices de la tabla `contacts`
+--
+ALTER TABLE `contacts`
+  ADD PRIMARY KEY (`Id_contact`);
+
+--
+-- Indices de la tabla `content`
+--
+ALTER TABLE `content`
+  ADD PRIMARY KEY (`Id_contenido`);
 
 --
 -- Indices de la tabla `products`
@@ -190,10 +223,28 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT de la tabla `comments`
+--
+ALTER TABLE `comments`
+  MODIFY `Id_coment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT de la tabla `contacts`
+--
+ALTER TABLE `contacts`
+  MODIFY `Id_contact` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de la tabla `content`
+--
+ALTER TABLE `content`
+  MODIFY `Id_contenido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
 -- AUTO_INCREMENT de la tabla `products`
 --
 ALTER TABLE `products`
-  MODIFY `Id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `Id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT de la tabla `season_specification`

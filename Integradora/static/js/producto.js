@@ -102,3 +102,79 @@ stars.forEach(function(star, index){
     });
 })
  */
+//Eliminar comentario
+
+function eliminarComentario(param) {
+    // Mostrar alerta de confirmación
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "Esta acción eliminará los contactos. No podrás recuperarlos.",
+        icon: 'warning',
+        iconColor: '#000000',
+        showCancelButton: true,
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#fed800',
+        confirmButtonText: 'Eliminar',
+        background: '#bfbfbf',
+        backdrop: 'rgba(0,0,0,0.7)',
+        customClass: {
+            popup: 'mi-alerta-redondeada'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Mostrar pantalla de carga
+            document.getElementById('loading').style.display = 'flex';
+        
+            // Enviar solicitud de eliminación
+            fetch('/eliminar_comentario_producto', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ parametro: param })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud');
+                }
+                return response.json();
+            })
+            .then(() => {
+                // Ocultar pantalla de carga y mostrar alerta de éxito
+                document.getElementById('loading').style.display = 'none';
+                Swal.fire({
+                    title: 'Eliminado',
+                    text: 'Contacto eliminado correctamente',
+                    icon: 'success',
+                    iconColor: '#2b8c4b',
+                    background: '#bfbfbf',
+                    showConfirmButton: false,
+                    backdrop: 'rgba(0,0,0,0.7)',
+                    timer: 2000,
+                    customClass: {
+                        popup: 'mi-alerta-redondeada'
+                    }
+                }).then(() => {
+                    window.location.reload();
+                })
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al eliminar el contacto',
+                    textColor: '#fed800',
+                    icon: 'error',
+                    iconColor: '#ec221f',
+                    background: '#bfbfbf',
+                    backdrop: 'rgba(0,0,0,0.7)',
+                    showConfirmButton: true,
+                });
+            })
+            .finally(() => {
+                document.getElementById('loading').style.display = 'none';
+            });
+        }
+    });
+}

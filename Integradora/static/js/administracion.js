@@ -347,7 +347,7 @@ function RegistrarProducto() {
             popup: 'mi-alerta-redondeada'  // Clase personalizada
         }
     }).then(() => {
-        window.location.href = '/administrador_content';
+        window.location.reload();
     })
 }
 
@@ -364,6 +364,6 @@ function ActualizarProducto() {
             popup: 'mi-alerta-redondeada'  // Clase personalizada
         }
     }).then(() => {
-        window.location.href = '/administrador_content';
+        window.location.reload();
     });
 }
