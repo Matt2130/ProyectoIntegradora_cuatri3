@@ -180,6 +180,108 @@ function eliminarComentario(param) {
 }
 
 ////Edicion de comentario modal
-function editarComentario(id){
-    console.log(id)
+//Modal para edición
+function editarComentario(id) {
+    var modal = document.getElementById("miModal2");
+    modal.style.display = "block"; // Muestra el modal
+
+    fetch('/api/buscador_comentario_edit', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id: id })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error en la solicitud');
+        }
+        return response.text(); // Cambiado a text() para manejar HTML
+    })
+    .then(html => {
+        // Inserta el HTML en el modal
+        document.getElementById('miModal2').querySelector('.modal-contenido').innerHTML = html;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('miModal2').querySelector('.modal-contenido').innerText = 'Error en la edición';
+    });
+}
+
+function cerrarModal() {
+    var modal = document.getElementById("miModal2");
+    modal.style.display = "none";
+}
+window.onclick = function(event) {
+    var modal = document.getElementById("miModal2");
+    if (event.target === modal) {
+        cerrarModal();
+    }
+}
+//////////////////////////////////////////////////////////////////////
+function editarsqlcomentario(id_comentario){
+    //console.log(id);
+    let comentario = document.getElementById('comentariod').value;
+    let calif = document.getElementById('califad').value;
+
+    fetch('/actualizar_comentario', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            comentario: comentario,
+            calif:calif,
+            id_comentario:id_comentario,
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error en la solicitud');
+        }
+        return response.json();
+    })
+    .then(data => {
+        //alert(data.message); 
+        ActualizarProducto();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showServerErrorAlert();
+        //alert("Error al registrar: " + error.message);
+    });
+}
+// Alerta de error en el servidor
+function showServerErrorAlert() {
+    Swal.fire({
+        icon: 'error',
+        iconColor: '#ec221f',
+        title: 'Error en el servidor',
+        text: 'Hubo un problema al procesar tu solicitud. Intenta nuevamente más tarde',
+        showConfirmButton: false,
+        showCancelButton: true,
+        cancelButtonColor: '#fed800',
+        cancelButtonText: 'OK',
+        background: '#bfbfbf', // Fondo blanco de la alerta
+        backdrop: 'rgba(0,0,0,0.7)', // Fondo oscuro con transparencia
+        customClass: {
+            popup: 'mi-alerta-redondeada'
+        }
+    });
+}
+function ActualizarProducto() {
+    Swal.fire({
+        title: 'Actualización Exitosa',
+        icon: 'success',
+        iconColor: '#2b8c4b',
+        showConfirmButton: false,
+        timer: 2000,
+        background: '#bfbfbf', // Fondo blanco de la alerta
+        backdrop: 'rgba(0,0,0,0.7)', // Fondo oscuro con transparencia
+        customClass: {
+            popup: 'mi-alerta-redondeada'  // Clase personalizada
+        }
+    }).then(() => {
+        window.location.reload();
+    })
 }

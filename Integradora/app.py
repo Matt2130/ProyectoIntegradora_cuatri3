@@ -976,8 +976,9 @@ def registrar_producto():
         image = request.files.get('image')
         if image and image.filename.endswith(('.png', '.jpg', '.jpeg')):
             unique_filename = f"{modelo}.png"
-            image_path = os.path.join("ProyectoIntegradora_cuatri3","integradora","static", "image", "imagenes_productos", unique_filename)
+            image_path = os.path.join("Integradora","static", "image", "imagenes_productos", unique_filename)
             #image_path = f"static/image/imagenes_productos/{unique_filename}"
+            
             '''
             image_dir = os.path.join("static", "image", "imagenes_productos")
 
@@ -1445,7 +1446,55 @@ def buscador_season_edit():
     except Exception as e:
         print(f"Error en la consulta: {e}")
         return Response("Error 404", mimetype='text/html')
-    
+  
+@app.route('/api/buscador_comentario_edit', methods=['POST'])
+def buscador_comentario_edit():
+    informacion = request.get_json()
+    id_contenido = informacion.get('id')
+
+    try:
+        init_db()
+        with engine.connect() as connection:
+            sql_query = """
+                SELECT comments.Punctuation, comments.Comment, comments.Id_coment FROM comments WHERE comments.Id_coment=:id;
+            """
+            result = connection.execute(text(sql_query), {"id": id_contenido})
+            contenido = result.fetchone()
+
+            if contenido is None:
+                return Response("No se encontró contenido", mimetype='text/html')
+
+            html = f"""
+            <span class="cerrar" onclick="cerrarModal()">&times;</span>
+            <div class="alinear">
+                <h1>
+                    Edición de Comentario
+                </h1>
+                <br>
+                <label for="califad">
+                    <h2>
+                        Comentario
+                    </h2>
+                    <br>
+                    <input type="number" id="califad" placeholder="Calificación" value="{contenido[0]}">
+                </label>
+                <label for="comentariod">
+                    <h2>
+                        Comentario
+                    </h2>
+                    <br>
+                    <textarea id="comentariod" placeholder="Comentario">{contenido[1]}</textarea>
+                </label>
+                <br>
+                <button id="registrar" onclick="editarsqlcomentario({contenido[2]})">Actualizar</button>
+            </div>
+            """
+            
+            return Response(html, mimetype='text/html')
+    except Exception as e:
+        print(f"Error en la consulta: {e}")
+        return Response("Error 404", mimetype='text/html')
+      
 @app.route('/api/buscador_users_edit', methods=['POST'])
 def buscador_users_edit():
     informacion = request.get_json()
@@ -1849,6 +1898,55 @@ def actualizar_temporada():
         # Manejo de errores (nimodillo)
         return jsonify({"message": f"Error al actualizar: {str(e)}"}), 500
 
+@app.route('/actualizar_comentario', methods=['POST'])
+def actualizar_comentario():
+    init_db()
+
+    informacion = request.get_json()
+    comentario = informacion.get('comentario')
+    calif = informacion.get('calif')
+    id_comentario = informacion.get('id_comentario')
+
+    #time.sleep(5)  #Espera 5 segundos para testear pantalla de carga
+
+    # Intento de insertar datos
+    try:
+        with engine.connect() as connection:
+            sql_query = """
+                SELECT comments.FK_Id_customer
+                FROM comments
+                WHERE  comments.Id_coment=:id;
+            """
+            result = connection.execute(text(sql_query), {"id": id_comentario})
+            contenido = result.fetchone()
+            if contenido[0] == session['id_usuario']:
+                # Iniciar una transacción
+                connection.execute(text("START TRANSACTION;"))
+
+                sql_query = """
+                    UPDATE `comments` SET `Punctuation` = :calif, `Comment` = :comentario WHERE `comments`.`Id_coment` = :id_comentario;
+                """
+
+                # Ejecutar la consulta con los datos
+                connection.execute(text(sql_query), {
+                    "calif": calif,
+                    "comentario":comentario,
+                    "id_comentario":id_comentario
+                })
+
+                # Finalizar transacción
+                connection.execute(text("COMMIT;"))
+            else:
+                return jsonify({"message": f"Error al actualizar: {str(e)}"}), 500
+        return jsonify({"message": "Actualizacion exitosa"}), 200
+    except Exception as e:
+        # Hacer rollback en caso de error
+        with engine.connect() as connection:
+            connection.execute(text("ROLLBACK;"))
+
+        # Manejo de errores (nimodillo)
+        return jsonify({"message": f"Error al actualizar: {str(e)}"}), 500
+    
 @app.route('/actualizar_producto', methods=['POST'])
 def actualizar_producto():
     init_db()
