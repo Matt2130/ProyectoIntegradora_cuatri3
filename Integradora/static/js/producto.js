@@ -178,3 +178,8 @@ function eliminarComentario(param) {
         }
     });
 }
+
+////Edicion de comentario modal
+function editarComentario(id){
+    console.log(id)
+}

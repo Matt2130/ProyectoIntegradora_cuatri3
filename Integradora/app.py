@@ -717,6 +717,10 @@ def comentarios_producto():
                     <button onclick="editarComentario({info[4]})">Editar</button>
                     <button onclick="eliminarComentario({info[4]})">Eliminar</button>
                     """
+                elif session['permiso_admin'] == True:
+                    html += f"""
+                    <button onclick="eliminarComentario({info[4]})">Eliminar</button>
+                    """
                 html +=f"""
                 </div>
                 <div class="comentario-texto">
@@ -1231,22 +1235,31 @@ def eliminar_comentario_producto():
     # Intento de insertar datos
     try:
         with engine.connect() as connection:
-            # Iniciar una transacción
-            connection.execute(text("START TRANSACTION;"))
-
             sql_query = """
-                DELETE FROM comments WHERE `comments`.`Id_coment`=:identificados;
+                SELECT comments.FK_Id_customer
+                FROM comments
+                WHERE  comments.Id_coment=:id;
             """
-            print(f"Ejecutando consulta: {sql_query}")
+            result = connection.execute(text(sql_query), {"id": id})
+            contenido = result.fetchone()
+            if contenido[0] == session['id_usuario'] or session['permiso_admin'] == True:
+                
+                # Iniciar una transacción
+                connection.execute(text("START TRANSACTION;"))
 
-            # Ejecutar la consulta
-            connection.execute(text(sql_query), {
-                "identificados": id
-            })
+                sql_query = """
+                    DELETE FROM comments WHERE `comments`.`Id_coment`=:identificados;
+                """
 
-            # Finalizar transacción
-            connection.execute(text("COMMIT;"))
+                # Ejecutar la consulta
+                connection.execute(text(sql_query), {
+                    "identificados": id
+                })
 
+                # Finalizar transacción
+                connection.execute(text("COMMIT;"))
+            else:
+                return jsonify({"message": f"Error al eliminar: {str(e)}"}), 500
         return jsonify({"message": "Eliminacion exitosa"}), 200
     except Exception as e:
         # Hacer rollback en caso de error
