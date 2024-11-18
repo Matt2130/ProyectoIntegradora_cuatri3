@@ -1912,23 +1912,32 @@ def actualizar_comentario():
     # Intento de insertar datos
     try:
         with engine.connect() as connection:
-            # Iniciar una transacción
-            connection.execute(text("START TRANSACTION;"))
-
             sql_query = """
-                UPDATE `comments` SET `Punctuation` = :calif, `Comment` = :comentario WHERE `comments`.`Id_coment` = :id_comentario;
+                SELECT comments.FK_Id_customer
+                FROM comments
+                WHERE  comments.Id_coment=:id;
             """
+            result = connection.execute(text(sql_query), {"id": id_comentario})
+            contenido = result.fetchone()
+            if contenido[0] == session['id_usuario']:
+                # Iniciar una transacción
+                connection.execute(text("START TRANSACTION;"))
 
-            # Ejecutar la consulta con los datos
-            connection.execute(text(sql_query), {
-                "calif": calif,
-                "comentario":comentario,
-                "id_comentario":id_comentario
-            })
+                sql_query = """
+                    UPDATE `comments` SET `Punctuation` = :calif, `Comment` = :comentario WHERE `comments`.`Id_coment` = :id_comentario;
+                """
 
-            # Finalizar transacción
-            connection.execute(text("COMMIT;"))
+                # Ejecutar la consulta con los datos
+                connection.execute(text(sql_query), {
+                    "calif": calif,
+                    "comentario":comentario,
+                    "id_comentario":id_comentario
+                })
 
+                # Finalizar transacción
+                connection.execute(text("COMMIT;"))
+            else:
+                return jsonify({"message": f"Error al actualizar: {str(e)}"}), 500
         return jsonify({"message": "Actualizacion exitosa"}), 200
     except Exception as e:
         # Hacer rollback en caso de error
