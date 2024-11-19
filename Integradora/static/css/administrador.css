@@ -9,7 +9,6 @@ main{
 }
 /*Primera parte*/
 .seleccionado{
-    background-color: rgba(151, 151, 151, 0.411);
     border-radius: 15vw;
     padding: 1vw;
 }
@@ -72,7 +71,7 @@ main{
     height: 120%;
     top: -10%;
     box-sizing: border-box;
-    background-color: white;
+    background-color: #bcc6e6;
     display: flex;
     align-items: center;
     z-index: -10;
@@ -301,6 +300,67 @@ button:hover {
     opacity: 1; /* Muestra el texto cuando está expandido */
     transform: translateY(0); /* Restablece la posición original */
 }
+
+.container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .box {
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    background-color: #f9f9f9;
+  }
+  
+  .best-rated {
+    grid-column: span 1;
+  }
+  
+  .image-placeholder {
+    width: 100%;
+    height: 100px;
+    background-color: #ddd;
+    margin-bottom: 10px;
+  }
+  
+  .product-count,
+  .client-count {
+    grid-column: span 1;
+  }
+  
+  .comments,
+  .last-comment {
+    grid-column: span 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .comments button,
+  .last-comment button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .comments button:hover,
+  .last-comment button:hover {
+    background-color: #0056b3;
+  }
+  
+  .empty {
+    grid-column: span 3;
+    height: 100px;
+    background-color: #eaeaea;
+  }
 
 @media (max-width: 768px) {
     table {
