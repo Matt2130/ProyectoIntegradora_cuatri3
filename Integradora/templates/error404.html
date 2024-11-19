@@ -28,6 +28,9 @@
             <ul>
                 <li><a href="/">inicio</a></li>
                 <li><a href="/catalogo">Productos</a></li>
+                {% if inicio %}
+                    <li><a href="/cuenta_usuario">Administrar cuenta</a></li>
+                {% endif %}
                 {% if admin %}
                     <li><a href="/administrador">Administrar</a></li>
                 {% endif %}

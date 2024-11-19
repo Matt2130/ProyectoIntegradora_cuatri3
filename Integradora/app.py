@@ -1224,6 +1224,46 @@ def eliminar_producto():
         # Manejo de errores (nimodillo)
         return jsonify({"message": f"Error al eliminar: {str(e)}"}), 500
 
+@app.route('/eliminar_usuario_el_solito', methods=['POST'])
+def eliminar_usuario_el_solito():
+    init_db()
+    
+    #time.sleep(5)  #Espera 5 segundos para testear pantalla de carga
+    if 'id_usuario' not in session:
+        return jsonify({"message": "No se encontró un usuario en la sesión"}), 400
+    # Intento de insertar datos
+    try:
+        with engine.connect() as connection:
+            # Iniciar una transacción
+            connection.execute(text("START TRANSACTION;"))
+
+            sql_query = """
+                DELETE FROM users WHERE `users`.`Id_user`=:identificados;
+            """
+            print(f"Ejecutando consulta: {sql_query}")
+
+            # Ejecutar la consulta
+            connection.execute(text(sql_query), {
+                "identificados": session['id_usuario']
+            })
+
+            session.clear()
+
+            session['inicio_cesion'] = False
+            session['permiso_admin'] = False
+    
+            # Finalizar transacción
+            connection.execute(text("COMMIT;"))
+
+        return jsonify({"message": "Eliminacion exitosa"}), 200
+    except Exception as e:
+        # Hacer rollback en caso de error
+        with engine.connect() as connection:
+            connection.execute(text("ROLLBACK;"))
+
+        # Manejo de errores (nimodillo)
+        return jsonify({"message": f"Error al eliminar: {str(e)}"}), 500
+    
 @app.route('/eliminar_comentario_producto', methods=['POST'])
 def eliminar_comentario_producto():
     init_db()
@@ -1577,6 +1617,55 @@ def buscador_users_edit():
         print(f"Error en la consulta: {e}")
         return Response("Error 404", mimetype='text/html')
 
+@app.route('/api/buscador_users_edit_solo', methods=['POST'])
+def buscador_users_edit_solo():
+    informacion = request.get_json()
+    id_contenido = session['id_usuario']
+
+    try:
+        init_db()
+        with engine.connect() as connection:
+            sql_query = """
+                SELECT users.User, users.Email, users.Name, users.Surname, users.Lastname FROM users WHERE users.Id_user=:id;
+            """
+            result = connection.execute(text(sql_query), {"id": id_contenido})
+            contenido = result.fetchone()
+
+            if contenido is None:
+                return Response("No se encontró contenido", mimetype='text/html')
+
+            html = f"""
+            <span class="cerrar" onclick="cerrarModal()">&times;</span>
+            <h1>Datos del usuario</h1>
+            <h2>Usuario</h2>
+            <input type="text" name="" id="usuariod" value="{contenido[0]}">
+            <br>
+            <h2>Email</h2>
+            <input type="text" name="" id="emaild" value="{contenido[1]}">
+            <br>
+            <h2>Nombre</h2>
+            <input type="text" name="" id="nombred" value="{contenido[2]}">
+            <br>
+            <h2>Apellido paterno</h2>
+            <input type="text" name="" id="apellidopaternod" value="{contenido[3]}">
+            <br>
+            <h2>Apellido materno</h2>
+            <input type="text" name="" id="apellidomaternod" value="{contenido[4]}">
+            <br>
+            <h2>Nueva contraseña</h2>
+            <input type="password" name="" id="contraseñanuevad">
+            <br>
+            <h2>Contraseña anterior</h2>
+            <input type="password" name="" id="contraseñaanteriord">
+            <br>
+            <button id="registrar" onclick="editarsqlcontenidousuariosolo()">Actualizar</button>
+            """
+            
+            return Response(html, mimetype='text/html')
+    except Exception as e:
+        print(f"Error en la consulta: {e}")
+        return Response("Error 404", mimetype='text/html')
+    
 @app.route('/api/buscador_producto_edit', methods=['POST'])
 def buscador_producto_edit():
     informacion = request.get_json()
@@ -2090,6 +2179,74 @@ def actualizar_producto():
         # Manejo de errores
         return jsonify({"message": f"Error al actualizar el producto: {str(e)}"}), 500
 
+@app.route('/actualizar_usuario_solito', methods=['POST'])
+def actualizar_usuario_solito():
+    init_db()
+
+    usuario = request.form.get('usuario')
+    email = request.form.get('email')
+    nombre = request.form.get('nombre')
+    apellidop = request.form.get('apellidop')
+    apellidom = request.form.get('apellidom')
+    contraseñanueva = request.form.get('contraseñanueva')
+    contraseñaanterior = request.form.get('contraseñaanterior')
+    
+    #time.sleep(5)  #Espera 5 segundos para testear pantalla de carga
+    
+    # Intento de insertar datos
+    try:
+        with engine.connect() as connection:
+            sql_query = """
+                SELECT users.Password FROM users WHERE users.Id_user=:id;
+            """
+            result = connection.execute(text(sql_query), {"id": session['id_usuario']})
+            contenido = result.fetchone()
+            
+            if contenido[0] == contraseñaanterior:
+                # Iniciar una transacción
+                connection.execute(text("START TRANSACTION;"))
+                
+                if not contraseñanueva:
+                    sql_query = """
+                        UPDATE `users` SET `User` = :usuario, `Email` = :correo, `Name` = :nombre, `Surname` = :apellidopaterno, `Lastname` = :apellidomaterno WHERE `users`.`Id_user` = :id_usuario;
+                    """
+                    # Ejecutar la consulta con los datos
+                    connection.execute(text(sql_query), {
+                        "usuario": usuario,
+                        "correo":email,
+                        "nombre":nombre,
+                        "apellidopaterno":apellidop,
+                        "apellidomaterno":apellidom,
+                        "id_usuario": session['id_usuario'],
+                    })
+                else:
+                    sql_query = """
+                        UPDATE `users` SET `User` = :usuario, `Password` = :contraseñanueva, `Email` = :correo, `Name` = :nombre, `Surname` = :apellidopaterno, `Lastname` = :apellidomaterno WHERE `users`.`Id_user` = :id_usuario;
+                    """
+                    # Ejecutar la consulta con los datos
+                    connection.execute(text(sql_query), {
+                        "usuario": usuario,
+                        "contraseñanueva":contraseñanueva,
+                        "correo":email,
+                        "nombre":nombre,
+                        "apellidopaterno":apellidop,
+                        "apellidomaterno":apellidom,
+                        "id_usuario": session['id_usuario'],
+                    })
+
+                # Finalizar transacción
+                connection.execute(text("COMMIT;"))
+            else:
+                return jsonify({"message": f"Error al actualizar contraseña incorrecta"}), 400
+        return jsonify({"message": "Actualizacion exitosa"}), 200
+    except Exception as e:
+        # Hacer rollback en caso de error
+        with engine.connect() as connection:
+            connection.execute(text("ROLLBACK;"))
+
+        # Manejo de errores (nimodillo)
+        return jsonify({"message": f"Error al actualizar: {str(e)}"}), 500
+
 #inicio de secion y cerrar seción
 @app.route('/login', methods=['POST'])
 def login():
@@ -2243,6 +2400,17 @@ def inicializar_variable():
     if 'id_usuario' not in session:
         session['id_usuario'] = None
     
+@app.route('/cuenta_usuario', methods=['GET','POST'])
+def cuenta_usuario():
+    with engine.connect() as connection:
+        sql_query = """
+                    SELECT users.User, users.Email, users.Name, users.Surname, users.Lastname FROM users WHERE users.Id_user=:id;
+                """
+        result = connection.execute(text(sql_query), {"id":session['id_usuario']})
+        contenido = result.fetchone()
+    #print(sesion_activa)
+    return render_template('usuario_administra.html',cont=contenido, inicio=session['inicio_cesion'], admin=session['permiso_admin'])
+
 ################################################################################################################################
 @app.route('/inicio_usuario')
 def inicio_usuario():
@@ -2262,5 +2430,3 @@ if __name__ == '__main__':
     init_db()
     #app.run(debug=True)
     app.run(host="0.0.0.0", port=5000, debug=True)
-
-#cvb

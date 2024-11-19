@@ -75,6 +75,7 @@ function Secioncerrada() {
             popup: 'mi-alerta-redondeada'
         }
     }).then(() => {
-        window.location.reload();
+        window.location.href = '/';
+        //window.location.reload();
     });
 }
