@@ -2,9 +2,9 @@ from flask import Flask, make_response, redirect, url_for, render_template, sess
 from sqlalchemy import create_engine, text
 from functools import wraps
 import os
-import bcrypt
 #Se eliminara pero es para hacer pruebas
 import time
+
 
 #app = Flask(__name__)
 app = Flask(__name__, static_folder="static")
@@ -32,7 +32,7 @@ def login_required(role):
 def init_db():
     global engine
     if engine is None:
-        engine = create_engine('mysql+pymysql://root:@localhost/integradora')
+        engine = create_engine('mysql+pymysql://root:pass123@localhost/integradora')
         #mysql+pymysql://<usuario>:<contraseña>@<host>/<nombre_base_de_datos>
         #Manuel
         #mysql+pymysql://root:'pass123'@localhost/integradora
@@ -752,7 +752,7 @@ def signup():
     surname = data.get('surname')
 
     #time.sleep(5)  #Espera 5 segundos para testear pantalla de carga
-    password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
     # Intento de insertar datos
     try:
         with engine.connect() as connection:
@@ -2202,7 +2202,7 @@ def actualizar_usuario_solito():
             result = connection.execute(text(sql_query), {"id": session['id_usuario']})
             contenido = result.fetchone()
             
-            if bcrypt.checkpw(contraseñaanterior.encode('utf-8'), contenido[0].encode('utf-8')):
+            if contenido[0] == contraseñaanterior:
                 # Iniciar una transacción
                 connection.execute(text("START TRANSACTION;"))
                 
@@ -2258,30 +2258,29 @@ def login():
     try:
         with engine.connect() as connection:
             sql_query = """
-            SELECT users.Rol, users.Id_user, users.Name, users.Password FROM users WHERE users.Email=:email;
+            SELECT users.Rol, users.Id_user, users.Name FROM users WHERE users.Password=:password AND users.Email=:email;
             """
             result = connection.execute(text(sql_query), {
-                "email": email
+                "email": email,
+                "password": password
             }).fetchone()
             
+            session['inicio_cesion'] = True
+            
             if result:
-                if bcrypt.checkpw(password.encode('utf-8'), result[3].encode('utf-8')):
-                    session['inicio_cesion'] = True
-                    #Almacenar los datos del usuario
-                    session['permiso_usuario'] = result[0]
-                    session['id_usuario'] = result[1]
-                    session['usuario_usuario'] = result[2]
+                #Almacenar los datos del usuario
+                session['permiso_usuario'] = result[0]
+                session['id_usuario'] = result[1]
+                session['usuario_usuario'] = result[2]
+                
+                if session['permiso_usuario']=="administrador":
+                    session['permiso_admin'] = True
                     
-                    if session['permiso_usuario']=="administrador":
-                        session['permiso_admin'] = True
-                        
-                    # Redirige según el rol
-                    if session['permiso_usuario'] == 'administrador':
-                        return jsonify({"redirect": "/administrador"})
-                    else:
-                        return jsonify({"redirect": "/"})
+                # Redirige según el rol
+                if session['permiso_usuario'] == 'administrador':
+                    return jsonify({"redirect": "/administrador"})
                 else:
-                    return jsonify({"message": "Usuario o contraseña incorrectos"})  
+                    return jsonify({"redirect": "/"})
             else:
                 return jsonify({"message": "Usuario o contraseña incorrectos"})
 
