@@ -1,7 +1,7 @@
 //console.log(1);
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('signupForm').addEventListener('submit', function(e) {
-        console.log(123456);
+        
         e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
 
         //Pantalla de carga
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log(data.message);
             document.getElementById('loading').style.display = 'none';
             alert("Registro exitoso: " + data.message);
-            window.open('/', '_self');
+            window.location.reload();
         })
         .catch(error => {
             console.error('Error:', error);

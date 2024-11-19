@@ -1,3 +1,19 @@
+import bcrypt
+
+password = "1234"
+
+hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
+print("Contraseña encriptada:", hashed)
+
+password_ingresada = "1234"
+
+if bcrypt.checkpw(password_ingresada.encode('utf-8'), hashed):
+    print("¡Contraseña correcta!")
+else:
+    print("Contraseña incorrecta.")
+
+"""
 from sqlalchemy import create_engine, text
 
 # URL de conexión a la base de datos
@@ -28,7 +44,7 @@ def obtener_season_specification():
 # Ejecución de la función
 if __name__ == "__main__":
     obtener_season_specification()  # Llama a la función para ejecutar
-
+"""
 #host:RitaCid.mysql.pythonanywhere-services.com
 #user:RitaCid
 #pass:

@@ -2,9 +2,9 @@ from flask import Flask, make_response, redirect, url_for, render_template, sess
 from sqlalchemy import create_engine, text
 from functools import wraps
 import os
+import bcrypt
 #Se eliminara pero es para hacer pruebas
 import time
-
 
 #app = Flask(__name__)
 app = Flask(__name__, static_folder="static")
@@ -752,7 +752,7 @@ def signup():
     surname = data.get('surname')
 
     #time.sleep(5)  #Espera 5 segundos para testear pantalla de carga
-
+    password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     # Intento de insertar datos
     try:
         with engine.connect() as connection:
@@ -2202,7 +2202,7 @@ def actualizar_usuario_solito():
             result = connection.execute(text(sql_query), {"id": session['id_usuario']})
             contenido = result.fetchone()
             
-            if contenido[0] == contraseñaanterior:
+            if bcrypt.checkpw(contraseñaanterior.encode('utf-8'), contenido[0].encode('utf-8')):
                 # Iniciar una transacción
                 connection.execute(text("START TRANSACTION;"))
                 
@@ -2258,29 +2258,30 @@ def login():
     try:
         with engine.connect() as connection:
             sql_query = """
-            SELECT users.Rol, users.Id_user, users.Name FROM users WHERE users.Password=:password AND users.Email=:email;
+            SELECT users.Rol, users.Id_user, users.Name, users.Password FROM users WHERE users.Email=:email;
             """
             result = connection.execute(text(sql_query), {
-                "email": email,
-                "password": password
+                "email": email
             }).fetchone()
             
-            session['inicio_cesion'] = True
-            
             if result:
-                #Almacenar los datos del usuario
-                session['permiso_usuario'] = result[0]
-                session['id_usuario'] = result[1]
-                session['usuario_usuario'] = result[2]
-                
-                if session['permiso_usuario']=="administrador":
-                    session['permiso_admin'] = True
+                if bcrypt.checkpw(password.encode('utf-8'), result[3].encode('utf-8')):
+                    session['inicio_cesion'] = True
+                    #Almacenar los datos del usuario
+                    session['permiso_usuario'] = result[0]
+                    session['id_usuario'] = result[1]
+                    session['usuario_usuario'] = result[2]
                     
-                # Redirige según el rol
-                if session['permiso_usuario'] == 'administrador':
-                    return jsonify({"redirect": "/administrador"})
+                    if session['permiso_usuario']=="administrador":
+                        session['permiso_admin'] = True
+                        
+                    # Redirige según el rol
+                    if session['permiso_usuario'] == 'administrador':
+                        return jsonify({"redirect": "/administrador"})
+                    else:
+                        return jsonify({"redirect": "/"})
                 else:
-                    return jsonify({"redirect": "/"})
+                    return jsonify({"message": "Usuario o contraseña incorrectos"})  
             else:
                 return jsonify({"message": "Usuario o contraseña incorrectos"})
 

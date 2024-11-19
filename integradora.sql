@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 19-11-2024 a las 00:49:50
--- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.2.12
+-- Host: localhost
+-- Generation Time: Nov 19, 2024 at 02:47 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `integradora`
+-- Database: `integradora`
 --
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `comments`
+-- Table structure for table `comments`
 --
 
 CREATE TABLE `comments` (
@@ -36,7 +36,7 @@ CREATE TABLE `comments` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `comments`
+-- Dumping data for table `comments`
 --
 
 INSERT INTO `comments` (`Id_coment`, `Punctuation`, `Comment`, `FK_Id_customer`, `FK_Id_product`) VALUES
@@ -48,7 +48,7 @@ INSERT INTO `comments` (`Id_coment`, `Punctuation`, `Comment`, `FK_Id_customer`,
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `contacts`
+-- Table structure for table `contacts`
 --
 
 CREATE TABLE `contacts` (
@@ -63,7 +63,7 @@ CREATE TABLE `contacts` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `contacts`
+-- Dumping data for table `contacts`
 --
 
 INSERT INTO `contacts` (`Id_contact`, `Facebook`, `Instagram`, `Tik_tok`, `Email`, `Twitter`, `Whatsapp`, `Phone`) VALUES
@@ -72,7 +72,7 @@ INSERT INTO `contacts` (`Id_contact`, `Facebook`, `Instagram`, `Tik_tok`, `Email
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `content`
+-- Table structure for table `content`
 --
 
 CREATE TABLE `content` (
@@ -82,7 +82,7 @@ CREATE TABLE `content` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `content`
+-- Dumping data for table `content`
 --
 
 INSERT INTO `content` (`Id_contenido`, `Title`, `Describe`) VALUES
@@ -96,7 +96,7 @@ INSERT INTO `content` (`Id_contenido`, `Title`, `Describe`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `products`
+-- Table structure for table `products`
 --
 
 CREATE TABLE `products` (
@@ -114,7 +114,7 @@ CREATE TABLE `products` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `products`
+-- Dumping data for table `products`
 --
 
 INSERT INTO `products` (`Id_product`, `Material_composition`, `Model`, `FK_id_season`, `Size`, `Name`, `Description`, `Price_per_unit`, `Color`, `url_imagen`, `FK_Id_user`) VALUES
@@ -152,7 +152,7 @@ INSERT INTO `products` (`Id_product`, `Material_composition`, `Model`, `FK_id_se
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `season_specification`
+-- Table structure for table `season_specification`
 --
 
 CREATE TABLE `season_specification` (
@@ -161,7 +161,7 @@ CREATE TABLE `season_specification` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `season_specification`
+-- Dumping data for table `season_specification`
 --
 
 INSERT INTO `season_specification` (`Id_season`, `season`) VALUES
@@ -173,7 +173,7 @@ INSERT INTO `season_specification` (`Id_season`, `season`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `users`
+-- Table structure for table `users`
 --
 
 CREATE TABLE `users` (
@@ -189,107 +189,34 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `users`
+-- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`Id_user`, `User`, `Password`, `Email`, `Name`, `Surname`, `Lastname`, `Rol`, `Estado`) VALUES
-(21, 'testuser', 'cliente', 'cliente@hotmail.com', 'Test', 'User', 'Example', 'cliente', 'Inactivo'),
-(39, 'admin', 'admin', 'admin@hotmail.com', 'Mario', 'a', 'z', 'administrador', 'Activo'),
-(40, 'testuser', 'testpassword', 'testuser@example.com', 'Test', 'User', 'Example', 'cliente', 'Inactivo');
+(42, 'admin', '$2b$12$l0oCM15EaTf78skkobq09.S5TkaHFkdETtmWhh1nwT3AQ9NhZQVpq', 'admin@hotmail.com', 'admin', 'admin', 'admin', 'administrador', 'Activo'),
+(43, 'cliente', '$2b$12$8uTvf4IOMKNXDOCvpGibl.gozIUx4cchvFRAhF22UbZ8P3a6jsQ.C', 'cliente@hotmail.com', 'cliente', 'cliente', 'cliente', 'cliente', 'Activo'),
+(45, 'a', '$2b$12$dzxlE98dNjaeQd/Iu1JK8.ayS4jO/VAJleZn9BI2PFqCqknfXndtG', 'a@a', 'a', 'a', 'a', 'cliente', 'Activo');
 
 --
--- Índices para tablas volcadas
+-- Indexes for dumped tables
 --
 
 --
--- Indices de la tabla `comments`
---
-ALTER TABLE `comments`
-  ADD PRIMARY KEY (`Id_coment`);
-
---
--- Indices de la tabla `contacts`
---
-ALTER TABLE `contacts`
-  ADD PRIMARY KEY (`Id_contact`);
-
---
--- Indices de la tabla `content`
---
-ALTER TABLE `content`
-  ADD PRIMARY KEY (`Id_contenido`);
-
---
--- Indices de la tabla `products`
---
-ALTER TABLE `products`
-  ADD PRIMARY KEY (`Id_product`),
-  ADD KEY `FK_id_season` (`FK_id_season`),
-  ADD KEY `FK_Id_user` (`FK_Id_user`);
-
---
--- Indices de la tabla `season_specification`
---
-ALTER TABLE `season_specification`
-  ADD PRIMARY KEY (`Id_season`);
-
---
--- Indices de la tabla `users`
+-- Indexes for table `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`Id_user`),
   ADD KEY `FK_id_rol` (`Rol`);
 
 --
--- AUTO_INCREMENT de las tablas volcadas
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT de la tabla `comments`
---
-ALTER TABLE `comments`
-  MODIFY `Id_coment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- AUTO_INCREMENT de la tabla `contacts`
---
-ALTER TABLE `contacts`
-  MODIFY `Id_contact` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT de la tabla `content`
---
-ALTER TABLE `content`
-  MODIFY `Id_contenido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
-
---
--- AUTO_INCREMENT de la tabla `products`
---
-ALTER TABLE `products`
-  MODIFY `Id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
-
---
--- AUTO_INCREMENT de la tabla `season_specification`
---
-ALTER TABLE `season_specification`
-  MODIFY `Id_season` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
-
---
--- AUTO_INCREMENT de la tabla `users`
+-- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `Id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
-
---
--- Restricciones para tablas volcadas
---
-
---
--- Filtros para la tabla `products`
---
-ALTER TABLE `products`
-  ADD CONSTRAINT `Products_ibfk_1` FOREIGN KEY (`FK_id_season`) REFERENCES `season_specification` (`Id_season`) ON DELETE CASCADE,
-  ADD CONSTRAINT `Products_ibfk_2` FOREIGN KEY (`FK_Id_user`) REFERENCES `users` (`Id_user`) ON DELETE CASCADE;
+  MODIFY `Id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
