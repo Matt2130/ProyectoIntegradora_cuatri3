@@ -38,6 +38,7 @@ def init_db():
         #mysql+pymysql://root:'pass123'@localhost/integradora
         #Mario
         #mysql+pymysql://root:@localhost/integradora
+########################################################################################################################################
 
 #Funciones a llamar desde la web#####################################################################################################
 @app.route('/check_session', methods=['GET'])
@@ -1732,7 +1733,7 @@ def buscador_producto_edit():
         init_db()
         with engine.connect() as connection:
             sql_query = """
-                SELECT products.Material_composition, products.Model, season_specification.season, products.Size, products.Name, products.Description, products.Price_per_unit, products.Color, products.url_imagen, users.User, products.Id_product FROM products INNER JOIN season_specification ON products.FK_id_season=season_specification.Id_season INNER JOIN users ON products.FK_Id_user=users.Id_user WHERE products.Id_product=:id;
+                SELECT products.Material_composition, products.Model, products.FK_id_season, products.Size, products.Name, products.Description, products.Price_per_unit, products.Color, products.url_imagen, users.User, products.Id_product FROM products INNER JOIN users ON products.FK_Id_user=users.Id_user WHERE products.Id_product=:id;
             """
             result = connection.execute(text(sql_query), {"id": id_contenido})
             contenido = result.fetchone()
@@ -1752,9 +1753,26 @@ def buscador_producto_edit():
                 <label for="modelo">Modelo:{contenido[1]}
                 </label>
                 <br>
-                <label for="temporada">Temporada:
-                    <input type="text" name="temporada" id="temporadad" value="{contenido[2]}">
-                </label>
+                """
+            with engine.connect() as connection:
+                result = connection.execute(text('SELECT season_specification.Id_season, season_specification.season FROM season_specification;'))
+                temporadas = result.fetchall()
+                html += f"""
+                <select id="temporadad">
+                    """
+                for info in temporadas:
+                    if contenido[2]==info[0]:
+                        html += f"""
+                            <option value="{info[0]}" selected>{info[1]}</option>
+                        """
+                    else:
+                        html += f"""
+                            <option value="{info[0]}">{info[1]}</option>
+                        """
+                html += f"""
+                    </select>
+                """
+            html +=f"""
                 <br>
                 <label for="tamaño">Tamaño:
                     <input type="text" name="tamaño" id="tamañod" value="{contenido[3]}">
@@ -2284,7 +2302,20 @@ def login_required(role):
 @app.route('/administrador_productos')
 @login_required('administrador')
 def administrador_productos():
-    response = make_response(render_template('administracion.html'))
+    with engine.connect() as connection:
+        result = connection.execute(text('SELECT season_specification.Id_season, season_specification.season FROM season_specification;'))
+        temporadas = result.fetchall()
+        html = f"""
+        <select id="temporada">
+            """
+        for info in temporadas:
+            html += f"""
+                <option value="{info[0]}">{info[1]}</option>
+                """
+        html += f"""
+        </select>
+        """
+    response = make_response(render_template('administracion.html', temporada_form=html))
     # Control de caché
     response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
     response.headers['Pragma'] = 'no-cache'
