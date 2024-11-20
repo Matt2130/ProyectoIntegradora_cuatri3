@@ -158,7 +158,63 @@ button:hover{
     display: block;
 }
 
-@media screen and (min-width:1500px){
+@media screen and (min-width:2000px) and (max-width:2400px){
+    .main{
+        width: 60vw;
+        height: 40vw;
+        overflow: hidden;
+    }
+    .login {
+        height: 40vw;
+        transform: translateY(2vw);
+        transition: .8s ease-in-out;
+    }
+    input{
+        width: 40%;
+        height: 1vw;
+        background: #e0dede;
+        font-size: .9rem;
+        text-align: center;
+        display: flex;
+        margin: 20px auto;
+        padding: .5vw;
+        border: none;
+        border-radius: 5px;
+    }
+    #chk:checked ~ .login{
+        transform: translateY(-20.4vw);
+    }
+}
+
+@media screen and (min-width:1750px) and (max-width:2000px){
+    .main{
+        width: 60vw;
+        height: 40vw;
+        overflow: hidden;
+    }
+    .login {
+        height: 40vw;
+        transform: translateY(-1vw);
+        transition: .8s ease-in-out;
+    }
+    input{
+        width: 40%;
+        height: 1vw;
+        background: #e0dede;
+        font-size: .9rem;
+        text-align: center;
+        display: flex;
+        margin: 20px auto;
+        padding: .5vw;
+        border: none;
+        border-radius: 5px;
+    }
+    #chk:checked ~ .login{
+        transform: translateY(-21.4vw);
+    }
+}
+
+@media screen and (min-width:1580px) and (max-width:1750px){
     .main{
         width: 60vw;
         height: 40vw;
@@ -182,11 +238,12 @@ button:hover{
         border-radius: 5px;
     }
     #chk:checked ~ .login{
-        transform: translateY(-8vw);
+        transform: translateY(-22vw);
     }
 }
 
-@media screen and (min-width:1350px){
+
+@media screen and (min-width:1380px) and (max-width:1580px){
     .main{
         width: 60vw;
         height: 40vw;
@@ -210,11 +267,11 @@ button:hover{
         border-radius: 5px;
     }
     #chk:checked ~ .login{
-        transform: translateY(-24vw);
+        transform: translateY(-23vw);
     }
 }
 
-@media screen and (min-width:740px) and (max-width:1350px){
+@media screen and (min-width:740px) and (max-width:1380px){
     .main{
         width: 60vw;
         height: 45vw;
@@ -246,7 +303,7 @@ button:hover{
         transition: .5s ease-in-out;
     }
     #chk:checked ~ .login{
-        transform: translateY(-26vw);
+        transform: translateY(-25vw);
     }
 }
 @media screen and (min-width:490px) and (max-width:740px){
