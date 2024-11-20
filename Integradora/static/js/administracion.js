@@ -144,8 +144,6 @@ function registrarproducto() {
     //console.log(234567890);
 
     // Obtén los datos
-    const image = document.getElementById('image').files[0];
-    const modelo = document.getElementById('modelo').value;
     const temporada = document.getElementById('temporada').value;
     const tamaño = document.getElementById('tamaño').value;
     const nombre = document.getElementById('nombre').value;
@@ -270,8 +268,6 @@ function editarsqlcontenido(idw){
     const id = idw;
 
     // Obtén los datos
-    const image = document.getElementById('imaged').files[0];
-    const modelo = document.getElementById('modelod').value;
     const temporada = document.getElementById('temporadad').value;
     const tamaño = document.getElementById('tamañod').value;
     const nombre = document.getElementById('nombred').value;
@@ -282,8 +278,6 @@ function editarsqlcontenido(idw){
 
     //Creae un FormData
     const formData = new FormData();
-    formData.append('image', image);
-    formData.append('modelo', modelo);
     formData.append('temporada', temporada);
     formData.append('tamaño', tamaño);
     formData.append('nombre', nombre);

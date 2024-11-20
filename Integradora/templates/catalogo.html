@@ -46,7 +46,16 @@
             <h1 class="titulo">Productos</h1>
             <div id="filtros">
                     <input type="search" name="search" placeholder="Buscar entre los productos" id="buscador">
-                    <img src="{{ url_for('static', filename='image/search.png') }}" alt="Buscar" class="search-icon">
+                    <select id="categoria">
+                        <option value="Model">Modelo</option>
+                        <option value="Size">Tamaño</option>
+                        <option value="Name">Nombre</option>
+                        <option value="Description">Descripción</option>
+                        <option value="Color">Color</option>
+                    </select>
+                    <a onclick="buscar_producto_select();" role="button">
+                        <img src="{{ url_for('static', filename='image/imagenes_productos/Satoru.png') }}" alt="Buscar" class="search-icon">
+                    </a>                    
                 </form>
             </div>
             <div id="catalogo" id="catalogo">

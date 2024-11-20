@@ -32,7 +32,7 @@ def login_required(role):
 def init_db():
     global engine
     if engine is None:
-        engine = create_engine('mysql+pymysql://root:pass123@localhost/integradora')
+        engine = create_engine('mysql+pymysql://root:@localhost/integradora')
         #mysql+pymysql://<usuario>:<contraseña>@<host>/<nombre_base_de_datos>
         #Manuel
         #mysql+pymysql://root:'pass123'@localhost/integradora
@@ -738,6 +738,63 @@ def comentarios_producto():
     except:
         return Response("Error 404", mimetype='text/html')
     
+@app.route('/api/mostrador_productos_buscados', methods=['POST','GET'])
+def mostrador_productos_buscados():
+    try:
+        data = request.json
+        buscar = data.get('buscar', '')  # Obtiene el valor de 'buscar'
+        categoria = data.get('categoria', '') 
+        init_db()
+        with engine.connect() as connection:
+            match categoria:
+                case "Model":
+                    sql_query = """
+                        SELECT products.url_imagen, products.Name, products.Color, products.Price_per_unit, products.Id_product FROM products WHERE products.Model LIKE :coso;
+                    """
+                case "Size":
+                    sql_query = """
+                        SELECT products.url_imagen, products.Name, products.Color, products.Price_per_unit, products.Id_product FROM products WHERE products.Size LIKE :coso;
+                    """
+                case "Name":
+                    sql_query = """
+                        SELECT products.url_imagen, products.Name, products.Color, products.Price_per_unit, products.Id_product FROM products WHERE products.Name LIKE :coso;
+                    """
+                case "Description":
+                    sql_query = """
+                        SELECT products.url_imagen, products.Name, products.Color, products.Price_per_unit, products.Id_product FROM products WHERE products.Description LIKE :coso;
+                    """
+                case "Color":
+                    sql_query = """
+                        SELECT products.url_imagen, products.Name, products.Color, products.Price_per_unit, products.Id_product FROM products WHERE products.Color LIKE :coso;
+                    """
+                case _:
+                    return Response("Error 404", mimetype='text/html')
+                
+            result = connection.execute(text(sql_query), {"coso":buscar})
+            contenido = result.fetchall()
+
+            html = ""
+
+            for info in contenido:
+                direccion_imagen= url_for('static', filename=f'image/imagenes_productos/{info[0]}', _external=True)
+                html += f"""
+                        <div class="producto">
+                            <a href="/producto?id={info[4]}">
+                                <div id="imagen">
+                                    <img src="{direccion_imagen}" alt="{info[0]}">
+                                </div>
+                                <div id="info">
+                                    <h3 id="nombre-producto">{info[1]}</h3>
+                                    <p id="color-modelo">{info[2]}</p>
+                                    <strong id="precio">${info[3]}</strong>
+                                </div>
+                            </a>
+                        </div>
+                """
+
+            return Response(html, mimetype='text/html')
+    except:
+        return Response("Error 404", mimetype='text/html')
 #Registros
 @app.route('/registro_usuario', methods=['POST'])
 def signup():
@@ -1690,14 +1747,9 @@ def buscador_producto_edit():
             <h1>Edición de producto</h1>
 
             <div class="izquierda">
-                <label for="image">Imagen del producto:
-                    <input type="file" name="image" id="imaged" accept="image/*">
-                </label>
-                <br>
                 <img src="{direccion_imagen}" alt="{contenido[8]}" style="width:300px;height:auto;">
                 <br>
-                <label for="modelo">Modelo:
-                    <input type="text" name="modelo" id="modelod" value="{contenido[1]}">
+                <label for="modelo">Modelo:{contenido[1]}
                 </label>
                 <br>
                 <label for="temporada">Temporada:
@@ -2041,7 +2093,6 @@ def actualizar_producto():
     init_db()
 
     # Captura los datos del formulario
-    modelo = request.form.get('modelo')
     temporada = request.form.get('temporada')
     tamaño = request.form.get('tamaño')
     nombre = request.form.get('nombre')
@@ -2052,42 +2103,6 @@ def actualizar_producto():
     producto_id = request.form.get('id')
 
     try:
-        # Abrir conexión para consultar la imagen actual
-        with engine.connect() as connection:
-            sql_query = text("""
-                SELECT url_imagen
-                FROM products
-                WHERE Id_product = :producto_id
-            """)
-            result = connection.execute(sql_query, {"producto_id": producto_id}).fetchone()
-
-            # Obtener el nombre de la imagen actual
-            imagen_actual = result['url_imagen'] if result else None
-
-        # Guardar la nueva imagen (si se sube una nueva)
-        image = request.files.get('image')
-        if image and image.filename.endswith(('.png', '.jpg', '.jpeg')):
-            # Eliminar la imagen anterior si existe
-            if imagen_actual:
-                imagen_anterior_path = os.path.join("Integradora","static", "image", "imagenes_productos", imagen_actual)
-                if os.path.exists(imagen_anterior_path):
-                    os.remove(imagen_anterior_path)  # Eliminar la imagen anterior
-
-            # Crear un nombre único para la nueva imagen
-            unique_filename = f"{modelo}.png"
-            image_path = os.path.join("static", "image", "imagenes_productos", unique_filename)
-            """
-            #Coso opara ver donde esta guardando las imagenes cuando truene la funcion
-            import os
-            image_dir = os.path.dirname(image_path)
-            if not os.path.exists(image_dir):
-                os.makedirs(image_dir)
-            """
-            image.save(image_path)  # Guardar la nueva imagen
-        else:
-            # Si no se sube una nueva imagen, se mantiene la imagen existente
-            unique_filename = imagen_actual
-
         # Abrir una nueva conexión para actualizar el producto
         with engine.connect() as connection:
             # Iniciar transacción
@@ -2098,14 +2113,12 @@ def actualizar_producto():
             UPDATE `products` 
             SET 
                 `Material_composition` = :materia,
-                `Model` = :modelo,
                 `FK_id_season` = :temporada,
                 `Size` = :tamaño,
                 `Name` = :nombre,
                 `Description` = :descripcion,
                 `Price_per_unit` = :precio_lot,
                 `Color` = :color,
-                `url_imagen` = :image_path,
                 `FK_Id_user` = :user_id
             WHERE `Id_product` = :producto_id;
             """
@@ -2113,60 +2126,16 @@ def actualizar_producto():
             # Ejecutar la consulta de actualización
             connection.execute(text(sql_query), {
                 "materia": materia,
-                "modelo": modelo,
                 "temporada": temporada,
                 "tamaño": tamaño,
                 "nombre": nombre,
                 "descripcion": descripcion,
                 "precio_lot": precio_lot,
                 "color": color,
-                "image_path": unique_filename,  # Ruta de la imagen (nueva o actual)
-                "user_id": session['id_usuario'],  # ID del usuario que está realizando la actualización
-                "producto_id": producto_id  # ID del producto que se va a actualizar
-            })
-            ###########################
-            #print(producto_id)
-            '''
-            params = {
-                "materia": materia,
-                "modelo": modelo,
-                "temporada": temporada,
-                "tamaño": tamaño,
-                "nombre": nombre,
-                "descripcion": descripcion,
-                "precio_lot": precio_lot,
-                "color": color,
-                "image_path": unique_filename,
                 "user_id": session['id_usuario'],
                 "producto_id": producto_id
-            }
-
-            # Usar la misma consulta con placeholders (parámetros)
-            sql_query = """
-                        UPDATE `products` 
-                        SET 
-                            `Material_composition` = :materia,
-                            `Model` = :modelo,
-                            `FK_id_season` = :temporada,
-                            `Size` = :tamaño,
-                            `Name` = :nombre,
-                            `Description` = :descripcion,
-                            `Price_per_unit` = :precio_lot,
-                            `Color` = :color,
-                            `url_imagen` = :image_path,
-                            `FK_Id_user` = :user_id
-                        WHERE `Id_product` = :producto_id;
-                        """
-
-            # Imprimir la consulta final con los parámetros sustituidos
-            print("Consulta SQL con valores sustituidos:")
-            formatted_query = sql_query
-            for key, value in params.items():
-                formatted_query = formatted_query.replace(f":{key}", repr(value))
-
-            print(formatted_query)
-            '''
-            ############################
+            })
+            ###########################
             # Confirmar transacción
             connection.execute(text("COMMIT;"))
 
