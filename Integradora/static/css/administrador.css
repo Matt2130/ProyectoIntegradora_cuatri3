@@ -238,7 +238,7 @@ button:hover {
 .toda_tabla{
     width: 80%;
 }
-/*///////////////////////////////////////*/
+/////////////////////////////////////////
 .modal textarea{
     width: 80%;
     height: 10vw;
@@ -270,7 +270,7 @@ button:hover {
 }
 
 .modal-contenido {
-    background-color: #fff;
+    background-color: #030225a7;
     margin: 5% auto;
     border: 1px solid #888;
     width: 80%;
@@ -292,6 +292,36 @@ button:hover {
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
+    
+}
+
+.modal-contenido h1, .modal-contenido h2 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #ffdd00; /* Azul destacado */
+    text-align: center;
+   
+}
+
+/* Inputs y textarea */
+.left{
+    margin-left: 0;
+    display: flex;
+}
+.right{
+    margin-right: 0;
+    display: flex;
+}
+.modal-contenido input[type="text"], 
+.modal-contenido textarea {
+    width: 40%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-family: 'Arial', sans-serif;
+    box-sizing: border-box;
 }
 
 #registrar {
@@ -310,9 +340,8 @@ button:hover {
     transform: scale(1.1);
 }
 #registrar:active {
-    transform: scale(0.9);
-}
-/*Targetas expandibles*/
+    transform: scale(0.9);
+}/*Targetas expandibles*/
 .content {
     width: 30%;
     padding: 0.5vw;
