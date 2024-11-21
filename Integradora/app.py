@@ -2,6 +2,7 @@ from flask import Flask, make_response, redirect, url_for, render_template, sess
 from sqlalchemy import create_engine, text
 from functools import wraps
 import os
+import hashlib
 #Se eliminara pero es para hacer pruebas
 import time
 
@@ -14,6 +15,27 @@ app.secret_key = '12345'  # Cambia esto por una clave única
 
 #Conexión
 engine = None
+
+#Función de encriptación de datos, con Sha-256
+def encriptar_sha256(texto):
+# """Genera el hash SHA-256 de un texto."""
+    return hashlib.sha256(texto.encode()).hexdigest()   
+
+#############################################################################################################
+#Función de verificación del sha
+def verificar_hash(texto_original, hash_almacenado):
+    # """
+    # Verifica si el hash del texto coincide con el hash almacenado.
+    
+    # Args:
+    #     texto_original (str): Texto original a verificar.
+    #     hash_almacenado (str): Hash almacenado para comparar.
+        
+    # Returns:
+    #     bool: True si coinciden, False en caso contrario.
+    # """
+    nuevo_hash = encriptar_sha256(texto_original)
+    return nuevo_hash == hash_almacenado
 
 ##Decorador de Autorización
 def login_required(role):
@@ -810,7 +832,8 @@ def signup():
     surname = data.get('surname')
 
     #time.sleep(5)  #Espera 5 segundos para testear pantalla de carga
-
+    # Encriptar la contraseña
+    hashed_password = encriptar_sha256(password)
     # Intento de insertar datos
     try:
         with engine.connect() as connection:
@@ -833,7 +856,7 @@ def signup():
                 # Ejecutar la consulta
                 connection.execute(text(sql_query), {
                     "username": username,
-                    "password": password,
+                    "password": hashed_password,
                     "email": email,
                     "name": name,
                     "surname": surname,
@@ -2178,6 +2201,7 @@ def actualizar_producto():
 def actualizar_usuario_solito():
     init_db()
 
+    # Obtener datos del formulario
     usuario = request.form.get('usuario')
     email = request.form.get('email')
     nombre = request.form.get('nombre')
@@ -2185,61 +2209,78 @@ def actualizar_usuario_solito():
     apellidom = request.form.get('apellidom')
     contraseñanueva = request.form.get('contraseñanueva')
     contraseñaanterior = request.form.get('contraseñaanterior')
-    
-    #time.sleep(5)  #Espera 5 segundos para testear pantalla de carga
-    
-    # Intento de insertar datos
+
     try:
         with engine.connect() as connection:
+            # Obtener la contraseña almacenada (hash)
             sql_query = """
                 SELECT users.Password FROM users WHERE users.Id_user=:id;
             """
             result = connection.execute(text(sql_query), {"id": session['id_usuario']})
             contenido = result.fetchone()
-            
-            if contenido[0] == contraseñaanterior:
-                # Iniciar una transacción
-                connection.execute(text("START TRANSACTION;"))
-                
-                if not contraseñanueva:
-                    sql_query = """
-                        UPDATE `users` SET `User` = :usuario, `Email` = :correo, `Name` = :nombre, `Surname` = :apellidopaterno, `Lastname` = :apellidomaterno WHERE `users`.`Id_user` = :id_usuario;
-                    """
-                    # Ejecutar la consulta con los datos
-                    connection.execute(text(sql_query), {
-                        "usuario": usuario,
-                        "correo":email,
-                        "nombre":nombre,
-                        "apellidopaterno":apellidop,
-                        "apellidomaterno":apellidom,
-                        "id_usuario": session['id_usuario'],
-                    })
-                else:
-                    sql_query = """
-                        UPDATE `users` SET `User` = :usuario, `Password` = :contraseñanueva, `Email` = :correo, `Name` = :nombre, `Surname` = :apellidopaterno, `Lastname` = :apellidomaterno WHERE `users`.`Id_user` = :id_usuario;
-                    """
-                    # Ejecutar la consulta con los datos
-                    connection.execute(text(sql_query), {
-                        "usuario": usuario,
-                        "contraseñanueva":contraseñanueva,
-                        "correo":email,
-                        "nombre":nombre,
-                        "apellidopaterno":apellidop,
-                        "apellidomaterno":apellidom,
-                        "id_usuario": session['id_usuario'],
-                    })
 
-                # Finalizar transacción
-                connection.execute(text("COMMIT;"))
+            if contenido:
+                # Validar la contraseña anterior
+                if verificar_hash(contraseñaanterior, contenido[0]):
+                    # Iniciar una transacción
+                    connection.execute(text("START TRANSACTION;"))
+
+                    if not contraseñanueva:
+                        # Si no hay nueva contraseña, solo actualizar los demás datos
+                        sql_query = """
+                            UPDATE users 
+                            SET User = :usuario, 
+                                Email = :correo, 
+                                Name = :nombre, 
+                                Surname = :apellidopaterno, 
+                                Lastname = :apellidomaterno 
+                            WHERE Id_user = :id_usuario;
+                        """
+                        connection.execute(text(sql_query), {
+                            "usuario": usuario,
+                            "correo": email,
+                            "nombre": nombre,
+                            "apellidopaterno": apellidop,
+                            "apellidomaterno": apellidom,
+                            "id_usuario": session['id_usuario'],
+                        })
+                    else:
+                        # Encriptar la nueva contraseña
+                        hashed_password = encriptar_sha256(contraseñanueva)
+                        sql_query = """
+                            UPDATE users 
+                            SET User = :usuario, 
+                                Password = :contraseñanueva, 
+                                Email = :correo, 
+                                Name = :nombre, 
+                                Surname = :apellidopaterno, 
+                                Lastname = :apellidomaterno 
+                            WHERE Id_user = :id_usuario;
+                        """
+                        connection.execute(text(sql_query), {
+                            "usuario": usuario,
+                            "contraseñanueva": hashed_password,
+                            "correo": email,
+                            "nombre": nombre,
+                            "apellidopaterno": apellidop,
+                            "apellidomaterno": apellidom,
+                            "id_usuario": session['id_usuario'],
+                        })
+
+                    # Finalizar transacción
+                    connection.execute(text("COMMIT;"))
+                else:
+                    return jsonify({"message": "La contraseña anterior no es correcta"}), 400
             else:
-                return jsonify({"message": f"Error al actualizar contraseña incorrecta"}), 400
-        return jsonify({"message": "Actualizacion exitosa"}), 200
+                return jsonify({"message": "Usuario no encontrado"}), 404
+
+        return jsonify({"message": "Actualización exitosa"}), 200
+
     except Exception as e:
         # Hacer rollback en caso de error
         with engine.connect() as connection:
             connection.execute(text("ROLLBACK;"))
 
-        # Manejo de errores (nimodillo)
         return jsonify({"message": f"Error al actualizar: {str(e)}"}), 500
 
 @app.route('/actualizar_user', methods=['POST'])
@@ -2283,38 +2324,42 @@ def login():
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
-    #time.sleep(3)
+
     try:
         with engine.connect() as connection:
+            # Obtener el hash almacenado en la base de datos
             sql_query = """
-            SELECT users.Rol, users.Id_user, users.Name, users.Estado FROM users WHERE users.Password=:password AND users.Email=:email;
+            SELECT users.Rol, users.Id_user, users.Name, users.Password 
+            FROM users 
+            WHERE users.Email=:email;
             """
-            result = connection.execute(text(sql_query), {
-                "email": email,
-                "password": password
-            }).fetchone()
+            result = connection.execute(text(sql_query), {"email": email}).fetchone()
 
-            if not result[3]=="Inactivo":
-                session['inicio_cesion'] = True
-                
-                if result:
-                    #Almacenar los datos del usuario
+            if result:
+                stored_password_hash = result[3]
+                hashed_input_password = encriptar_sha256(password)
+
+                # Comparar los hashes
+                if hashed_input_password == stored_password_hash:
+                    # Almacenar los datos del usuario en la sesión
+                    session['inicio_cesion'] = True
                     session['permiso_usuario'] = result[0]
                     session['id_usuario'] = result[1]
                     session['usuario_usuario'] = result[2]
-                    
-                    if session['permiso_usuario']=="administrador":
+
+                    if session['permiso_usuario'] == "administrador":
                         session['permiso_admin'] = True
-                        
+
                     # Redirige según el rol
                     if session['permiso_usuario'] == 'administrador':
                         return jsonify({"redirect": "/administrador"})
                     else:
                         return jsonify({"redirect": "/"})
                 else:
-                    return jsonify({"message": "Usuario o contraseña incorrectos"})
+                    return jsonify({"message": "Usuario o contraseña incorrectos"}), 401
             else:
-                return jsonify({"message": "Error en el servidor"}), 500
+                return jsonify({"message": "Usuario o contraseña incorrectos"}), 401
+
     except Exception as e:
         print(f"Error: {e}")
         return jsonify({"message": "Error en el servidor"}), 500
