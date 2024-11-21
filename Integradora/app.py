@@ -814,28 +814,36 @@ def signup():
     # Intento de insertar datos
     try:
         with engine.connect() as connection:
-            # Iniciar una transacción
-            connection.execute(text("START TRANSACTION;"))
-
             sql_query = """
-                INSERT INTO users (User, Password, Email, Name, Surname, Lastname, Rol, Estado)
-                VALUES (:username, :password, :email, :name, :surname, :lastname, 'cliente', 'Activo')
+                SELECT users.User FROM users WHERE users.Email=:correo;
             """
-            print(f"Ejecutando consulta: {sql_query}")
+            result = connection.execute(text(sql_query), {"correo": email})
+            contenido = result.fetchone()
+            if not contenido:
+                
+                # Iniciar una transacción
+                connection.execute(text("START TRANSACTION;"))
 
-            # Ejecutar la consulta
-            connection.execute(text(sql_query), {
-                "username": username,
-                "password": password,
-                "email": email,
-                "name": name,
-                "surname": surname,
-                "lastname": lastname
-            })
+                sql_query = """
+                    INSERT INTO users (User, Password, Email, Name, Surname, Lastname, Rol, Estado)
+                    VALUES (:username, :password, :email, :name, :surname, :lastname, 'cliente', 'Activo')
+                """
+                print(f"Ejecutando consulta: {sql_query}")
 
-            # Finalizar transacción
-            connection.execute(text("COMMIT;"))
+                # Ejecutar la consulta
+                connection.execute(text(sql_query), {
+                    "username": username,
+                    "password": password,
+                    "email": email,
+                    "name": name,
+                    "surname": surname,
+                    "lastname": lastname
+                })
 
+                # Finalizar transacción
+                connection.execute(text("COMMIT;"))
+            else:
+                return jsonify({"message": "Correo ya registrado"}), 400
         return jsonify({"message": "Registro exitoso"}), 200
     except Exception as e:
         # Hacer rollback en caso de error
@@ -2234,6 +2242,40 @@ def actualizar_usuario_solito():
         # Manejo de errores (nimodillo)
         return jsonify({"message": f"Error al actualizar: {str(e)}"}), 500
 
+@app.route('/actualizar_user', methods=['POST'])
+def actualizar_user():
+    init_db()
+
+    data = request.get_json()
+
+    # Extraer los valores del JSON
+    rol = data.get('rol')
+    estado = data.get('estado')
+    id = data.get('id')
+    #time.sleep(5)  #Espera 5 segundos para testear pantalla de carga
+    
+    # Intento de insertar datos
+    try:
+        with engine.connect() as connection:
+            sql_query = """
+                        UPDATE `users` SET `Rol` = :rol, `Estado` = :estado WHERE `users`.`Id_user` = :id_usuario;
+                """
+            # Ejecutar la consulta con los datos
+            connection.execute(text(sql_query), {
+                "rol":rol,
+                "estado":estado,
+                "id_usuario": id,
+            })
+            connection.execute(text("COMMIT;"))
+        return jsonify({"message": "Actualizacion exitosa"}), 200
+    except Exception as e:
+        # Hacer rollback en caso de error
+        with engine.connect() as connection:
+            connection.execute(text("ROLLBACK;"))
+
+        # Manejo de errores (nimodillo)
+        return jsonify({"message": f"Error al actualizar: {str(e)}"}), 500
+
 #inicio de secion y cerrar seción
 @app.route('/login', methods=['POST'])
 def login():
@@ -2245,32 +2287,34 @@ def login():
     try:
         with engine.connect() as connection:
             sql_query = """
-            SELECT users.Rol, users.Id_user, users.Name FROM users WHERE users.Password=:password AND users.Email=:email;
+            SELECT users.Rol, users.Id_user, users.Name, users.Estado FROM users WHERE users.Password=:password AND users.Email=:email;
             """
             result = connection.execute(text(sql_query), {
                 "email": email,
                 "password": password
             }).fetchone()
-            
-            session['inicio_cesion'] = True
-            
-            if result:
-                #Almacenar los datos del usuario
-                session['permiso_usuario'] = result[0]
-                session['id_usuario'] = result[1]
-                session['usuario_usuario'] = result[2]
-                
-                if session['permiso_usuario']=="administrador":
-                    session['permiso_admin'] = True
-                    
-                # Redirige según el rol
-                if session['permiso_usuario'] == 'administrador':
-                    return jsonify({"redirect": "/administrador"})
-                else:
-                    return jsonify({"redirect": "/"})
-            else:
-                return jsonify({"message": "Usuario o contraseña incorrectos"})
 
+            if not result[3]=="Inactivo":
+                session['inicio_cesion'] = True
+                
+                if result:
+                    #Almacenar los datos del usuario
+                    session['permiso_usuario'] = result[0]
+                    session['id_usuario'] = result[1]
+                    session['usuario_usuario'] = result[2]
+                    
+                    if session['permiso_usuario']=="administrador":
+                        session['permiso_admin'] = True
+                        
+                    # Redirige según el rol
+                    if session['permiso_usuario'] == 'administrador':
+                        return jsonify({"redirect": "/administrador"})
+                    else:
+                        return jsonify({"redirect": "/"})
+                else:
+                    return jsonify({"message": "Usuario o contraseña incorrectos"})
+            else:
+                return jsonify({"message": "Error en el servidor"}), 500
     except Exception as e:
         print(f"Error: {e}")
         return jsonify({"message": "Error en el servidor"}), 500
