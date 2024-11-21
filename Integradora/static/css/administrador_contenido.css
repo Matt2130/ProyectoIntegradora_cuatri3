@@ -144,7 +144,7 @@ button {
 }
 
 .eliminar {
-    background-color: #e22d2d;
+    background-color: #dc3545;
 }
 
 button:hover {
@@ -238,59 +238,30 @@ button:hover {
 
 .cerrar {
     color: #aaa;
-    /* float: right; */
+    float: right;
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
-    padding: 5px 10px; /* Espaciado interno */
-    border-radius: 5px; /* Bordes redondeados */
-    transition: all 0.3s ease; /* Transición suave */
-    background-color: #63660b; /* Fondo sutil */
-    display: inline-block; /* Comportamiento de botón */
 }
 
 #registrar {
-    background-color: #030225;
+    background-color: #dc3545;
     text-decoration: none;
-    border-radius: 10px; 
+    border-radius: 0.5vw;
     text-align: center;
-    width: 15%; 
-    font-size: 1rem; 
+    width: 8%;
+    font-size: 1vw;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
+    padding: 1vw;
     transition: all 0.3s ease;
-    margin: 20px auto; 
+    margin: 0 auto;
 }
-
 #registrar:hover {
     transform: scale(1.1);
 }
-
 #registrar:active {
     transform: scale(0.9);
 }
-
-/* Responsividad para pantallas medianas */
-@media (max-width: 768px) {
-    #registrar {
-        width: 30%; /* Más ancho en pantallas más pequeñas */
-        font-size: 0.9rem; /* Disminuir tamaño de fuente */
-        padding: 8px; /* Ajustar relleno */
-    }
-}
-
-/* Responsividad para pantallas pequeñas */
-@media (max-width: 480px) {
-    #registrar {
-        width: 50%; /* Más ancho para dispositivos móviles */
-        font-size: 0.8rem; /* Reducir aún más la fuente */
-        padding: 6px; /* Ajustar relleno */
-    }
-}
-
-
 /*Targetas expandibles*/
 .content {
     width: 30%;
@@ -343,94 +314,5 @@ button:hover {
 
     button {
         font-size: 1vw;
-    }
-}
-
-
-/*Administrador Contenido*/
-
-/* Estilo general del modal */
-.modal {
-    display: none; /* Oculto por defecto */
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.7); /* Fondo semitransparente */
-}
-
-/* Contenido del modal */
-.modal-contenido {
-    background-color: #0b06588a; /* Fondo blanco */
-    margin: 10% auto; /* Centrado vertical y horizontal */
-    padding: 20px;
-    border-radius: 10px; /* Bordes redondeados */
-    width: 40%; /* Ajustar ancho */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra */
-    font-family: 'Arial', sans-serif;
-    color: #333; /* Texto oscuro */
-}
-
-/* Botón de cierre */
-.modal-contenido .cerrar {
-    color: #ffffff;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.modal-contenido .cerrar:hover,
-.modal-contenido .cerrar:focus {
-    color: #000;
-    text-decoration: none;
-   
-}
-
-/* Títulos y etiquetas */
-.modal-contenido h1, .modal-contenido h2 {
-    font-size: 1.5rem;
-    margin-bottom: 15px;
-    color: #ffdd00; /* Azul destacado */
-    text-align: center;
-   
-}
-
-/* Inputs y textarea */
-.modal-contenido input[type="text"], 
-.modal-contenido textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1rem;
-    font-family: 'Arial', sans-serif;
-    box-sizing: border-box;
-}
-
-/* Botones */
-.modal-contenido button {
-    background-color: #007BFF; /* Azul brillante */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 10px 20px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.modal-contenido button:hover {
-    background-color: #0056b3; /* Azul oscuro */
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .modal-contenido {
-        width: 90%; /* Más ancho en dispositivos pequeños */
     }
 }

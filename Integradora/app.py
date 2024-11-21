@@ -2,7 +2,6 @@ from flask import Flask, make_response, redirect, url_for, render_template, sess
 from sqlalchemy import create_engine, text
 from functools import wraps
 import os
-import hashlib
 #Se eliminara pero es para hacer pruebas
 import time
 
@@ -15,27 +14,6 @@ app.secret_key = '12345'  # Cambia esto por una clave única
 
 #Conexión
 engine = None
-
-#Función de encriptación de datos, con Sha-256
-def encriptar_sha256(texto):
-# """Genera el hash SHA-256 de un texto."""
-    return hashlib.sha256(texto.encode()).hexdigest()   
-
-#############################################################################################################
-#Función de verificación del sha
-def verificar_hash(texto_original, hash_almacenado):
-    # """
-    # Verifica si el hash del texto coincide con el hash almacenado.
-    
-    # Args:
-    #     texto_original (str): Texto original a verificar.
-    #     hash_almacenado (str): Hash almacenado para comparar.
-        
-    # Returns:
-    #     bool: True si coinciden, False en caso contrario.
-    # """
-    nuevo_hash = encriptar_sha256(texto_original)
-    return nuevo_hash == hash_almacenado
 
 ##Decorador de Autorización
 def login_required(role):
@@ -54,7 +32,7 @@ def login_required(role):
 def init_db():
     global engine
     if engine is None:
-        engine = create_engine('mysql+pymysql://root:pass123@localhost/integradora')
+        engine = create_engine('mysql+pymysql://root:@localhost/integradora')
         #mysql+pymysql://<usuario>:<contraseña>@<host>/<nombre_base_de_datos>
         #Manuel
         #mysql+pymysql://root:'pass123'@localhost/integradora
@@ -296,65 +274,81 @@ def tabla_season_specification():
         print(f"Error: {e}")
         return Response("Error 404", mimetype='text/html')
 
-from flask import render_template, Response
-
 @app.route('/api/tabla_contact')
 def tabla_contact():
     try:
         init_db()
         with engine.connect() as connection:
-            # Realizar la consulta
-            result = connection.execute(text("""
-                SELECT Facebook, Instagram, Tik_tok, Email, Twitter, Whatsapp, Phone, Id_contact 
-                FROM contacts;
-            """))
-            contactos = result.fetchall()
-            nombre_columnas = result.keys()
-
-        if contactos:
+            result = connection.execute(text('SELECT contacts.Facebook, contacts.Instagram, contacts.Tik_tok, contacts.Email, contacts.Twitter, contacts.Whatsapp, contacts.Phone, contacts.Id_contact FROM contacts;'))
+            contenido = result.fetchall()
             html = ""
-            for redes in contactos:
-                id_contact = redes[-1]  # Id_contact como último elemento
-                html += '<div class="contacto_contenedor">'
-                for url, nombre in zip(redes, nombre_columnas):
-                    # Excluir Id_contact del HTML
-                    if nombre == "Id_contact":
-                        continue
-                    
-                    if nombre == 'Email':
-                        link = f"mailto:{url}"
-                    elif nombre == 'Whatsapp':
-                        link = f"https://wa.me/{url}"
-                    elif nombre == 'Phone':
-                        link = f"tel:{url}"
-                    else:
-                        link = url  # Redes sociales como Facebook, Instagram, etc.
-
-                    # Generar los elementos visuales
+            if contenido:
+                for info in contenido:
                     html += f"""
-                    <div class="elementos">
-                        <a target="_blank" href="{link}">
-                            <img src="static/image/{nombre}.svg" alt="{nombre}" class="{nombre}">
-                        </a>
+                    <h2>
+                        Facebook
+                    </h2>
+                    <h3>
+                        {info[0]}
+                    </h3>
+                    <br>
+                    <h2>
+                        Instagra
+                    </h2>
+                    <h3>
+                        {info[1]}
+                    </h3>
+                    <br>
+                    <h2>
+                        Tik Tok
+                    </h2>
+                    <h3>
+                        {info[2]}
+                    </h3>
+                    <br>
+                    <h2>
+                        Email
+                    </h2>
+                    <h3>
+                        {info[3]}
+                    </h3>
+                    <br>
+                    <h2>
+                        Twitter
+                    </h2>
+                    <h3>
+                        {info[4]}
+                    </h3>
+                    <br>
+                    <h2>
+                        Whatsapp
+                    </h2>
+                    <h3>
+                        {info[5]}
+                    </h3>
+                    <br>
+                    <h2>
+                        Telefono
+                    </h2>
+                    <h3>
+                        {info[6]}
+                    </h3>
+                    <br>
+                    <h2>
+                        Acciones
+                    </h2>
+                        <button onclick="editarProducto({info[7]})" class="editar">Editar</button>
+                        <button onclick="eliminarProducto({info[7]})" class="eliminar">Eliminar</button>
+                    """
+            else:
+                html += f"""
+                    <div class="arriba">
+                        <button id="abrirModal" onclick="abrirModal()">Registrar</button>
                     </div>
                     """
-                html += f"""
-                <button onclick="editarProducto({id_contact})" class="editar">Editar</button>
-                <button onclick="eliminarProducto({id_contact})" class="eliminar">Eliminar</button>
-                """
-                html += '</div><hr>'
-        else:
-            # Si no hay contactos, mostrar botón de registro
-            html = """
-            <div class="arriba">
-                <button id="abrirModal" onclick="abrirModal()">Registrar</button>
-            </div>
-            """
-
-        return Response(html, mimetype='text/html')
-    except Exception as e:
-        return Response(f"Error 404: {str(e)}", mimetype='text/html')
-
+            return Response(html, mimetype='text/html')
+    except:
+        return Response("Error 404", mimetype='text/html')
 
 @app.route('/api/tabla_content')
 def tabla_content():
@@ -803,63 +797,6 @@ def mostrador_productos_buscados():
     except:
         return Response("Error 404", mimetype='text/html')
 #Registros
-@app.route('/registro_usuario_administrador', methods=['POST'])
-def registro_usuario_administrador():
-    init_db()
-
-    data = request.get_json()
-    name = data.get('name')
-    lastname = data.get('lastname')
-    username = data.get('username')
-    email = data.get('email')
-    password = data.get('password')
-    surname = data.get('surname')
-
-    #time.sleep(5)  #Espera 5 segundos para testear pantalla de carga
-    # Encriptar la contraseña
-    hashed_password = encriptar_sha256(password)
-    # Intento de insertar datos
-    try:
-        with engine.connect() as connection:
-            sql_query = """
-                SELECT users.User FROM users WHERE users.Email=:correo;
-            """
-            result = connection.execute(text(sql_query), {"correo": email})
-            contenido = result.fetchone()
-            if not contenido:
-                
-                # Iniciar una transacción
-                connection.execute(text("START TRANSACTION;"))
-
-                sql_query = """
-                    INSERT INTO users (User, Password, Email, Name, Surname, Lastname, Rol, Estado)
-                    VALUES (:username, :password, :email, :name, :surname, :lastname, 'administrador', 'Activo')
-                """
-                print(f"Ejecutando consulta: {sql_query}")
-
-                # Ejecutar la consulta
-                connection.execute(text(sql_query), {
-                    "username": username,
-                    "password": hashed_password,
-                    "email": email,
-                    "name": name,
-                    "surname": surname,
-                    "lastname": lastname
-                })
-
-                # Finalizar transacción
-                connection.execute(text("COMMIT;"))
-            else:
-                return jsonify({"message": "Correo ya registrado"}), 400
-        return jsonify({"message": "Registro exitoso"}), 200
-    except Exception as e:
-        # Hacer rollback en caso de error
-        with engine.connect() as connection:
-            connection.execute(text("ROLLBACK;"))
-
-        # Manejo de errores (nimodillo)
-        return jsonify({"message": f"Error al registrar: {str(e)}"}), 500
-
 @app.route('/registro_usuario', methods=['POST'])
 def signup():
     init_db()
@@ -873,8 +810,7 @@ def signup():
     surname = data.get('surname')
 
     #time.sleep(5)  #Espera 5 segundos para testear pantalla de carga
-    # Encriptar la contraseña
-    hashed_password = encriptar_sha256(password)
+
     # Intento de insertar datos
     try:
         with engine.connect() as connection:
@@ -897,7 +833,7 @@ def signup():
                 # Ejecutar la consulta
                 connection.execute(text(sql_query), {
                     "username": username,
-                    "password": hashed_password,
+                    "password": password,
                     "email": email,
                     "name": name,
                     "surname": surname,
@@ -2242,7 +2178,6 @@ def actualizar_producto():
 def actualizar_usuario_solito():
     init_db()
 
-    # Obtener datos del formulario
     usuario = request.form.get('usuario')
     email = request.form.get('email')
     nombre = request.form.get('nombre')
@@ -2250,78 +2185,61 @@ def actualizar_usuario_solito():
     apellidom = request.form.get('apellidom')
     contraseñanueva = request.form.get('contraseñanueva')
     contraseñaanterior = request.form.get('contraseñaanterior')
-
+    
+    #time.sleep(5)  #Espera 5 segundos para testear pantalla de carga
+    
+    # Intento de insertar datos
     try:
         with engine.connect() as connection:
-            # Obtener la contraseña almacenada (hash)
             sql_query = """
                 SELECT users.Password FROM users WHERE users.Id_user=:id;
             """
             result = connection.execute(text(sql_query), {"id": session['id_usuario']})
             contenido = result.fetchone()
-
-            if contenido:
-                # Validar la contraseña anterior
-                if verificar_hash(contraseñaanterior, contenido[0]):
-                    # Iniciar una transacción
-                    connection.execute(text("START TRANSACTION;"))
-
-                    if not contraseñanueva:
-                        # Si no hay nueva contraseña, solo actualizar los demás datos
-                        sql_query = """
-                            UPDATE users 
-                            SET User = :usuario, 
-                                Email = :correo, 
-                                Name = :nombre, 
-                                Surname = :apellidopaterno, 
-                                Lastname = :apellidomaterno 
-                            WHERE Id_user = :id_usuario;
-                        """
-                        connection.execute(text(sql_query), {
-                            "usuario": usuario,
-                            "correo": email,
-                            "nombre": nombre,
-                            "apellidopaterno": apellidop,
-                            "apellidomaterno": apellidom,
-                            "id_usuario": session['id_usuario'],
-                        })
-                    else:
-                        # Encriptar la nueva contraseña
-                        hashed_password = encriptar_sha256(contraseñanueva)
-                        sql_query = """
-                            UPDATE users 
-                            SET User = :usuario, 
-                                Password = :contraseñanueva, 
-                                Email = :correo, 
-                                Name = :nombre, 
-                                Surname = :apellidopaterno, 
-                                Lastname = :apellidomaterno 
-                            WHERE Id_user = :id_usuario;
-                        """
-                        connection.execute(text(sql_query), {
-                            "usuario": usuario,
-                            "contraseñanueva": hashed_password,
-                            "correo": email,
-                            "nombre": nombre,
-                            "apellidopaterno": apellidop,
-                            "apellidomaterno": apellidom,
-                            "id_usuario": session['id_usuario'],
-                        })
-
-                    # Finalizar transacción
-                    connection.execute(text("COMMIT;"))
+            
+            if contenido[0] == contraseñaanterior:
+                # Iniciar una transacción
+                connection.execute(text("START TRANSACTION;"))
+                
+                if not contraseñanueva:
+                    sql_query = """
+                        UPDATE `users` SET `User` = :usuario, `Email` = :correo, `Name` = :nombre, `Surname` = :apellidopaterno, `Lastname` = :apellidomaterno WHERE `users`.`Id_user` = :id_usuario;
+                    """
+                    # Ejecutar la consulta con los datos
+                    connection.execute(text(sql_query), {
+                        "usuario": usuario,
+                        "correo":email,
+                        "nombre":nombre,
+                        "apellidopaterno":apellidop,
+                        "apellidomaterno":apellidom,
+                        "id_usuario": session['id_usuario'],
+                    })
                 else:
-                    return jsonify({"message": "La contraseña anterior no es correcta"}), 400
+                    sql_query = """
+                        UPDATE `users` SET `User` = :usuario, `Password` = :contraseñanueva, `Email` = :correo, `Name` = :nombre, `Surname` = :apellidopaterno, `Lastname` = :apellidomaterno WHERE `users`.`Id_user` = :id_usuario;
+                    """
+                    # Ejecutar la consulta con los datos
+                    connection.execute(text(sql_query), {
+                        "usuario": usuario,
+                        "contraseñanueva":contraseñanueva,
+                        "correo":email,
+                        "nombre":nombre,
+                        "apellidopaterno":apellidop,
+                        "apellidomaterno":apellidom,
+                        "id_usuario": session['id_usuario'],
+                    })
+
+                # Finalizar transacción
+                connection.execute(text("COMMIT;"))
             else:
-                return jsonify({"message": "Usuario no encontrado"}), 404
-
-        return jsonify({"message": "Actualización exitosa"}), 200
-
+                return jsonify({"message": f"Error al actualizar contraseña incorrecta"}), 400
+        return jsonify({"message": "Actualizacion exitosa"}), 200
     except Exception as e:
         # Hacer rollback en caso de error
         with engine.connect() as connection:
             connection.execute(text("ROLLBACK;"))
 
+        # Manejo de errores (nimodillo)
         return jsonify({"message": f"Error al actualizar: {str(e)}"}), 500
 
 @app.route('/actualizar_user', methods=['POST'])
@@ -2365,42 +2283,38 @@ def login():
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
-
+    #time.sleep(3)
     try:
         with engine.connect() as connection:
-            # Obtener el hash almacenado en la base de datos
             sql_query = """
-            SELECT users.Rol, users.Id_user, users.Name, users.Password 
-            FROM users 
-            WHERE users.Email=:email;
+            SELECT users.Rol, users.Id_user, users.Name, users.Estado FROM users WHERE users.Password=:password AND users.Email=:email;
             """
-            result = connection.execute(text(sql_query), {"email": email}).fetchone()
+            result = connection.execute(text(sql_query), {
+                "email": email,
+                "password": password
+            }).fetchone()
 
-            if result:
-                stored_password_hash = result[3]
-                hashed_input_password = encriptar_sha256(password)
-
-                # Comparar los hashes
-                if hashed_input_password == stored_password_hash:
-                    # Almacenar los datos del usuario en la sesión
-                    session['inicio_cesion'] = True
+            if not result[3]=="Inactivo":
+                session['inicio_cesion'] = True
+                
+                if result:
+                    #Almacenar los datos del usuario
                     session['permiso_usuario'] = result[0]
                     session['id_usuario'] = result[1]
                     session['usuario_usuario'] = result[2]
-
-                    if session['permiso_usuario'] == "administrador":
+                    
+                    if session['permiso_usuario']=="administrador":
                         session['permiso_admin'] = True
-
+                        
                     # Redirige según el rol
                     if session['permiso_usuario'] == 'administrador':
                         return jsonify({"redirect": "/administrador"})
                     else:
                         return jsonify({"redirect": "/"})
                 else:
-                    return jsonify({"message": "Usuario o contraseña incorrectos"}), 401
+                    return jsonify({"message": "Usuario o contraseña incorrectos"})
             else:
-                return jsonify({"message": "Usuario o contraseña incorrectos"}), 401
-
+                return jsonify({"message": "Error en el servidor"}), 500
     except Exception as e:
         print(f"Error: {e}")
         return jsonify({"message": "Error en el servidor"}), 500
