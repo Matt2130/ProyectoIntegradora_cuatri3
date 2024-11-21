@@ -296,81 +296,65 @@ def tabla_season_specification():
         print(f"Error: {e}")
         return Response("Error 404", mimetype='text/html')
 
+from flask import render_template, Response
+
 @app.route('/api/tabla_contact')
 def tabla_contact():
     try:
         init_db()
         with engine.connect() as connection:
-            result = connection.execute(text('SELECT contacts.Facebook, contacts.Instagram, contacts.Tik_tok, contacts.Email, contacts.Twitter, contacts.Whatsapp, contacts.Phone, contacts.Id_contact FROM contacts;'))
-            contenido = result.fetchall()
+            # Realizar la consulta
+            result = connection.execute(text("""
+                SELECT Facebook, Instagram, Tik_tok, Email, Twitter, Whatsapp, Phone, Id_contact 
+                FROM contacts;
+            """))
+            contactos = result.fetchall()
+            nombre_columnas = result.keys()
+
+        if contactos:
             html = ""
-            if contenido:
-                for info in contenido:
+            for redes in contactos:
+                id_contact = redes[-1]  # Id_contact como último elemento
+                html += '<div class="contacto_contenedor">'
+                for url, nombre in zip(redes, nombre_columnas):
+                    # Excluir Id_contact del HTML
+                    if nombre == "Id_contact":
+                        continue
+                    
+                    if nombre == 'Email':
+                        link = f"mailto:{url}"
+                    elif nombre == 'Whatsapp':
+                        link = f"https://wa.me/{url}"
+                    elif nombre == 'Phone':
+                        link = f"tel:{url}"
+                    else:
+                        link = url  # Redes sociales como Facebook, Instagram, etc.
+
+                    # Generar los elementos visuales
                     html += f"""
-                    <h2>
-                        Facebook
-                    </h2>
-                    <h3>
-                        {info[0]}
-                    </h3>
-                    <br>
-                    <h2>
-                        Instagra
-                    </h2>
-                    <h3>
-                        {info[1]}
-                    </h3>
-                    <br>
-                    <h2>
-                        Tik Tok
-                    </h2>
-                    <h3>
-                        {info[2]}
-                    </h3>
-                    <br>
-                    <h2>
-                        Email
-                    </h2>
-                    <h3>
-                        {info[3]}
-                    </h3>
-                    <br>
-                    <h2>
-                        Twitter
-                    </h2>
-                    <h3>
-                        {info[4]}
-                    </h3>
-                    <br>
-                    <h2>
-                        Whatsapp
-                    </h2>
-                    <h3>
-                        {info[5]}
-                    </h3>
-                    <br>
-                    <h2>
-                        Telefono
-                    </h2>
-                    <h3>
-                        {info[6]}
-                    </h3>
-                    <br>
-                    <h2>
-                        Acciones
-                    </h2>
-                        <button onclick="editarProducto({info[7]})" class="editar">Editar</button>
-                        <button onclick="eliminarProducto({info[7]})" class="eliminar">Eliminar</button>
-                    """
-            else:
-                html += f"""
-                    <div class="arriba">
-                        <button id="abrirModal" onclick="abrirModal()">Registrar</button>
+                    <div class="elementos">
+                        <a target="_blank" href="{link}">
+                            <img src="static/image/{nombre}.svg" alt="{nombre}" class="{nombre}">
+                        </a>
                     </div>
                     """
-            return Response(html, mimetype='text/html')
-    except:
-        return Response("Error 404", mimetype='text/html')
+                html += f"""
+                <button onclick="editarProducto({id_contact})" class="editar">Editar</button>
+                <button onclick="eliminarProducto({id_contact})" class="eliminar">Eliminar</button>
+                """
+                html += '</div><hr>'
+        else:
+            # Si no hay contactos, mostrar botón de registro
+            html = """
+            <div class="arriba">
+                <button id="abrirModal" onclick="abrirModal()">Registrar</button>
+            </div>
+            """
+
+        return Response(html, mimetype='text/html')
+    except Exception as e:
+        return Response(f"Error 404: {str(e)}", mimetype='text/html')
+
 
 @app.route('/api/tabla_content')
 def tabla_content():
