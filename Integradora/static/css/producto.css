@@ -26,11 +26,7 @@
     width: auto;
     border-radius: 1vw;
 }
-#spa-imagenes::before {
-    content: "Subir imagen";
-    color: #aaa;
-    font-size: 1em;
-}
+
 
 #spa-info {
     flex: 2;
@@ -117,56 +113,6 @@ table h3 {
 
 .comentario-texto p {
     color: #555;
-}
-
-/* Modal para edicion de comentario*/
-.modal textarea{
-    width: 80%;
-    height: 10vw;
-    resize: none;
-    padding: 1vw;
-    border: 1px solid black;
-    border-radius: 0.5vw;
-    margin: 1vw 0;
-    text-align: center;
-}
-.modal input[type="text"] {
-    width: 20%;
-    padding: 1vw;
-    margin: 1vw 0;
-    border: none;
-    border-bottom: 0.2vw solid black;
-    font-size: 1vw;
-}
-.modal {
-    display: none;
-    position: fixed; 
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); 
-    overflow: auto;
-}
-.modal-contenido {
-    background-color: #fff;
-    margin: 5% auto;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 80%;
-    text-align: center;
-    border-radius: 1vw;
-    min-height: 80%;
-    padding: 2vw;
-    overflow: auto;
-}
-.cerrar {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
 }
 
 /* Media Queries para adaptabilidad */
