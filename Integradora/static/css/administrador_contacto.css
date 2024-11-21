@@ -135,6 +135,8 @@ button:hover {
     display: inline-block;
     align-items: center;
     justify-content: center;
+    height: 2.5vw;
+    width: 2.5vw;
 }
 .detalles {
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Sombra pequeña alrededor del botón */
@@ -145,8 +147,10 @@ button:hover {
     display: inline-block;
     align-items: center;
     justify-content: center;
+    height: 2.5vw;
+    width: 2.5vw;
 }
-
+ 
 .editar {
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Sombra pequeña alrededor del botón */
     border: none;
@@ -155,14 +159,16 @@ button:hover {
     display: inline-block;
     align-items: center;
     justify-content: center;
+    height: 2.5vw;
+    width: 2.5vw;
+}
+.icon-del{
+    fill: rgb(11, 10, 10); /* Color del icono blanco */
 }
 .icon-edit{
-    fill: white;
-}
-.icon-edit{
-    stroke: #ffc107;
-    stroke-width: 1px; 
-    fill: #ffc107; 
+    stroke: #ffc107; /* Color del contorno */
+    stroke-width: 1px; /* Grosor del contorno */
+    fill: #ffc107; /* Color del icono blanco */
 }
 
 /*//////////////////////////////////////////*/
