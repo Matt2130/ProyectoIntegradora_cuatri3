@@ -197,3 +197,47 @@ function editarsqlcontenido(idw){
         alert("Error al registrar: " + error.message);
     });
 }
+
+//Registrar
+function registrartemporadao(){
+    document.getElementById('loading').style.display = 'flex';
+
+    const formData = {
+        name: document.getElementById('name').value,
+        lastname: document.getElementById('lastname').value,
+        surname: document.getElementById('surname').value,
+        username: document.getElementById('username').value,
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value,
+    };
+    fetch('/registro_usuario_administrador', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            // Si la respuesta no es exitosa (por ejemplo, 400 o 500), lanzar un error
+            return response.json().then(data => {
+                throw new Error(data.message); // Lanzamos el mensaje de error desde la respuesta
+            });
+        }
+        return response.json(); // Si todo va bien, seguimos con el procesamiento de la respuesta
+    })
+    .then(data => {
+        console.log(data.message);
+        document.getElementById('loading').style.display = 'none';
+        alert("Registro exitoso: " + data.message);
+        window.location.reload();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert("Error al registrar: " + error.message); // Mostrar alerta con el mensaje de error
+    })
+    .finally(() => {
+        // Desaparecer la pantalla de carga
+        document.getElementById('loading').style.display = 'none';
+    });
+}
