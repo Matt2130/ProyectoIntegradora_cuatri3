@@ -853,6 +853,62 @@ def signup():
         # Manejo de errores (nimodillo)
         return jsonify({"message": f"Error al registrar: {str(e)}"}), 500
 
+@app.route('/registro_usuario_administrador', methods=['POST'])
+def registro_usuario_administrador():
+    init_db()
+
+    data = request.get_json()
+    name = data.get('name')
+    lastname = data.get('lastname')
+    username = data.get('username')
+    email = data.get('email')
+    password = data.get('password')
+    surname = data.get('surname')
+
+    #time.sleep(5)  #Espera 5 segundos para testear pantalla de carga
+
+    # Intento de insertar datos
+    try:
+        with engine.connect() as connection:
+            sql_query = """
+                SELECT users.User FROM users WHERE users.Email=:correo;
+            """
+            result = connection.execute(text(sql_query), {"correo": email})
+            contenido = result.fetchone()
+            if not contenido:
+                
+                # Iniciar una transacción
+                connection.execute(text("START TRANSACTION;"))
+
+                sql_query = """
+                    INSERT INTO users (User, Password, Email, Name, Surname, Lastname, Rol, Estado)
+                    VALUES (:username, :password, :email, :name, :surname, :lastname, 'administrador', 'Activo')
+                """
+                print(f"Ejecutando consulta: {sql_query}")
+
+                # Ejecutar la consulta
+                connection.execute(text(sql_query), {
+                    "username": username,
+                    "password": password,
+                    "email": email,
+                    "name": name,
+                    "surname": surname,
+                    "lastname": lastname
+                })
+
+                # Finalizar transacción
+                connection.execute(text("COMMIT;"))
+            else:
+                return jsonify({"message": "Correo ya registrado"}), 400
+        return jsonify({"message": "Registro exitoso"}), 200
+    except Exception as e:
+        # Hacer rollback en caso de error
+        with engine.connect() as connection:
+            connection.execute(text("ROLLBACK;"))
+
+        # Manejo de errores (nimodillo)
+        return jsonify({"message": f"Error al registrar: {str(e)}"}), 500
+
 @app.route('/registrar_contenido', methods=['POST'])
 def registrar_contenido():
     init_db()
