@@ -18,6 +18,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;  // Detener la ejecución si algún campo está vacío
             }
         }
+        // Expresión regular para validar la contraseña (sin necesidad de un carácter especial)
+        const passwordPattern = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+        // Verifica si la contraseña cumple con los criterios de seguridad
+        if (!passwordPattern.test(formData.password)) {
+            alert("La contraseña debe tener al menos 8 caracteres, incluir una letra mayúscula y un número.");
+            return;  // Detener la ejecución si la contraseña no cumple con los requisitos
+        }
         // Pantalla de carga
         document.getElementById('loading').style.display = 'flex';
 

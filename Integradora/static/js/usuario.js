@@ -77,7 +77,7 @@ window.onclick = function(event) {
 }
 ///////Edicion sql usuario solo////////////
 function editarsqlcontenidousuariosolo(){
-    //console.log(2347);
+    
     const usuario = document.getElementById('usuariod').value;
     const email = document.getElementById('emaild').value;
     const nombre = document.getElementById('nombred').value;
@@ -90,7 +90,16 @@ function editarsqlcontenidousuariosolo(){
         alert('Por favor, completa todos los campos exepto "Nueva contraseña" de no queres cambiar contraseña.');
         return;  // Detener la ejecución si algún campo está vacío
     }
+    // Validación de la nueva contraseña si se proporciona
+    if (contraseñanueva) {
+        // Expresión regular para validar la contraseña
+        const passwordPattern = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
 
+        if (!passwordPattern.test(contraseñanueva)) {
+            alert("La contraseña debe tener al menos 8 caracteres, incluir una letra mayúscula y un número.");
+            return;  // Detener la ejecución si la contraseña no cumple con los requisitos
+        }
+    }
     const formData = new FormData();
     formData.append('usuario', usuario);
     formData.append('email', email);
