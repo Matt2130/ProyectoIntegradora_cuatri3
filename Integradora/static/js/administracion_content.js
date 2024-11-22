@@ -200,69 +200,87 @@ window.onclick = function(event) {
     }
 }
 //Actualizacion
-function editarsqlcontenido(idw){
-    const titulo = document.getElementById('tituloedit').value;
-    const descripcion = document.getElementById('descripcionedit').value;
-    const id = idw;
+function editarsqlcontenido(contenidoId) {
+    const titulo = document.getElementById('tituloedit').value.trim();
+    const descripcion = document.getElementById('descripcionedit').value.trim();
 
+    // Validar que los campos no estén vacíos
+    if (!titulo || !descripcion) {
+        alert("El título y la descripción no pueden estar vacíos.");
+        return;
+    }
+
+    // Confirmar la acción
+    if (!confirm("¿Estás seguro de que deseas actualizar este contenido?")) {
+        return;
+    }
+
+    // Enviar la solicitud para actualizar el contenido
     fetch('/actualizar_contenido', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         },
         body: JSON.stringify({
             titulo: titulo,
             descripcion: descripcion,
-            id:id
+            id: contenidoId,
+        }),
+    })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.message || 'Error al actualizar contenido');
+                });
+            }
+            return response.json();
         })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Error en la solicitud');
-        }
-        return response.json();
-    })
-    .then(data => {
-        ActualizarProducto();
-/*         alert(data.message); 
-        window.location.href = '/administrador_content'; */
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert("Error al registrar: " + error.message);
-    });
+        .then(data => {
+            ActualizarProducto(); // Llamada a la función para actualizar la vista
+            // Redireccionar si es necesario
+            // window.location.href = '/administrador_content';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("Error al actualizar: " + error.message);
+        });
 }
+
 ////////////////////////////////////////////////////////////////////////////////
-function registrarcontenido(){
-    const titulo = document.getElementById('titulo').value;
-    const descripcion = document.getElementById('descripcion').value;
+function registrarcontenido() {
+    const titulo = document.getElementById('titulo').value.trim();
+    const descripcion = document.getElementById('descripcion').value.trim();
+
+    if (!titulo || !descripcion) {
+        alert("El título y la descripción no pueden estar vacíos.");
+        return;
+    }
 
     fetch('/registrar_contenido', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-            titulo: titulo,
-            descripcion: descripcion
+        body: JSON.stringify({ titulo, descripcion }),
+    })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.message || 'Error al registrar contenido');
+                });
+            }
+            return response.json();
         })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Error en la solicitud');
-        }
-        return response.json();
-    })
-    .then(data => {
-        RegistrarProducto();        
-        /* alert(data.message); */ 
-        /*window.location.href = '/administrador_content';*/
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert("Error al registrar: " + error.message);
-    });
+        .then(data => {
+            RegistrarProducto(); // Llamada a la función de registro de productos
+            // window.location.href = '/administrador_content';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("Error al registrar: " + error.message);
+        });
 }
+
 
 //////////////Mostrar contenido de la base de datos//////////////////
 //Todos se pueden a la vez
