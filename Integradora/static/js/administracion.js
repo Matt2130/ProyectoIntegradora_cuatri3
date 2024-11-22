@@ -1,4 +1,25 @@
 document.addEventListener('DOMContentLoaded', function() {
+    cargarProductos(1);  // Cargar la primera página de la tabla
+});
+
+// Función para cargar productos de una página específica
+function cargarProductos(page) {
+    fetch('/api/tabla_productos?page=' + page)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error en la red: ' + response.statusText);
+            }
+            return response.text();
+        })
+        .then(data => {
+            // Actualizar el contenido de la tabla
+            document.getElementById('administracion-tabla').innerHTML = data;
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+/*
+document.addEventListener('DOMContentLoaded', function() {
     fetch('/api/tabla_productos')
         .then(response => {
             if (!response.ok) {
@@ -11,6 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => console.error('Error:', error));
 });
+ */
 
 function eliminarProducto(param) {
     Swal.fire({
@@ -91,10 +113,10 @@ function eliminarProducto(param) {
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //Buscador
-function buscador() {
+function buscador(page = 1) {
     const buscar = document.getElementById('buscador').value;
 
-    fetch('/api/buscador_productos', {
+    fetch('/api/buscador_productos?page=' + page, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -105,10 +127,10 @@ function buscador() {
         if (!response.ok) {
             throw new Error('Error en la solicitud');
         }
-        return response.text();  // Cambiado de .json() a .text() para recibir HTML
+        return response.text();  // Recibe el HTML para actualizar la tabla
     })
     .then(html => {
-        // Muestra los resultados HTML en el contenedor
+        // Actualiza el contenido de la tabla
         const resultsContainer = document.getElementById('administracion-tabla');
         resultsContainer.innerHTML = html;
     })
@@ -116,6 +138,7 @@ function buscador() {
         console.error('Error:', error);
     });
 }
+
 ///Modal de registro
 document.addEventListener("DOMContentLoaded", function() {
     // Obtiene el modal

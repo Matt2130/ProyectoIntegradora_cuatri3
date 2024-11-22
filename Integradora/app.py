@@ -129,16 +129,32 @@ def texto_valores():
 
 @app.route('/api/mostrador_productos')
 def mostrador_productos():
+    page = int(request.args.get('page', 1))  # Obtener el número de página desde los parámetros de la URL
+    limit = 20  # Número de productos por página
+    offset = (page - 1) * limit  # Calcular el desplazamiento para la consulta
+
     try:
         init_db()
         with engine.connect() as connection:
-            result = connection.execute(text('SELECT products.url_imagen, products.Name, products.Color, products.Price_per_unit, products.Id_product FROM products;'))
+            # Consulta para obtener los productos con paginación
+            sql_query = """
+                SELECT products.url_imagen, products.Name, products.Color, products.Price_per_unit, products.Id_product 
+                FROM products
+                LIMIT :limit OFFSET :offset;
+            """
+            result = connection.execute(text(sql_query), {"limit": limit, "offset": offset})
             contenido = result.fetchall()
-            
+
+            # Consulta para contar el total de productos
+            count_query = "SELECT COUNT(*) FROM products"
+            result_count = connection.execute(text(count_query))
+            total_products = result_count.scalar()  # Número total de productos
+            total_pages = (total_products + limit - 1) // limit  # Calcular el total de páginas
+
             html = ""
 
             for info in contenido:
-                direccion_imagen= url_for('static', filename=f'image/imagenes_productos/{info[0]}', _external=True)
+                direccion_imagen = url_for('static', filename=f'image/imagenes_productos/{info[0]}', _external=True)
                 html += f"""
                         <div class="producto">
                             <a href="/producto?id={info[4]}">
@@ -154,19 +170,52 @@ def mostrador_productos():
                         </div>
                 """
 
+            # Agregar los botones de paginación
+            html += """
+                <div class="paginacion">
+            """
+            # Mostrar botón "Anterior" si no es la primera página
+            if page > 1:
+                html += f'<a href="#" onclick="mostrarProductos({page-1})">Anterior</a>'
+            # Mostrar botón "Siguiente" si no es la última página
+            if page < total_pages:
+                html += f'<a href="#" onclick="mostrarProductos({page+1})">Siguiente</a>'
+            html += """
+                </div>
+            """
+
             return Response(html, mimetype='text/html')
-    except:
+
+    except Exception as e:
+        print(f"Error: {e}")
         return Response("Error 404", mimetype='text/html')
 
 #Tablas
 @app.route('/api/tabla_productos')
 def tabla_productos():
+    # Obtener el número de página desde los parámetros de la URL (por defecto es 1)
+    page = int(request.args.get('page', 1))
+    limit = 10  # Número de elementos por página
+    offset = (page - 1) * limit  # Calcular el desplazamiento para la consulta
+
     try:
         init_db()
         with engine.connect() as connection:
-            result = connection.execute(text('SELECT products.Name, products.Model, products.Size, products.Material_composition, products.Price_per_unit, products.Color, products.Id_product FROM products;'))
+            # Consulta SQL con LIMIT y OFFSET para la paginación
+            sql_query = """
+                SELECT products.Name, products.Model, products.Size, products.Material_composition, products.Price_per_unit, products.Color, products.Id_product
+                FROM products
+                LIMIT :limit OFFSET :offset;
+            """
+            result = connection.execute(text(sql_query), {"limit": limit, "offset": offset})
             contenido = result.fetchall()
-            
+
+            # Contar el total de registros para calcular el número total de páginas
+            result_count = connection.execute(text("SELECT COUNT(*) FROM products"))
+            total_products = result_count.scalar()  # Número total de registros
+            total_pages = (total_products + limit - 1) // limit  # Número total de páginas
+
+            # Generar el HTML para la tabla
             html = """
             <table>
                 <thead>
@@ -174,10 +223,10 @@ def tabla_productos():
                         <th>Producto</th>
                         <th>Modelo</th>
                         <th>Tamaño</th>
-                        <th>Material de composisión</th>
+                        <th>Material de composición</th>
                         <th>Precio</th>
                         <th>Color</th>
-                        <th></th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -197,43 +246,59 @@ def tabla_productos():
                             <button onclick="eliminarProducto({info[6]})" class="eliminar">Eliminar</button>
                         </td>
                     </tr>
-                    
                 """
-
             html += """
                 </tbody>
             </table>
             """
-            
+
+            # Agregar los botones de paginación
+            html += """
+                <div class="paginacion">
+            """
+            # Mostrar botón "Anterior" si no es la primera página
+            if page > 1:
+                html += f'<a href="#" onclick="cargarProductos({page-1})">Anterior</a>'
+            # Mostrar botón "Siguiente" si no es la última página
+            if page < total_pages:
+                html += f'<a href="#" onclick="cargarProductos({page+1})">Siguiente</a>'
+            html += """
+                </div>
+            """
+
+            # Devolver el HTML generado
             return Response(html, mimetype='text/html')
-    except:
+
+    except Exception as e:
+        print(f"Error: {e}")
         return Response("Error 404", mimetype='text/html')
 
 @app.route('/api/tabla_season_specification')
 def tabla_season_specification():
-    # Obtener el número de página de los parámetros de la URL (por defecto es 1)
     page = int(request.args.get('page', 1))
-    limit = 2  # Número de elementos por página
-    offset = (page - 1) * limit  # Calcular el desplazamiento para la consulta
+    limit = 2
+    offset = (page - 1) * limit
 
     try:
         init_db()
         with engine.connect() as connection:
-            # Consulta SQL con LIMIT y OFFSET para aplicar la paginación
-            result = connection.execute(text('''
+            sql_query = '''
                 SELECT season_specification.season, season_specification.Id_season
                 FROM season_specification
                 LIMIT :limit OFFSET :offset;
-            '''), {"limit": limit, "offset": offset})
-
+            '''
+            result = connection.execute(
+                text(sql_query),
+                {"limit": limit, "offset": offset}
+            )
             contenido = result.fetchall()
 
-            # Contar el total de registros para calcular el número total de páginas
-            result_count = connection.execute(text('SELECT COUNT(*) FROM season_specification'))
-            total_seasons = result_count.scalar()  # Obtiene el número total de registros
-            total_pages = (total_seasons + limit - 1) // limit  # Calcula el total de páginas
+            result_count = connection.execute(
+            text('SELECT COUNT(*) FROM season_specification'))
 
-            # Generar el HTML para la tabla
+            total_seasons = result_count.scalar()
+            total_pages = (total_seasons + limit - 1) // limit
+
             html = """
             <table>
                 <thead>
@@ -259,21 +324,25 @@ def tabla_season_specification():
             </table>
             """
 
-            # Agregar los enlaces de paginación
-            html += f"""
+            html += """
                 <div class="paginacion">
-                    <a href="#" onclick="cargarProductos({page-1})" {"style='pointer-events: none;'" if page == 1 else ""}>Anterior</a>
-                    <a href="#" onclick="cargarProductos({page+1})" {"style='pointer-events: none;'" if page == total_pages else ""}>Siguiente</a>
-                </div>
             """
+            if page > 1:
+                html += f"""
+                    <a href="#" onclick="paginacion({page-1})">Anterior</a>
+                """
+            if page < total_pages:
+                html += f"""
+                    <a href="#" onclick="paginacion({page+1})">Siguiente</a>
+                """
+            html += "</div>"
 
-            # Solo devolver el HTML de la tabla y la paginación
             return Response(html, mimetype='text/html')
 
     except Exception as e:
         print(f"Error: {e}")
         return Response("Error 404", mimetype='text/html')
-
+    
 @app.route('/api/tabla_contact')
 def tabla_contact():
     try:
@@ -375,12 +444,29 @@ def tabla_content():
 
 @app.route('/api/tabla_users')
 def tabla_users():
+    # Obtener el número de página de los parámetros de la URL (por defecto es 1)
+    page = int(request.args.get('page', 1))
+    limit = 10  # Número de elementos por página
+    offset = (page - 1) * limit  # Calcular el desplazamiento para la consulta
+
     try:
         init_db()
         with engine.connect() as connection:
-            result = connection.execute(text('SELECT users.User, users.Email, users.Name, users.Surname, users.Lastname, users.Rol, users.Id_user FROM users;'))
+            # Consulta SQL con LIMIT y OFFSET para la paginación
+            sql_query = """
+                SELECT users.User, users.Email, users.Name, users.Surname, users.Lastname, users.Rol, users.Id_user
+                FROM users
+                LIMIT :limit OFFSET :offset;
+            """
+            result = connection.execute(text(sql_query), {"limit": limit, "offset": offset})
             contenido = result.fetchall()
-            
+
+            # Contar el total de registros para calcular el número total de páginas
+            result_count = connection.execute(text("SELECT COUNT(*) FROM users"))
+            total_users = result_count.scalar()  # Número total de registros
+            total_pages = (total_users + limit - 1) // limit  # Número total de páginas
+
+            # Generar el HTML para la tabla
             html = """
             <table>
                 <thead>
@@ -388,10 +474,10 @@ def tabla_users():
                         <th>Usuario</th>
                         <th>Correo</th>
                         <th>Nombre</th>
-                        <th>Apellido paterno</th>
+                        <th>Apellido Paterno</th>
                         <th>Apellido Materno</th>
                         <th>Rol</th>
-                        <th></th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -411,16 +497,31 @@ def tabla_users():
                             <button onclick="eliminarProducto({info[6]})" class="eliminar">Eliminar</button>
                         </td>
                     </tr>
-                    
                 """
-
             html += """
                 </tbody>
             </table>
             """
-            
+
+            # Agregar los botones de paginación
+            html += """
+                <div class="paginacion">
+            """
+            # Mostrar botón "Anterior" si no es la primera página
+            if page > 1:
+                html += f'<button onclick="cargarUsuarios({page-1})">Anterior</button>'
+            # Mostrar botón "Siguiente" si no es la última página
+            if page < total_pages:
+                html += f'<button onclick="cargarUsuarios({page+1})">Siguiente</button>'
+            html += """
+                </div>
+            """
+
+            # Devolver el HTML generado
             return Response(html, mimetype='text/html')
-    except:
+
+    except Exception as e:
+        print(f"Error: {e}")
         return Response("Error 404", mimetype='text/html')
 
 @app.route('/api/contenido_inicio_administracion')
@@ -485,37 +586,34 @@ def buscador_content():
 
 @app.route('/api/buscador_season', methods=['POST'])
 def buscador_season():
-    # Obtener el término de búsqueda desde el cuerpo de la solicitud
     informacion = request.get_json()
     buscar = informacion.get('buscar', '')
-    
-    # Obtener el número de página de los parámetros de la URL (por defecto es 1)
     page = int(request.args.get('page', 1))
-    limit = 2  # Número de elementos por página
-    offset = (page - 1) * limit  # Calcular el desplazamiento para la consulta
+    limit = 2
+    offset = (page - 1) * limit
 
     try:
         init_db()
         with engine.connect() as connection:
-            # Consulta SQL con filtro LIKE y paginación (LIMIT y OFFSET)
-            sql_query = """
+            sql_query = '''
                 SELECT season_specification.season, season_specification.Id_season
                 FROM season_specification
                 WHERE season_specification.season LIKE :buscar
                 LIMIT :limit OFFSET :offset;
-            """
-            result = connection.execute(text(sql_query), {"buscar": f"%{buscar}%", "limit": limit, "offset": offset})
+            '''
+            result = connection.execute(
+                text(sql_query),
+                {"buscar": f"%{buscar}%", "limit": limit, "offset": offset}
+            )
             contenido = result.fetchall()
 
-            # Contar el total de registros que coinciden con la búsqueda para calcular el número total de páginas
-            result_count = connection.execute(text('''
-                SELECT COUNT(*) FROM season_specification 
-                WHERE season_specification.season LIKE :buscar
-            '''), {"buscar": f"%{buscar}%"})
-            total_seasons = result_count.scalar()  # Obtiene el número total de registros
-            total_pages = (total_seasons + limit - 1) // limit  # Calcula el total de páginas
+            result_count = connection.execute(
+                text('SELECT COUNT(*) FROM season_specification WHERE season_specification.season LIKE :buscar'),
+                {"buscar": f"%{buscar}%"}
+            )
+            total_seasons = result_count.scalar()
+            total_pages = (total_seasons + limit - 1) // limit
 
-            # Generar el HTML para la tabla
             html = """
             <table>
                 <thead>
@@ -541,15 +639,19 @@ def buscador_season():
             </table>
             """
 
-            # Agregar los enlaces de paginación
-            html += f"""
+            html += """
                 <div class="paginacion">
-                    <a href="#" onclick="cargarProductos({page-1})" {"style='pointer-events: none;'" if page == 1 else ""}>Anterior</a>
-                    <a href="#" onclick="cargarProductos({page+1})" {"style='pointer-events: none;'" if page == total_pages else ""}>Siguiente</a>
-                </div>
             """
+            if page > 1:
+                html += f"""
+                    <a href="#" onclick="paginacion({page-1})">Anterior</a>
+                """
+            if page < total_pages:
+                html += f"""
+                    <a href="#" onclick="paginacion({page+1})">Siguiente</a>
+                """
+            html += "</div>"
 
-            # Solo devolver el HTML de la tabla y la paginación
             return Response(html, mimetype='text/html')
 
     except Exception as e:
@@ -560,10 +662,14 @@ def buscador_season():
 def buscador_users():
     informacion = request.get_json()
     buscar = informacion.get('buscar', '')
-    
+    page = int(request.args.get('page', 1))  # Página actual
+    limit = 10  # Número de elementos por página
+    offset = (page - 1) * limit  # Calcular desplazamiento
+
     try:
         init_db()
         with engine.connect() as connection:
+            # Consulta SQL con búsqueda, límite y desplazamiento
             sql_query = """
                 SELECT users.User, users.Email, users.Name, users.Surname, users.Lastname, users.Rol, users.Id_user
                 FROM users
@@ -573,11 +679,28 @@ def buscador_users():
                 OR users.Surname LIKE :buscar
                 OR users.Lastname LIKE :buscar
                 OR users.Rol LIKE :buscar
+                OR users.Estado LIKE :buscar
+                LIMIT :limit OFFSET :offset;
+            """
+            result = connection.execute(text(sql_query), {"buscar": f"%{buscar}%", "limit": limit, "offset": offset})
+            contenido = result.fetchall()
+
+            # Contar el total de registros que coinciden con la búsqueda
+            count_query = """
+                SELECT COUNT(*) 
+                FROM users
+                WHERE users.User LIKE :buscar
+                OR users.Email LIKE :buscar
+                OR users.Name LIKE :buscar
+                OR users.Surname LIKE :buscar
+                OR users.Lastname LIKE :buscar
+                OR users.Rol LIKE :buscar
                 OR users.Estado LIKE :buscar;
             """
-            result = connection.execute(text(sql_query), {"buscar": f"%{buscar}%"})
-            contenido = result.fetchall()
-            
+            total_count = connection.execute(text(count_query), {"buscar": f"%{buscar}%"}).scalar()
+            total_pages = (total_count + limit - 1) // limit  # Total de páginas
+
+            # Generar el HTML para la tabla
             html = """
             <table>
                 <thead>
@@ -588,7 +711,7 @@ def buscador_users():
                         <th>Apellido paterno</th>
                         <th>Apellido Materno</th>
                         <th>Rol</th>
-                        <th></th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -603,33 +726,72 @@ def buscador_users():
                         <td>{info[4]}</td>
                         <td>{info[5]}</td>
                         <td>
-                            <button onclick="editarProducto({info[6]})" class="editar">Editar/Más detalles</button>
+                            <button onclick="detalleProductos({info[6]})" class="detalles">Detalles</button>
+                            <button onclick="editarProducto({info[6]})" class="editar">Editar</button>
                             <button onclick="eliminarProducto({info[6]})" class="eliminar">Eliminar</button>
                         </td>
                     </tr>
-                    
                 """
-
             html += """
                 </tbody>
             </table>
             """
-            
+
+            # Agregar botones de paginación
+            html += """
+                <div class="paginacion">
+            """
+            if page > 1:
+                html += f'<button onclick="buscarUsuarios(\'{buscar}\', {page-1})">Anterior</button>'
+            if page < total_pages:
+                html += f'<button onclick="buscarUsuarios(\'{buscar}\', {page+1})">Siguiente</button>'
+            html += """
+                </div>
+            """
+
+            # Devolver el HTML generado
             return Response(html, mimetype='text/html')
-    except:
+
+    except Exception as e:
+        print(f"Error: {e}")
         return Response("Error 404", mimetype='text/html')
 
 @app.route('/api/buscador_productos', methods=['POST'])
 def buscador_productos():
     informacion = request.get_json()
     buscar = informacion.get('buscar', '')
-    
+    page = int(request.args.get('page', 1))  # Obtener el número de página (por defecto es 1)
+    limit = 10  # Número de productos por página
+    offset = (page - 1) * limit  # Calcular el desplazamiento para la consulta
+
     try:
         init_db()
         with engine.connect() as connection:
             sql_query = """
-                SELECT products.Name, products.Model, products.Size, products.Material_composition, products.Price_per_unit, products.Color, products.Id_product FROM products
-                INNER JOIN season_specification ON products.FK_id_season=season_specification.Id_season INNER JOIN users ON products.FK_Id_user=users.Id_user
+                SELECT products.Name, products.Model, products.Size, products.Material_composition, products.Price_per_unit, products.Color, products.Id_product
+                FROM products
+                INNER JOIN season_specification ON products.FK_id_season = season_specification.Id_season
+                INNER JOIN users ON products.FK_Id_user = users.Id_user
+                WHERE 
+                    products.Model LIKE :buscar OR
+                    season_specification.season LIKE :buscar OR
+                    products.Size LIKE :buscar OR
+                    products.Name LIKE :buscar OR
+                    products.Description LIKE :buscar OR
+                    products.Price_per_unit LIKE :buscar OR
+                    products.Color LIKE :buscar OR
+                    users.User LIKE :buscar
+                LIMIT :limit OFFSET :offset;
+            """
+            result = connection.execute(text(sql_query), {"buscar": f"%{buscar}%", "limit": limit, "offset": offset})
+            contenido = result.fetchall()
+
+            # Contar el total de registros para calcular el número total de páginas
+            count_query = """
+                SELECT COUNT(*) 
+                FROM products
+                INNER JOIN season_specification ON products.FK_id_season = season_specification.Id_season
+                INNER JOIN users ON products.FK_Id_user = users.Id_user
                 WHERE 
                     products.Model LIKE :buscar OR
                     season_specification.season LIKE :buscar OR
@@ -640,9 +802,11 @@ def buscador_productos():
                     products.Color LIKE :buscar OR
                     users.User LIKE :buscar;
             """
-            result = connection.execute(text(sql_query), {"buscar": f"%{buscar}%"})
-            contenido = result.fetchall()
-            
+            result_count = connection.execute(text(count_query), {"buscar": f"%{buscar}%"})
+            total_products = result_count.scalar()  # Número total de registros
+            total_pages = (total_products + limit - 1) // limit  # Número total de páginas
+
+            # Generar el HTML para la tabla
             html = """
             <table>
                 <thead>
@@ -650,10 +814,10 @@ def buscador_productos():
                         <th>Producto</th>
                         <th>Modelo</th>
                         <th>Tamaño</th>
-                        <th>Material de composisión</th>
+                        <th>Material de composición</th>
                         <th>Precio</th>
                         <th>Color</th>
-                        <th></th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -673,16 +837,31 @@ def buscador_productos():
                             <button onclick="eliminarProducto({info[6]})" class="eliminar">Eliminar</button>
                         </td>
                     </tr>
-                    
                 """
-
             html += """
                 </tbody>
             </table>
             """
-            
+
+            # Agregar los botones de paginación
+            html += """
+                <div class="paginacion">
+            """
+            # Mostrar botón "Anterior" si no es la primera página
+            if page > 1:
+                html += f'<a href="#" onclick="buscador({page-1})">Anterior</a>'
+            # Mostrar botón "Siguiente" si no es la última página
+            if page < total_pages:
+                html += f'<a href="#" onclick="buscador({page+1})">Siguiente</a>'
+            html += """
+                </div>
+            """
+
+            # Devolver el HTML generado
             return Response(html, mimetype='text/html')
-    except:
+
+    except Exception as e:
+        print(f"Error: {e}")
         return Response("Error 404", mimetype='text/html')
 
 @app.route('/api/comentarios_producto', methods=['POST','GET'])
@@ -739,63 +918,103 @@ def comentarios_producto():
     except:
         return Response("Error 404", mimetype='text/html')
     
-@app.route('/api/mostrador_productos_buscados', methods=['POST','GET'])
+@app.route('/api/mostrador_productos_buscados', methods=['POST', 'GET'])
 def mostrador_productos_buscados():
     try:
         data = request.json
         buscar = data.get('buscar', '')  # Obtiene el valor de 'buscar'
-        categoria = data.get('categoria', '') 
+        categoria = data.get('categoria', '')
+        page = int(request.args.get('page', 1))  # Número de página, por defecto 1
+        limit = 20  # Número de productos por página
+        offset = (page - 1) * limit  # Calcular el desplazamiento para la consulta
+
         init_db()
         with engine.connect() as connection:
+            # Definir la consulta según la categoría
             match categoria:
                 case "Model":
                     sql_query = """
-                        SELECT products.url_imagen, products.Name, products.Color, products.Price_per_unit, products.Id_product FROM products WHERE products.Model LIKE :coso;
+                        SELECT products.url_imagen, products.Name, products.Color, products.Price_per_unit, products.Id_product
+                        FROM products WHERE products.Model LIKE :coso LIMIT :limit OFFSET :offset;
                     """
                 case "Size":
                     sql_query = """
-                        SELECT products.url_imagen, products.Name, products.Color, products.Price_per_unit, products.Id_product FROM products WHERE products.Size LIKE :coso;
+                        SELECT products.url_imagen, products.Name, products.Color, products.Price_per_unit, products.Id_product
+                        FROM products WHERE products.Size LIKE :coso LIMIT :limit OFFSET :offset;
                     """
                 case "Name":
                     sql_query = """
-                        SELECT products.url_imagen, products.Name, products.Color, products.Price_per_unit, products.Id_product FROM products WHERE products.Name LIKE :coso;
+                        SELECT products.url_imagen, products.Name, products.Color, products.Price_per_unit, products.Id_product
+                        FROM products WHERE products.Name LIKE :coso LIMIT :limit OFFSET :offset;
                     """
                 case "Description":
                     sql_query = """
-                        SELECT products.url_imagen, products.Name, products.Color, products.Price_per_unit, products.Id_product FROM products WHERE products.Description LIKE :coso;
+                        SELECT products.url_imagen, products.Name, products.Color, products.Price_per_unit, products.Id_product
+                        FROM products WHERE products.Description LIKE :coso LIMIT :limit OFFSET :offset;
                     """
                 case "Color":
                     sql_query = """
-                        SELECT products.url_imagen, products.Name, products.Color, products.Price_per_unit, products.Id_product FROM products WHERE products.Color LIKE :coso;
+                        SELECT products.url_imagen, products.Name, products.Color, products.Price_per_unit, products.Id_product
+                        FROM products WHERE products.Color LIKE :coso LIMIT :limit OFFSET :offset;
                     """
                 case _:
                     return Response("Error 404", mimetype='text/html')
-                
-            result = connection.execute(text(sql_query), {"coso":buscar})
+
+            # Ejecutar la consulta para obtener los productos
+            result = connection.execute(text(sql_query), {"coso": f"%{buscar}%", "limit": limit, "offset": offset})
             contenido = result.fetchall()
 
-            html = ""
+            # Consultar el número total de productos que coinciden con la búsqueda
+            count_query = """
+                SELECT COUNT(*) FROM products WHERE
+                    products.Model LIKE :coso OR
+                    products.Size LIKE :coso OR
+                    products.Name LIKE :coso OR
+                    products.Description LIKE :coso OR
+                    products.Color LIKE :coso;
+            """
+            result_count = connection.execute(text(count_query), {"coso": f"%{buscar}%"})
+            total_products = result_count.scalar()  # Total de productos encontrados
+            total_pages = (total_products + limit - 1) // limit  # Calcular número total de páginas
 
+            # Generar el HTML para los productos
+            html = ""
             for info in contenido:
-                direccion_imagen= url_for('static', filename=f'image/imagenes_productos/{info[0]}', _external=True)
+                direccion_imagen = url_for('static', filename=f'image/imagenes_productos/{info[0]}', _external=True)
                 html += f"""
-                        <div class="producto">
-                            <a href="/producto?id={info[4]}">
-                                <div id="imagen">
-                                    <img src="{direccion_imagen}" alt="{info[0]}">
-                                </div>
-                                <div id="info">
-                                    <h3 id="nombre-producto">{info[1]}</h3>
-                                    <p id="color-modelo">{info[2]}</p>
-                                    <strong id="precio">${info[3]}</strong>
-                                </div>
-                            </a>
-                        </div>
+                    <div class="producto">
+                        <a href="/producto?id={info[4]}">
+                            <div id="imagen">
+                                <img src="{direccion_imagen}" alt="{info[0]}">
+                            </div>
+                            <div id="info">
+                                <h3 id="nombre-producto">{info[1]}</h3>
+                                <p id="color-modelo">{info[2]}</p>
+                                <strong id="precio">${info[3]}</strong>
+                            </div>
+                        </a>
+                    </div>
                 """
 
+            # Agregar los botones de paginación
+            html += """
+                <div class="paginacion">
+            """
+            # Botón "Anterior"
+            if page > 1:
+                html += f'<a href="#" onclick="buscar_producto_select({page-1})">Anterior</a>'
+            # Botón "Siguiente"
+            if page < total_pages:
+                html += f'<a href="#" onclick="buscar_producto_select({page+1})">Siguiente</a>'
+            html += """
+                </div>
+            """
+
             return Response(html, mimetype='text/html')
-    except:
+    except Exception as e:
+        print(f"Error: {e}")
         return Response("Error 404", mimetype='text/html')
+
 #Registros
 @app.route('/registro_usuario', methods=['POST'])
 def signup():

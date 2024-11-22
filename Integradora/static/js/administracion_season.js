@@ -18,6 +18,43 @@ function cargarProductos(page) {
         .catch(error => console.error('Error:', error));
 }
 
+// Buscador para productos
+function buscador(page = 1) {
+    const buscar = document.getElementById('buscador').value;
+
+    fetch('/api/buscador_season?page=' + page, {  // Ahora enviamos 'page' en la URL
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ buscar: buscar })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error en la solicitud');
+        }
+        return response.text();  // Cambiado de .json() a .text() para recibir HTML
+    })
+    .then(html => {
+        // Muestra los resultados HTML en el contenedor
+        const resultsContainer = document.getElementById('administracion-tabla');
+        resultsContainer.innerHTML = html;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+// Función para manejar la paginación
+function paginacion(page) {
+    const buscar = document.getElementById('buscador').value;
+    if (buscar === '') {
+        cargarProductos(page);  // Llamar a cargarProductos si no hay búsqueda
+    } else {
+        buscador(page);  // Llamar a buscador si hay búsqueda
+    }
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////    
 function eliminarProducto(param) {
     //const confirmacion = confirmarEliminacion();
@@ -75,7 +112,8 @@ function eliminarProducto(param) {
         }
     });
 }
-//Buscador
+
+/*
 function buscador() {
     const buscar = document.getElementById('buscador').value;
 
@@ -101,6 +139,7 @@ function buscador() {
         console.error('Error:', error);
     });
 }
+ */
 ///Modal de registro
 document.addEventListener("DOMContentLoaded", function() {
     // Obtiene el modal

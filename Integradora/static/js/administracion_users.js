@@ -1,4 +1,48 @@
 document.addEventListener('DOMContentLoaded', function() {
+    cargarUsuarios(1); // Cargar la primera página de la tabla
+});
+
+// Función para cargar usuarios de una página específica
+function cargarUsuarios(page) {
+    fetch('/api/tabla_users?page=' + page)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error en la red: ' + response.statusText);
+            }
+            return response.text();
+        })
+        .then(data => {
+            // Actualizar el contenido de la tabla
+            document.getElementById('administracion-tabla').innerHTML = data;
+        })
+        .catch(error => console.error('Error:', error));
+}
+function buscarUsuarios(buscar, page) {
+    fetch('/api/buscador_users?page=' + page, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ buscar: buscar })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error en la solicitud');
+        }
+        return response.text();
+    })
+    .then(html => {
+        // Actualiza la tabla con los resultados de búsqueda
+        const resultsContainer = document.getElementById('administracion-tabla');
+        resultsContainer.innerHTML = html;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+/*
+document.addEventListener('DOMContentLoaded', function() {
     fetch('/api/tabla_users')
         .then(response => {
             if (!response.ok) {
@@ -11,6 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => console.error('Error:', error));
 });
+ */
 
 function eliminarProducto(param) {
     const confirmacion = confirm("¿Estás seguro de que deseas eliminar este usuario? (Ya no sera reversible esta operación)");
