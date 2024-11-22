@@ -57,10 +57,11 @@ function paginacion(page) {
 
 ///////////////////////////////////////////////////////////////////////////////////////    
 function eliminarProducto(param) {
-    //const confirmacion = confirmarEliminacion();
+    const buscar = document.getElementById('temporadaeli').value;
+
     Swal.fire({
         title: '¿Estás seguro?',
-        text: "Esta acción eliminará el producto. No podras recuperarlo!",
+        text: "Esta acción eliminará el producto. ¡No podrás recuperarlo!",
         icon: 'warning',
         iconColor: '#000000',
         showCancelButton: true,
@@ -78,13 +79,13 @@ function eliminarProducto(param) {
             // Mostrar la pantalla de carga
             document.getElementById('loading').style.display = 'flex';
         
-            // Enviar solo el parámetro 'param' a Flask
+            // Enviar 'param' y 'buscar' a Flask
             fetch('/eliminar_season', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ parametro: param })
+                body: JSON.stringify({ parametro: param, temporada: buscar }) // Incluye 'temporada' en el cuerpo
             })
             .then(response => {
                 if (!response.ok) {
@@ -103,7 +104,6 @@ function eliminarProducto(param) {
             .catch(error => {
                 console.error('Error:', error);
                 showServerErrorAlert();
-                //alert("Error al eliminar: " + error.message); // Mostrar alerta de error
             })
             .finally(() => {
                 // Asegurarse de ocultar la pantalla de carga en cualquier caso
@@ -113,6 +113,33 @@ function eliminarProducto(param) {
     });
 }
 
+
+function PantallaeliminacionProducto(id) {
+    var modal = document.getElementById("miModal2");
+    modal.style.display = "block"; // Muestra el modal
+
+    fetch('/api/buscador_season_delete', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id: id })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error en la solicitud');
+        }
+        return response.text(); // Cambiado a text() para manejar HTML
+    })
+    .then(html => {
+        // Inserta el HTML en el modal
+        document.getElementById('miModal2').querySelector('.modal-contenido').innerHTML = html;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('miModal2').querySelector('.modal-contenido').innerText = 'Error en la edición';
+    });
+}
 /*
 function buscador() {
     const buscar = document.getElementById('buscador').value;

@@ -315,7 +315,7 @@ def tabla_season_specification():
                         <td>{info[0]}</td>
                         <td>
                             <button onclick="editarProducto({info[1]})" class="editar">Editar</button>
-                            <button onclick="eliminarProducto({info[1]})" class="eliminar">Eliminar</button>
+                            <button onclick="PantallaeliminacionProducto({info[1]})" class="eliminar">Eliminar</button>
                         </td>
                     </tr>
                 """
@@ -1380,36 +1380,44 @@ def eliminar_season():
     init_db()
 
     identificador = request.get_json()
-    id = identificador.get('parametro')
-    
-    #time.sleep(5)  #Espera 5 segundos para testear pantalla de carga
+    id = identificador.get('parametro')  # ID de la temporada a eliminar
+    nueva_temporada = identificador.get('temporada')  # Nueva temporada para los productos
 
-    # Intento de insertar datos
+    if not id or not nueva_temporada:
+        return jsonify({"message": "Faltan parámetros requeridos."}), 400
+
     try:
         with engine.connect() as connection:
             # Iniciar una transacción
             connection.execute(text("START TRANSACTION;"))
-
-            sql_query = """
-                DELETE FROM season_specification WHERE `season_specification`.`Id_season` = :identificados;
+            
+            # Actualizar los productos para que apunten a la nueva temporada
+            sql_update = """
+                UPDATE `products` 
+                SET `FK_id_season` = :nueva_temporada 
+                WHERE `FK_id_season` = :id;
             """
-            print(f"Ejecutando consulta: {sql_query}")
+            update_result = connection.execute(
+                text(sql_update), 
+                {"id": id, "nueva_temporada": nueva_temporada}
+            )
 
-            # Ejecutar la consulta
-            connection.execute(text(sql_query), {
-                "identificados": id
-            })
+            # Eliminar la temporada original
+            sql_delete = """
+                DELETE FROM season_specification 
+                WHERE `Id_season` = :id;
+            """
+            connection.execute(text(sql_delete), {"id": id})
 
-            # Finalizar transacción
+            # Confirmar la transacción
             connection.execute(text("COMMIT;"))
 
-        return jsonify({"message": "Eliminacion exitosa"}), 200
+        return jsonify({"message": "Eliminación exitosa y productos reasignados."}), 200
     except Exception as e:
         # Hacer rollback en caso de error
         with engine.connect() as connection:
             connection.execute(text("ROLLBACK;"))
 
-        # Manejo de errores (nimodillo)
         return jsonify({"message": f"Error al eliminar: {str(e)}"}), 500
 
 @app.route('/eliminar_usuarios', methods=['POST'])
@@ -1822,7 +1830,59 @@ def buscador_season_edit():
     except Exception as e:
         print(f"Error en la consulta: {e}")
         return Response("Error 404", mimetype='text/html')
-  
+
+@app.route('/api/buscador_season_delete', methods=['POST'])
+def buscador_season_delete():
+    informacion = request.get_json()
+    id_contenido = informacion.get('id')
+
+    try:
+        init_db()
+        with engine.connect() as connection:
+            # Consulta para obtener la temporada actual
+            sql_query = """
+                SELECT season_specification.season, season_specification.Id_season 
+                FROM season_specification 
+                WHERE season_specification.Id_season = :id;
+            """
+            result = connection.execute(text(sql_query), {"id": id_contenido})
+            contenido = result.fetchone()
+
+            if contenido is None:
+                return Response("No se encontró contenido", mimetype='text/html')
+
+            # Consulta para obtener todas las temporadas
+            sql_all = """
+                SELECT season_specification.Id_season, season_specification.season 
+                FROM season_specification;
+            """
+            temporadas = connection.execute(text(sql_all)).fetchall()
+
+            # Construcción del HTML
+            html = f"""
+            <span class="cerrar">&times;</span>
+            <div class="alinear">
+                <h1>Eliminación de temporada</h1>
+                <br>
+                <h2>Selecciona una temporada para remplazar la temporada a los productos</h2>
+                <select id="temporadaeli">
+            """
+            for info in temporadas:
+                if id_contenido != info[0]:  # Excluir la temporada actual
+                    html += f'<option value="{info[0]}">{info[1]}</option>'
+
+            html += f"""
+                </select>
+                <br>
+                <button id="registrar" onclick="eliminarProducto({contenido[1]})">Actualizar</button>
+            </div>
+            """
+            
+            return Response(html, mimetype='text/html')
+    except Exception as e:
+        print(f"Error en la consulta: {e}")
+        return Response("Error 404: Algo salió mal en la consulta", mimetype='text/html')
+
 @app.route('/api/buscador_comentario_edit', methods=['POST'])
 def buscador_comentario_edit():
     informacion = request.get_json()
@@ -2730,8 +2790,7 @@ def inicializar_variable():
         
     if 'usuario_usuario' not in session:
         session['usuario_usuario'] = None
-    
-    
+
 @app.route('/cuenta_usuario', methods=['GET','POST'])
 def cuenta_usuario():
     with engine.connect() as connection:
