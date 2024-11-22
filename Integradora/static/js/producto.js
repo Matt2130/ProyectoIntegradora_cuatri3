@@ -29,16 +29,19 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-function registrarcomentario(){
+function registrarcomentario() {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
 
     const id = urlParams.get('id');
-    let comentario = document.getElementById('nuevo-comentario').value;
+    let comentario = document.getElementById('nuevo-comentario').value.trim();
     let calif = document.getElementById('califa').value;
-    //console.log(id);
-    //console.log(calif);
-    //console.log(comentario);
+
+    // Validación de campos
+    if (!calif) {
+        alert("Por favor, Llenar el campo de calificación.");
+        return;
+    }
 
     fetch('/registrar_comentario', {
         method: 'POST',
@@ -53,27 +56,20 @@ function registrarcomentario(){
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error('Error en la solicitud');
+            return response.json().then(err => { throw new Error(err.message); });
         }
         return response.json();
     })
     .then(data => {
-        alert("Registro exitoso");
-        window.location.reload();
-        /*
-        RegistrarProducto();
-        setTimeout(() => {
-            window.location.reload();
-            //window.location.href = '/administrador_season'; // Redirige después del éxito
-        }, 500);
-         */
+        alert(data.message);
+        window.location.reload();// Recarga solo la sección de comentarios
     })
     .catch(error => {
         console.error('Error:', error);
-        //showServerErrorAlert();
-        alert("Error al registrar: " + error.message);
+        alert("Error al registrar el comentario: " + error.message);
     });
 }
+
 ////Registrar comentrio///////////////////////////
 /*
 const stars = document.querySelectorAll('.star');
@@ -223,6 +219,11 @@ function editarsqlcomentario(id_comentario){
     //console.log(id);
     let comentario = document.getElementById('comentariod').value;
     let calif = document.getElementById('califad').value;
+
+    if (!calif) {
+        alert("Por favor, Llenar el campo de calificación.");
+        return;
+    }
 
     fetch('/actualizar_comentario', {
         method: 'POST',

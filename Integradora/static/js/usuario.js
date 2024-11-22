@@ -86,6 +86,11 @@ function editarsqlcontenidousuariosolo(){
     const contraseñanueva = document.getElementById('contraseñanuevad').value;
     const contraseñaanterior = document.getElementById('contraseñaanteriord').value;
 
+    if (!usuario || !email || !nombre || !apellidop || !apellidom || !contraseñaanterior) {
+        alert('Por favor, completa todos los campos exepto "Nueva contraseña" de no queres cambiar contraseña.');
+        return;  // Detener la ejecución si algún campo está vacío
+    }
+
     const formData = new FormData();
     formData.append('usuario', usuario);
     formData.append('email', email);

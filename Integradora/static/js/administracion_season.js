@@ -167,6 +167,11 @@ document.addEventListener("DOMContentLoaded", function() {
 function registrartemporadao(){
     const temporada = document.getElementById('temporada').value;
 
+    if (!temporada) {
+        alert("Por favor, completa el campo de temporada.");
+        return;  // Detener la ejecución si el campo 'temporada' está vacío
+    }
+
     fetch('/registrar_season', {
         method: 'POST',
         headers: {
@@ -236,6 +241,11 @@ window.onclick = function(event) {
 function editarsqltemporada(idw){
     const season = document.getElementById('temporadad').value;
     const id = idw;
+
+    if (!season) {
+        alert("Por favor, completa el campo de temporada.");
+        return;  // Detener la ejecución si el campo 'temporada' está vacío
+    }
 
     fetch('/actualizar_temporada', {
         method: 'POST',

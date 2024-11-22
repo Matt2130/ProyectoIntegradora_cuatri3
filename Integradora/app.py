@@ -1170,40 +1170,42 @@ def registrar_comentario():
     calificacion = data.get('calificacion')
     comentario = data.get('comentario')
 
-    #time.sleep(5)  #Espera 5 segundos para testear pantalla de carga
-    
-    # Intento de insertar datos
     try:
         with engine.connect() as connection:
-            # Iniciar una transacción
+            # Validar si ya existe un comentario
+            sql_query = """
+                SELECT 1 FROM comments WHERE FK_Id_product = :id_producto AND FK_Id_customer = :id_usuario;
+            """
+            result = connection.execute(text(sql_query), {
+                "id_producto": id_produto,
+                "id_usuario": session['id_usuario']
+            }).fetchone()
+
+            if result:
+                return jsonify({"message": f"Ya existe un comentario registrado para este producto."}), 400
+
+            # Registrar nuevo comentario
             connection.execute(text("START TRANSACTION;"))
 
             sql_query = """
                 INSERT INTO `comments` (`Punctuation`, `Comment`, `FK_Id_customer`, `FK_Id_product`) 
                 VALUES (:calificacion, :comentario, :id_usuario, :id_produto);
             """
-
-            #print(f"Ejecutando consulta: {sql_query}")
-
-            # Ejecutar la consulta
             connection.execute(text(sql_query), {
                 "calificacion": calificacion,
                 "comentario": comentario,
-                "id_usuario":session['id_usuario'],
+                "id_usuario": session['id_usuario'],
                 "id_produto": id_produto,
             })
 
-            # Finalizar transacción
             connection.execute(text("COMMIT;"))
 
-        return jsonify({"message": "Registro exitoso"}), 200
+        return jsonify({"message": "Comentario registrado exitosamente."}), 200
+
     except Exception as e:
-        # Hacer rollback en caso de error
         with engine.connect() as connection:
             connection.execute(text("ROLLBACK;"))
-
-        # Manejo de errores (nimodillo)
-        return jsonify({"message": f"Error al registrar: {str(e)}"}), 500
+        return jsonify({"message": f"Error al registrar el comentario: {str(e)}"}), 500
 
 @app.route('/registrar_contactos', methods=['POST'])
 def registrar_contactos():
@@ -2725,6 +2727,10 @@ def inicializar_variable():
     
     if 'id_usuario' not in session:
         session['id_usuario'] = None
+        
+    if 'usuario_usuario' not in session:
+        session['usuario_usuario'] = None
+    
     
 @app.route('/cuenta_usuario', methods=['GET','POST'])
 def cuenta_usuario():

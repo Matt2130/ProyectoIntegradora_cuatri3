@@ -3,9 +3,6 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('signupForm').addEventListener('submit', function(e) {
         e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
     
-        // Pantalla de carga
-        document.getElementById('loading').style.display = 'flex';
-    
         const formData = {
             name: document.getElementById('name').value,
             lastname: document.getElementById('lastname').value,
@@ -14,7 +11,16 @@ document.addEventListener('DOMContentLoaded', function() {
             email: document.getElementById('email').value,
             password: document.getElementById('password').value,
         };
-    
+        
+        for (const key in formData) {
+            if (!formData[key]) {  // Si algún campo está vacío
+                alert(`Ningun campo puede estar vacio`);
+                return;  // Detener la ejecución si algún campo está vacío
+            }
+        }
+        // Pantalla de carga
+        document.getElementById('loading').style.display = 'flex';
+
         fetch('/registro_usuario', {
             method: 'POST',
             headers: {

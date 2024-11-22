@@ -175,6 +175,11 @@ function registrarproducto() {
     const color = document.getElementById('color').value;
     const materia = document.getElementById('materia').value;
 
+    if (!temporada || !tamaño || !nombre || !descripcion || !precio_lot || !color) {
+        alert("Por favor, completa todos los campos. (Exeptuando Material)");
+        return;  // Detener la ejecución si algún campo está vacío
+    }
+
     //Creae un FormData
     const formData = new FormData();
     formData.append('image', image);
@@ -298,6 +303,11 @@ function editarsqlcontenido(idw){
     const precio_lot = document.getElementById('precio_lotd').value;
     const color = document.getElementById('colord').value;
     const materia = document.getElementById('materiad').value;
+
+    if (!temporada || !tamaño || !nombre || !descripcion || !precio_lot || !color) {
+        alert("Por favor, completa todos los campos. (Exeptuando Material)");
+        return;  // Detener la ejecución si algún campo está vacío
+    }
 
     //Creae un FormData
     const formData = new FormData();

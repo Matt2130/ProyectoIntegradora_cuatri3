@@ -216,6 +216,11 @@ function editarsqlcontenido(idw){
     const estado = document.getElementById('estado').value;
     const id = idw;
 
+    if (!rol || !estado || !id) {
+        alert("Por favor, completa todos los campos.");
+        return;  // Detener la ejecución si algún campo está vacío
+    }
+
     fetch('/actualizar_user', {
         method: 'POST',
         headers: {
@@ -244,7 +249,6 @@ function editarsqlcontenido(idw){
 }
 //Registrar
 function registrartemporadao(){
-    document.getElementById('loading').style.display = 'flex';
 
     const formData = {
         name: document.getElementById('name').value,
@@ -254,6 +258,13 @@ function registrartemporadao(){
         email: document.getElementById('email').value,
         password: document.getElementById('password').value,
     };
+
+    if (!formData.name || !formData.lastname || !formData.surname || !formData.username || !formData.email || !formData.password) {
+        alert("Por favor, completa todos los campos.");
+        return;  // Detener la ejecución si algún campo está vacío
+    }
+
+    document.getElementById('loading').style.display = 'flex';
     fetch('/registro_usuario_administrador', {
         method: 'POST',
         headers: {

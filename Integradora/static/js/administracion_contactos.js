@@ -123,6 +123,11 @@ function registrarcontactos(){
     const whatsapp = document.getElementById('Whatsapp').value;
     const phone = document.getElementById('Telefono').value;
 
+    if (!facebook && !instagram && !tik_tok && !email && !twitter && !whatsapp && !phone) {
+        alert("Por favor, llena al menos un campo.");
+        return; // Detener la ejecución si todos los campos están vacíos
+    }
+
     fetch('/registrar_contactos', {
         method: 'POST',
         headers: {
@@ -208,6 +213,11 @@ function actualizartabalcontactos(idw){
     const phone = document.getElementById('Telefonod').value;
     const id = idw;
 
+    if (!facebook && !instagram && !tik_tok && !email && !twitter && !whatsapp && !phone) {
+        alert("Por favor, llena al menos un campo.");
+        return; // Detener la ejecución si todos los campos están vacíos
+    }
+    
     fetch('/actualizar_contacto', {
         method: 'POST',
         headers: {
