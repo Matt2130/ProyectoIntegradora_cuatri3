@@ -193,12 +193,14 @@ function cerrarModal() {
     var modal = document.getElementById("miModal2");
     modal.style.display = "none";
 }
+/*
 window.onclick = function(event) {
     var modal = document.getElementById("miModal2");
     if (event.target === modal) {
         cerrarModal();
     }
 }
+ */
 //Actualizacion
 function editarsqlcontenido(contenidoId) {
     const titulo = document.getElementById('tituloedit').value.trim();

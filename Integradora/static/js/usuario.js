@@ -50,7 +50,7 @@ function eliminarusuariosolito(param) {
                         popup: 'mi-alerta-redondeada' // Clase personalizada
                     }
                 }).then(() => {
-                    window.open('/administrador_user', '_self'); // Redirigir tras la eliminación
+                    window.open('/', '_self'); // Redirigir tras la eliminación
                 });
             })
             .catch(error => {
@@ -143,7 +143,6 @@ function editarsqlcontenidousuariosolo() {
 
     if (contraseñanueva) {
         const passwordPattern = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
-
         if (!passwordPattern.test(contraseñanueva)) {
             Swal.fire({
                 title: 'Error',
@@ -170,36 +169,85 @@ function editarsqlcontenidousuariosolo() {
     formData.append('contraseñanueva', contraseñanueva);
     formData.append('contraseñaanterior', contraseñaanterior);
 
-    document.getElementById('loading').style.display = 'flex';
+    // Expresión regular para validar correos
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-    fetch('/actualizar_usuario_solito', {
-        method: 'POST',
-        body: formData 
-    })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(data => {
-                throw new Error(data.message);
-            });
-        }
-        return response.json();
-    })
-    .then(data => {
-        document.getElementById('loading').style.display = 'none';
+    // Obtener el email del FormData
+    const emailValue = formData.get('email');
+
+    // Validar si el email tiene el formato correcto
+    if (!emailPattern.test(emailValue)) {
         Swal.fire({
-            title: 'Actualización exitosa',
-            icon: 'success',
-            iconColor: '#2b8c4b',
-            showConfirmButton: false, // No muestra botón
-            timer: 3000, // Desaparece automáticamente
+            title: 'Error',
+            text: 'El correo electrónico ingresado no es válido. Por favor, verifica.',
+            icon: 'error',
+            iconColor: '#ec221f',
+            confirmButtonColor: '#fed800',
             background: '#bfbfbf',
             backdrop: 'rgba(0,0,0,0.7)',
             customClass: {
                 popup: 'mi-alerta-redondeada'
             }
-        }).then(() => {
-            window.location.href = '/administrador_productos';
         });
+        return;
+    }
+
+
+    document.getElementById('loading').style.display = 'flex';
+
+    fetch('/actualizar_usuario_solito', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        const status = response.status; // Guardamos el estado HTTP
+        return response.json().then(data => ({ status, data }));
+    })
+    .then(({ status, data }) => {
+        document.getElementById('loading').style.display = 'none';
+
+        if (status === 200) {
+            Swal.fire({
+                title: 'Actualización exitosa',
+                icon: 'success',
+                iconColor: '#2b8c4b',
+                showConfirmButton: false,
+                timer: 3000,
+                background: '#bfbfbf',
+                backdrop: 'rgba(0,0,0,0.7)',
+                customClass: {
+                    popup: 'mi-alerta-redondeada'
+                }
+            }).then(() => {
+                window.location.reload();
+            });
+        } else if (status === 400) {
+            Swal.fire({
+                title: 'Error',
+                text: data.message, // Mensaje del backend
+                icon: 'warning',
+                iconColor: '#ec221f',
+                confirmButtonColor: '#fed800',
+                background: '#bfbfbf',
+                backdrop: 'rgba(0,0,0,0.7)',
+                customClass: {
+                    popup: 'mi-alerta-redondeada'
+                }
+            });
+        } else {
+            Swal.fire({
+                title: 'Error del servidor',
+                text: 'Ocurrió un problema. Inténtalo más tarde.',
+                icon: 'error',
+                iconColor: '#ec221f',
+                confirmButtonColor: '#fed800',
+                background: '#bfbfbf',
+                backdrop: 'rgba(0,0,0,0.7)',
+                customClass: {
+                    popup: 'mi-alerta-redondeada'
+                }
+            });
+        }
     })
     .catch(error => {
         console.error('Error:', error);
@@ -226,6 +274,23 @@ function showServerErrorAlert() {
         iconColor: '#ec221f',
         title: 'Error en el servidor',
         text: 'Hubo un problema al procesar tu solicitud. Intenta nuevamente más tarde',
+        showConfirmButton: false,
+        showCancelButton: true,
+        cancelButtonColor: '#fed800',
+        cancelButtonText: 'OK',
+        background: '#bfbfbf', // Fondo blanco de la alerta
+        backdrop: 'rgba(0,0,0,0.7)', // Fondo oscuro con transparencia
+        customClass: {
+            popup: 'mi-alerta-redondeada'
+        }
+    });
+}
+function contraseña_incorrecta() {
+    Swal.fire({
+        icon: 'error',
+        iconColor: '#ec221f',
+        title: 'Error en el servidor',
+        text: 'Contraseña incorrecta',
         showConfirmButton: false,
         showCancelButton: true,
         cancelButtonColor: '#fed800',

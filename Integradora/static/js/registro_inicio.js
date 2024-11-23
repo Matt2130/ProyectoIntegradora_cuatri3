@@ -12,6 +12,26 @@ document.addEventListener('DOMContentLoaded', function() {
             password: document.getElementById('password').value,
         };
         
+        // Expresión regular para validar correos
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+        // Validar si el email tiene el formato correcto
+        if (!emailPattern.test(formData.email)) {
+            Swal.fire({
+                title: 'Error',
+                text: 'El correo electrónico ingresado no es válido. Por favor, verifica.',
+                icon: 'error',
+                iconColor: '#ec221f',
+                confirmButtonColor: '#fed800',
+                background: '#bfbfbf',
+                backdrop: 'rgba(0,0,0,0.7)',
+                customClass: {
+                    popup: 'mi-alerta-redondeada'
+                }
+            });
+            return;
+        } 
+
         for (const key in formData) {
             if (!formData[key]) {  // Si algún campo está vacío
                 Swal.fire({
@@ -68,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return response.json();
         })
         .then(data => {
-            console.log(data.message);
+            //console.log(data.message);
             document.getElementById('loading').style.display = 'none';
             Swal.fire({
                 title: 'Registro exitoso',

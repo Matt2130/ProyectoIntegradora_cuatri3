@@ -102,13 +102,14 @@ function abrirModal() {
     span.onclick = function() {
         modal.style.display = "none"; // Cierra el modal al hacer clic en la "X"
     }
-
+    /*
     // Cierra el modal si se hace clic fuera de él
     window.onclick = function(event) {
         if (event.target === modal) {
             modal.style.display = "none";
         }
     }
+     */
 }
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -198,12 +199,14 @@ function cerrarModal() {
     var modal = document.getElementById("miModal2");
     modal.style.display = "none";
 }
+/*
 window.onclick = function(event) {
     var modal = document.getElementById("miModal2");
     if (event.target === modal) {
         cerrarModal();
     }
 }
+ */
 
 //Actualizar bd
 function actualizartabalcontactos(idw){

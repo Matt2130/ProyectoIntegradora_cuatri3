@@ -2,6 +2,7 @@ from flask import Flask, make_response, redirect, url_for, render_template, sess
 from sqlalchemy import create_engine, text
 from functools import wraps
 import os
+from werkzeug.security import generate_password_hash, check_password_hash
 #Se eliminara pero es para hacer pruebas
 import time
 
@@ -1092,6 +1093,7 @@ def signup():
     password = data.get('password')
     surname = data.get('surname')
 
+    password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=16)
     #time.sleep(5)  #Espera 5 segundos para testear pantalla de carga
 
     # Intento de insertar datos
@@ -1149,7 +1151,8 @@ def registro_usuario_administrador():
     surname = data.get('surname')
 
     #time.sleep(5)  #Espera 5 segundos para testear pantalla de carga
-
+    password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=16)
+    
     # Intento de insertar datos
     try:
         with engine.connect() as connection:
@@ -1809,7 +1812,7 @@ def buscador_contacto_edit():
                 return Response("No se encontró contenido", mimetype='text/html')
 
             html = f"""
-                <span class="cerrar">&times;</span>
+                <span class="cerrar" onclick="cerrarModal()">&times;</span>
             <h1>
                 Editar Contactos
             </h1>
@@ -1901,7 +1904,7 @@ def buscador_season_edit():
                 return Response("No se encontró contenido", mimetype='text/html')
 
             html = f"""
-            <span class="cerrar">&times;</span>
+            <span class="cerrar" onclick="cerrarModal()">&times;</span>
             <div class="alinear">
                 <h1>
                     Edición de temporada
@@ -1953,7 +1956,7 @@ def buscador_season_delete():
 
             # Construcción del HTML
             html = f"""
-            <span class="cerrar">&times;</span>
+            <span class="cerrar" onclick="cerrarModal()">&times;</span>
             <div class="alinear">
                 <h1>Eliminación de temporada</h1>
                 <br>
@@ -1967,7 +1970,7 @@ def buscador_season_delete():
             html += f"""
                 </select>
                 <br>
-                <button id="registrar" onclick="eliminarProducto({contenido[1]})">Actualizar</button>
+                <button id="registrar" onclick="eliminarProducto({contenido[1]})">Eliminar</button>
             </div>
             """
             
@@ -2006,7 +2009,7 @@ def buscador_users_delete():
 
             # Construcción del HTML
             html = """
-            <span class="cerrar">&times;</span>
+            <span class="cerrar" onclick="cerrarModal()">&times;</span>
             <div class="alinear">
                 <h1>Eliminación de Usuarios</h1>
                 <br>
@@ -2687,42 +2690,45 @@ def actualizar_usuario_solito():
             result = connection.execute(text(sql_query), {"id": session['id_usuario']})
             contenido = result.fetchone()
             
-            if contenido[0] == contraseñaanterior:
-                # Iniciar una transacción
-                connection.execute(text("START TRANSACTION;"))
-                
-                if not contraseñanueva:
-                    sql_query = """
-                        UPDATE `users` SET `User` = :usuario, `Email` = :correo, `Name` = :nombre, `Surname` = :apellidopaterno, `Lastname` = :apellidomaterno WHERE `users`.`Id_user` = :id_usuario;
-                    """
-                    # Ejecutar la consulta con los datos
-                    connection.execute(text(sql_query), {
-                        "usuario": usuario,
-                        "correo":email,
-                        "nombre":nombre,
-                        "apellidopaterno":apellidop,
-                        "apellidomaterno":apellidom,
-                        "id_usuario": session['id_usuario'],
-                    })
-                else:
-                    sql_query = """
-                        UPDATE `users` SET `User` = :usuario, `Password` = :contraseñanueva, `Email` = :correo, `Name` = :nombre, `Surname` = :apellidopaterno, `Lastname` = :apellidomaterno WHERE `users`.`Id_user` = :id_usuario;
-                    """
-                    # Ejecutar la consulta con los datos
-                    connection.execute(text(sql_query), {
-                        "usuario": usuario,
-                        "contraseñanueva":contraseñanueva,
-                        "correo":email,
-                        "nombre":nombre,
-                        "apellidopaterno":apellidop,
-                        "apellidomaterno":apellidom,
-                        "id_usuario": session['id_usuario'],
-                    })
-
-                # Finalizar transacción
-                connection.execute(text("COMMIT;"))
+            if not check_password_hash(contenido[0], contraseñaanterior):
+                return jsonify({"message": "Contraseña incorrecta"}), 400
+            
+            # Iniciar una transacción
+            connection.execute(text("START TRANSACTION;"))
+            
+            if not contraseñanueva:
+                sql_query = """
+                    UPDATE `users` SET `User` = :usuario, `Email` = :correo, `Name` = :nombre, `Surname` = :apellidopaterno, `Lastname` = :apellidomaterno WHERE `users`.`Id_user` = :id_usuario;
+                """
+                # Ejecutar la consulta con los datos
+                connection.execute(text(sql_query), {
+                    "usuario": usuario,
+                    "correo":email,
+                    "nombre":nombre,
+                    "apellidopaterno":apellidop,
+                    "apellidomaterno":apellidom,
+                    "id_usuario": session['id_usuario'],
+                })
             else:
-                return jsonify({"message": f"Error al actualizar contraseña incorrecta"}), 400
+                contraseñanueva = generate_password_hash(contraseñanueva, method='pbkdf2:sha256', salt_length=16)
+                
+                sql_query = """
+                    UPDATE `users` SET `User` = :usuario, `Password` = :contraseñanueva, `Email` = :correo, `Name` = :nombre, `Surname` = :apellidopaterno, `Lastname` = :apellidomaterno WHERE `users`.`Id_user` = :id_usuario;
+                """
+                # Ejecutar la consulta con los datos
+                connection.execute(text(sql_query), {
+                    "usuario": usuario,
+                    "contraseñanueva":contraseñanueva,
+                    "correo":email,
+                    "nombre":nombre,
+                    "apellidopaterno":apellidop,
+                    "apellidomaterno":apellidom,
+                    "id_usuario": session['id_usuario'],
+                })
+
+            # Finalizar transacción
+            connection.execute(text("COMMIT;"))
+            
         return jsonify({"message": "Actualizacion exitosa"}), 200
     except Exception as e:
         # Hacer rollback en caso de error
@@ -2777,13 +2783,24 @@ def login():
     try:
         with engine.connect() as connection:
             sql_query = """
-            SELECT users.Rol, users.Id_user, users.Name, users.Estado FROM users WHERE users.Password=:password AND users.Email=:email;
+            SELECT users.Password FROM users WHERE users.Email=:email;
             """
             result = connection.execute(text(sql_query), {
                 "email": email,
-                "password": password
             }).fetchone()
-
+            if not result:
+                 return jsonify({"message": "Usuario o contraseña incorrectos"})
+            
+            if not check_password_hash(result[0], password):
+                return jsonify({"message": "Usuario o contraseña incorrectos"})
+            
+            sql_query = """
+            SELECT users.Rol, users.Id_user, users.Name, users.Estado FROM users WHERE users.Email=:email;
+            """
+            result = connection.execute(text(sql_query), {
+                "email": email
+            }).fetchone()
+            
             if not result[3]=="Inactivo":
                 session['inicio_cesion'] = True
                 
@@ -3047,8 +3064,6 @@ def administrador():
     response.headers['Expires'] = '0'
 
     return response
-
-
 
 #######################################################################################################################
 @app.route('/catalogo')

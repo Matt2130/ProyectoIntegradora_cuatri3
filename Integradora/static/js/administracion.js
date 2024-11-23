@@ -284,12 +284,14 @@ function cerrarModal() {
     var modal = document.getElementById("miModal2");
     modal.style.display = "none";
 }
+/*
 window.onclick = function(event) {
     var modal = document.getElementById("miModal2");
     if (event.target === modal) {
         cerrarModal();
     }
 }
+ */
 //Modal para editar
 function editarProducto(id) {
     var modal = document.getElementById("miModal2");
@@ -322,12 +324,14 @@ function cerrarModal() {
     var modal = document.getElementById("miModal2");
     modal.style.display = "none";
 }
+/*
 window.onclick = function(event) {
     var modal = document.getElementById("miModal2");
     if (event.target === modal) {
         cerrarModal();
     }
 }
+ */
 
 //Actualizacion
 function editarsqlcontenido(idw){

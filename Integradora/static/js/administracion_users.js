@@ -225,15 +225,17 @@ function cerrarModal() {
     var modal = document.getElementById("miModal2");
     modal.style.display = "none";
 }
+/*
 window.onclick = function(event) {
     var modal = document.getElementById("miModal2");
     if (event.target === modal) {
         cerrarModal();
     }
 }
+ */
 
 //Modal para detalles
-function detalleProductos(id) {
+function detallesProducto(id) {
     var modal = document.getElementById("miModal2");
     modal.style.display = "block"; // Muestra el modal
 
@@ -326,6 +328,26 @@ function registrartemporadao() {
         });
         return; // Detener la ejecución si algún campo está vacío
     }
+
+    // Expresión regular para validar correos
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    // Validar si el email tiene el formato correcto
+    if (!emailPattern.test(formData.email)) {
+        Swal.fire({
+            title: 'Error',
+            text: 'El correo electrónico ingresado no es válido. Por favor, verifica.',
+            icon: 'error',
+            iconColor: '#ec221f',
+            confirmButtonColor: '#fed800',
+            background: '#bfbfbf',
+            backdrop: 'rgba(0,0,0,0.7)',
+            customClass: {
+                popup: 'mi-alerta-redondeada'
+            }
+        });
+        return;
+    } 
 
     // Mostrar pantalla de carga
     document.getElementById('loading').style.display = 'flex';
