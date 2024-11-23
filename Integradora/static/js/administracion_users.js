@@ -67,21 +67,6 @@ function PantallaeliminacionProducto(id) {
         document.getElementById('miModal2').querySelector('.modal-contenido').innerText = 'Error en la edición';
     });
 }
-/*
-document.addEventListener('DOMContentLoaded', function() {
-    fetch('/api/tabla_users')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error en la red: ' + response.statusText);
-            }
-            return response.text();
-        })
-        .then(data => {
-            document.getElementById('administracion-tabla').innerHTML = data;
-        })
-        .catch(error => console.error('Error:', error));
-});
- */
 
 function eliminarProducto(param) {
     const confirmacion = confirm("¿Estás seguro de que deseas eliminar este usuario? (Ya no sera reversible esta operación)");
@@ -247,6 +232,8 @@ function editarsqlcontenido(idw){
         return;  // Detener la ejecución si algún campo está vacío
     }
 
+    document.getElementById('loading').style.display = 'flex';
+
     fetch('/actualizar_user', {
         method: 'POST',
         headers: {
@@ -266,10 +253,12 @@ function editarsqlcontenido(idw){
     })
     .then(data => {
         alert(data.message); 
+        document.getElementById('loading').style.display = 'none';
         window.location.href = '/administrador_user';
     })
     .catch(error => {
         console.error('Error:', error);
+        document.getElementById('loading').style.display = 'none';
         alert("Error al registrar: " + error.message);
     });
 }

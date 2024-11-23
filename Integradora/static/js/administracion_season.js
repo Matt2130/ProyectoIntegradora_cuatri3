@@ -140,33 +140,7 @@ function PantallaeliminacionProducto(id) {
         document.getElementById('miModal2').querySelector('.modal-contenido').innerText = 'Error en la edición';
     });
 }
-/*
-function buscador() {
-    const buscar = document.getElementById('buscador').value;
 
-    fetch('/api/buscador_season', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ buscar: buscar })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Error en la solicitud');
-        }
-        return response.text();  // Cambiado de .json() a .text() para recibir HTML
-    })
-    .then(html => {
-        // Muestra los resultados HTML en el contenedor
-        const resultsContainer = document.getElementById('administracion-tabla');
-        resultsContainer.innerHTML = html;
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-}
- */
 ///Modal de registro
 document.addEventListener("DOMContentLoaded", function() {
     // Obtiene el modal
@@ -199,6 +173,8 @@ function registrartemporadao(){
         return;  // Detener la ejecución si el campo 'temporada' está vacío
     }
 
+    document.getElementById('loading').style.display = 'flex';
+
     fetch('/registrar_season', {
         method: 'POST',
         headers: {
@@ -219,10 +195,12 @@ function registrartemporadao(){
         setTimeout(() => {
             window.location.href = '/administrador_season'; // Redirige después del éxito
         }, 500);
+        document.getElementById('loading').style.display = 'none';
     })
     .catch(error => {
         console.error('Error:', error);
         showServerErrorAlert();
+        document.getElementById('loading').style.display = 'none';
         //alert("Error al registrar: " + error.message);
     });
 }
@@ -274,6 +252,8 @@ function editarsqltemporada(idw){
         return;  // Detener la ejecución si el campo 'temporada' está vacío
     }
 
+    document.getElementById('loading').style.display = 'flex';
+
     fetch('/actualizar_temporada', {
         method: 'POST',
         headers: {
@@ -296,10 +276,12 @@ function editarsqltemporada(idw){
         setTimeout(() => {
             window.location.href = '/administrador_season'; // Redirige después del éxito
         }, 1000);
+        document.getElementById('loading').style.display = 'none';
     })
     .catch(error => {
         console.error('Error:', error);
         showServerErrorAlert();
+        document.getElementById('loading').style.display = 'none';
         //alert("Error al registrar: " + error.message);
     });
 }

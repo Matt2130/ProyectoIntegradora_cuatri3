@@ -109,6 +109,8 @@ function editarsqlcontenidousuariosolo(){
     formData.append('contraseñanueva', contraseñanueva);
     formData.append('contraseñaanterior', contraseñaanterior);
 
+    document.getElementById('loading').style.display = 'flex';
+
     fetch('/actualizar_usuario_solito', {
         method: 'POST',
         body: formData 
@@ -121,12 +123,14 @@ function editarsqlcontenidousuariosolo(){
     })
     .then(data => {
         ActualizarProducto();
+        document.getElementById('loading').style.display = 'none';
 /*         alert(data.message); 
         window.location.href = '/administrador_productos'; */
     })
     .catch(error => {
         console.error('Error:', error);
 /*         alert("Error al registrar: " + error.message); */
+        document.getElementById('loading').style.display = 'none';
         showServerErrorAlert();
     });
 }

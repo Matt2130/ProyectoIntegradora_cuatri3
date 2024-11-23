@@ -21,6 +21,8 @@ function buscar_producto_select(page = 1) {
     const categoria = document.getElementById('categoria').value;
     const buscar = document.getElementById('buscador').value;
 
+    document.getElementById('loading').style.display = 'flex';
+
     fetch('/api/mostrador_productos_buscados?page=' + page, {
         method: 'POST',
         headers: {
@@ -39,10 +41,12 @@ function buscar_producto_select(page = 1) {
     })
     .then(html => {
         // Actualiza el contenido del catálogo
+        document.getElementById('loading').style.display = 'none';
         const resultsContainer = document.getElementById('catalogo');
         resultsContainer.innerHTML = html;
     })
     .catch(error => {
         console.error('Error:', error);
+        document.getElementById('loading').style.display = 'none';
     });
 }

@@ -43,6 +43,8 @@ function registrarcomentario() {
         return;
     }
 
+    document.getElementById('loading').style.display = 'flex';
+
     fetch('/registrar_comentario', {
         method: 'POST',
         headers: {
@@ -61,43 +63,17 @@ function registrarcomentario() {
         return response.json();
     })
     .then(data => {
+        document.getElementById('loading').style.display = 'none';
         alert(data.message);
         window.location.reload();// Recarga solo la sección de comentarios
     })
     .catch(error => {
         console.error('Error:', error);
+        document.getElementById('loading').style.display = 'none';
         alert("Error al registrar el comentario: " + error.message);
     });
 }
 
-////Registrar comentrio///////////////////////////
-/*
-const stars = document.querySelectorAll('.star');
-
-stars.forEach(function(star) {
-    star.addEventListener('click', function() {
-        const id = this.dataset.id;
-        const url = `/producto/like/${id}`;
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-            });
-    });
-});
-
-stars.forEach(function(star, index){
-    star.addEventListener('click', function(){
-        for (let i=0; i<=index; i++){
-            stars[i].classList.add('checked');
-        }
-        for (let i=index+1; i<stars.length; i++){
-            stars[i].classList.remove('checked');
-        }
-        punctuation=i;
-    });
-})
- */
 //Eliminar comentario
 
 function eliminarComentario(param) {
@@ -225,6 +201,8 @@ function editarsqlcomentario(id_comentario){
         return;
     }
 
+    document.getElementById('loading').style.display = 'flex';
+
     fetch('/actualizar_comentario', {
         method: 'POST',
         headers: {
@@ -243,11 +221,12 @@ function editarsqlcomentario(id_comentario){
         return response.json();
     })
     .then(data => {
-        //alert(data.message); 
+        document.getElementById('loading').style.display = 'none';
         ActualizarProducto();
     })
     .catch(error => {
         console.error('Error:', error);
+        document.getElementById('loading').style.display = 'none';
         showServerErrorAlert();
         //alert("Error al registrar: " + error.message);
     });

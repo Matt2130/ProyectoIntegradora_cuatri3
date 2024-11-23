@@ -192,6 +192,7 @@ function registrarproducto() {
     formData.append('color', color);
     formData.append('materia', materia);
 
+    document.getElementById('loading').style.display = 'flex';
     
     fetch('/registrar_producto', {
         method: 'POST',
@@ -205,12 +206,14 @@ function registrarproducto() {
     })
     .then(data => {
         RegistrarProducto();
+        document.getElementById('loading').style.display = 'none';
 /*         alert(data.message); 
         window.location.href = '/administrador_productos'; */
     })
     .catch(error => {
         console.error('Error:', error);
         showServerErrorAlert();
+        document.getElementById('loading').style.display = 'none';
   /*       alert("Error al registrar: " + error.message); */
     });
 }
@@ -256,7 +259,7 @@ window.onclick = function(event) {
 function editarProducto(id) {
     var modal = document.getElementById("miModal2");
     modal.style.display = "block"; // Muestra el modal
-
+    
     fetch('/api/buscador_producto_edit', {
         method: 'POST',
         headers: {
@@ -320,6 +323,8 @@ function editarsqlcontenido(idw){
     formData.append('materia', materia);
     formData.append('id', id);
 
+    document.getElementById('loading').style.display = 'flex';
+
     fetch('/actualizar_producto', {
         method: 'POST',
         body: formData 
@@ -332,6 +337,7 @@ function editarsqlcontenido(idw){
     })
     .then(data => {
         ActualizarProducto();
+        document.getElementById('loading').style.display = 'none';
 /*         alert(data.message); 
         window.location.href = '/administrador_productos'; */
     })
@@ -339,6 +345,7 @@ function editarsqlcontenido(idw){
         console.error('Error:', error);
 /*         alert("Error al registrar: " + error.message); */
         showServerErrorAlert();
+        document.getElementById('loading').style.display = 'none';
     });
 }
 

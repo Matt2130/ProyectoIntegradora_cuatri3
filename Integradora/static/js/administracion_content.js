@@ -215,6 +215,8 @@ function editarsqlcontenido(contenidoId) {
         return;
     }
 
+    document.getElementById('loading').style.display = 'flex';
+
     // Enviar la solicitud para actualizar el contenido
     fetch('/actualizar_contenido', {
         method: 'POST',
@@ -236,13 +238,15 @@ function editarsqlcontenido(contenidoId) {
             return response.json();
         })
         .then(data => {
-            ActualizarProducto(); // Llamada a la función para actualizar la vista
+            ActualizarProducto();
+            document.getElementById('loading').style.display = 'none';
             // Redireccionar si es necesario
             // window.location.href = '/administrador_content';
         })
         .catch(error => {
             console.error('Error:', error);
             alert("Error al actualizar: " + error.message);
+            document.getElementById('loading').style.display = 'none';
         });
 }
 
@@ -255,6 +259,8 @@ function registrarcontenido() {
         alert("El título y la descripción no pueden estar vacíos.");
         return;
     }
+
+    document.getElementById('loading').style.display = 'flex';
 
     fetch('/registrar_contenido', {
         method: 'POST',
@@ -273,11 +279,13 @@ function registrarcontenido() {
         })
         .then(data => {
             RegistrarProducto(); // Llamada a la función de registro de productos
+            document.getElementById('loading').style.display = 'none';
             // window.location.href = '/administrador_content';
         })
         .catch(error => {
             console.error('Error:', error);
             alert("Error al registrar: " + error.message);
+            document.getElementById('loading').style.display = 'none';
         });
 }
 

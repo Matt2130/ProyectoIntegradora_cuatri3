@@ -128,6 +128,8 @@ function registrarcontactos(){
         return; // Detener la ejecución si todos los campos están vacíos
     }
 
+    document.getElementById('loading').style.display = 'flex';
+
     fetch('/registrar_contactos', {
         method: 'POST',
         headers: {
@@ -152,6 +154,7 @@ function registrarcontactos(){
     })
     .then(data => {
         ActualizarProducto();
+        document.getElementById('loading').style.display = 'none';
 /*         alert(data.message); 
         window.location.href = '/administrador_contact'; */
     })
@@ -159,6 +162,7 @@ function registrarcontactos(){
         console.error('Error:', error);
 /*         alert("Error al registrar: " + error.message); */
         showServerErrorAlert();
+        document.getElementById('loading').style.display = 'none';
     });
     
 }
@@ -218,6 +222,8 @@ function actualizartabalcontactos(idw){
         return; // Detener la ejecución si todos los campos están vacíos
     }
     
+    document.getElementById('loading').style.display = 'flex';
+
     fetch('/actualizar_contacto', {
         method: 'POST',
         headers: {
@@ -242,6 +248,7 @@ function actualizartabalcontactos(idw){
     })
     .then(data => {
         ActualizarProducto();
+        document.getElementById('loading').style.display = 'none';
         /* alert(data.message); */ 
         //window.location.href = '/administrador_contact';
     })
@@ -249,6 +256,7 @@ function actualizartabalcontactos(idw){
         console.error('Error:', error);
 /*         alert("Error al actualizar: " + error.message); */
         showServerErrorAlert();
+        document.getElementById('loading').style.display = 'none';
     });
 }
 
