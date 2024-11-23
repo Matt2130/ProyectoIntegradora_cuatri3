@@ -477,7 +477,7 @@ def tabla_users():
                         <td>
                             <button onclick="detalleProductos({info[6]})" class="detalles">Detalles</button>
                             <button onclick="editarProducto({info[6]})" class="editar">Editar</button>
-                            <button onclick="eliminarProducto({info[6]})" class="eliminar">Eliminar</button>
+                            <button onclick="PantallaeliminacionProducto({info[6]})" class="eliminar">Eliminar</button>
                         </td>
                     </tr>
                 """
@@ -613,7 +613,7 @@ def buscador_season():
                         <td>{info[0]}</td>
                         <td>
                             <button onclick="editarProducto({info[1]})" class="editar">Editar</button>
-                            <button onclick="eliminarProducto({info[1]})" class="eliminar">Eliminar</button>
+                            <button onclick="PantallaeliminacionProducto({info[1]})" class="eliminar">Eliminar</button>
                         </td>
                     </tr>
                 """
@@ -711,7 +711,7 @@ def buscador_users():
                         <td>
                             <button onclick="detalleProductos({info[6]})" class="detalles">Detalles</button>
                             <button onclick="editarProducto({info[6]})" class="editar">Editar</button>
-                            <button onclick="eliminarProducto({info[6]})" class="eliminar">Eliminar</button>
+                            <button onclick="PantallaeliminacionProducto({info[6]})" class="eliminar">Eliminar</button>
                         </td>
                     </tr>
                 """
@@ -1426,7 +1426,10 @@ def eliminar_usuarios():
 
     identificador = request.get_json()
     id = identificador.get('parametro')
+    user_new = identificador.get('nuevo_user')
     
+    if id==session['id_usuario']:
+        return jsonify({"message": f"Error al eliminar: {str(e)}"}), 500
     #time.sleep(5)  #Espera 5 segundos para testear pantalla de carga
 
     # Intento de insertar datos
@@ -1436,9 +1439,18 @@ def eliminar_usuarios():
             connection.execute(text("START TRANSACTION;"))
 
             sql_query = """
+                UPDATE products SET products.FK_Id_user=:user_new WHERE products.FK_Id_user=:identificados;
+            """
+
+            # Ejecutar la consulta
+            connection.execute(text(sql_query), {
+                "user_new":user_new,
+                "identificados": id
+            })
+            
+            sql_query = """
                 DELETE FROM users WHERE `users`.`Id_user`=:identificados;
             """
-            print(f"Ejecutando consulta: {sql_query}")
 
             # Ejecutar la consulta
             connection.execute(text(sql_query), {
@@ -1882,6 +1894,60 @@ def buscador_season_delete():
     except Exception as e:
         print(f"Error en la consulta: {e}")
         return Response("Error 404: Algo salió mal en la consulta", mimetype='text/html')
+
+@app.route('/api/buscador_users_delete', methods=['POST'])
+def buscador_users_delete():
+    informacion = request.get_json()
+    id_contenido = informacion.get('id')
+
+    if not id_contenido:
+        return Response("ID no proporcionado", mimetype='text/html', status=400)
+
+    try:
+        init_db()
+        with engine.connect() as connection:
+            # Consulta para obtener otros administradores
+            sql_query = """
+                SELECT users.Id_user, users.User 
+                FROM users 
+                WHERE users.Rol = "administrador" AND users.Id_user != :id;
+            """
+            result = connection.execute(text(sql_query), {"id": id_contenido})
+            contenido = result.fetchall()
+
+            # Verificar si hay otros administradores
+            if not contenido:
+                return Response(
+                    "No se encontró otro administrador para heredar los productos",
+                    mimetype='text/html',
+                    status=400
+                )
+
+            # Construcción del HTML
+            html = """
+            <span class="cerrar">&times;</span>
+            <div class="alinear">
+                <h1>Eliminación de Usuarios</h1>
+                <br>
+                <h2>Selecciona otro administrador para reasignar los productos:</h2>
+                <select id="administradorEli">
+            """
+            for admin in contenido:
+                html += f'<option value="{admin.Id_user}">{admin.User}</option>'
+
+            html += f"""
+                </select>
+                <br>
+                <button id="registrar" onclick="eliminarProducto({id_contenido})">Actualizar</button>
+            </div>
+            """
+
+            return Response(html, mimetype='text/html', status=200)
+
+    except Exception as e:
+        app.logger.error(f"Error en la consulta: {e}")
+        return Response("Error interno del servidor", mimetype='text/html', status=500)
+
 
 @app.route('/api/buscador_comentario_edit', methods=['POST'])
 def buscador_comentario_edit():

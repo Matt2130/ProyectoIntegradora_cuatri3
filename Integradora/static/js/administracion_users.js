@@ -41,6 +41,32 @@ function buscarUsuarios(buscar, page) {
     });
 }
 
+function PantallaeliminacionProducto(id) {
+    var modal = document.getElementById("miModal2");
+    modal.style.display = "block"; // Muestra el modal
+
+    fetch('/api/buscador_users_delete', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id: id })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error en la solicitud');
+        }
+        return response.text(); // Cambiado a text() para manejar HTML
+    })
+    .then(html => {
+        // Inserta el HTML en el modal
+        document.getElementById('miModal2').querySelector('.modal-contenido').innerHTML = html;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('miModal2').querySelector('.modal-contenido').innerText = 'Error en la edición';
+    });
+}
 /*
 document.addEventListener('DOMContentLoaded', function() {
     fetch('/api/tabla_users')
@@ -61,7 +87,7 @@ function eliminarProducto(param) {
     const confirmacion = confirm("¿Estás seguro de que deseas eliminar este usuario? (Ya no sera reversible esta operación)");
     
     if (confirmacion){
-
+        const nuevo_user = document.getElementById('administradorEli').value;
         // Mostrar la pantalla de carga
         document.getElementById('loading').style.display = 'flex';
     
@@ -71,7 +97,7 @@ function eliminarProducto(param) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ parametro: param })
+            body: JSON.stringify({ parametro: param,nuevo_user:nuevo_user })
         })
         .then(response => {
             if (!response.ok) {
