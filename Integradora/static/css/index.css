@@ -126,12 +126,15 @@ body {
     flex: 1;
     min-width: 300px;
     max-width: 40%;
-    height: 100%;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-image: url('../image/cama1.jpg');
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#vision_mision img {
+    width: 100%;
 }
 
 #vision_mision #texto1 {
