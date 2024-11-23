@@ -1,41 +1,81 @@
 function eliminarusuariosolito(param) {
-    const confirmacion = confirm("¿Estás seguro de que deseas eliminar este usuario? (Ya no sera reversible esta operación)");
-    
-    if (confirmacion){
-
-        // Mostrar la pantalla de carga
-        document.getElementById('loading').style.display = 'flex';
-    
-        // Enviar solo el parámetro 'param' a Flask
-        fetch('/eliminar_usuario_el_solito', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({  })
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error en la solicitud');
-            }
-            return response.json();
-        })
-        .then(() => {
-            // Ocultar la pantalla de carga y mostrar alerta de éxito
-            document.getElementById('loading').style.display = 'none';
-            alert("Eliminación exitosa");
-            window.open('/administrador_user', '_self'); // Redirige después del éxito
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert("Error al eliminar: " + error.message); // Mostrar alerta de error
-        })
-        .finally(() => {
-            // Asegurarse de ocultar la pantalla de carga en cualquier caso
-            document.getElementById('loading').style.display = 'none';
-        });
-    }
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "Esta acción eliminará el usuario. ¡No podrás recuperarlo!",
+        icon: 'warning',
+        iconColor: '#000000',
+        showCancelButton: true,
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#fed800',
+        confirmButtonText: 'Eliminar',
+        background: '#bfbfbf',
+        backdrop: 'rgba(0,0,0,0.7)',
+        customClass: {
+            popup: 'mi-alerta-redondeada' // Clase personalizada
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Mostrar la pantalla de carga
+            document.getElementById('loading').style.display = 'flex';
+        
+            // Enviar solo el parámetro 'param' a Flask
+            fetch('/eliminar_usuario_el_solito', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ parametro: param })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud');
+                }
+                return response.json();
+            })
+            .then(() => {
+                // Ocultar la pantalla de carga y mostrar alerta de éxito
+                document.getElementById('loading').style.display = 'none';
+                Swal.fire({
+                    title: 'Eliminado',
+                    text: 'El usuario se ha eliminado correctamente.',
+                    icon: 'success',
+                    iconColor: '#2b8c4b',
+                    confirmButtonColor: '#fed800',
+                    background: '#bfbfbf',
+                    backdrop: 'rgba(0,0,0,0.7)',
+                    timer: 4000, // La alerta de éxito se cerrará automáticamente
+                    showConfirmButton: false,
+                    customClass: {
+                        popup: 'mi-alerta-redondeada' // Clase personalizada
+                    }
+                }).then(() => {
+                    window.open('/administrador_user', '_self'); // Redirigir tras la eliminación
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: "Error al eliminar: " + error.message,
+                    icon: 'error',
+                    iconColor: '#d33',
+                    confirmButtonColor: '#fed800',
+                    background: '#bfbfbf',
+                    backdrop: 'rgba(0,0,0,0.7)',
+                    customClass: {
+                        popup: 'mi-alerta-redondeada' // Clase personalizada
+                    }
+                });
+            })
+            .finally(() => {
+                // Asegurarse de ocultar la pantalla de carga en cualquier caso
+                document.getElementById('loading').style.display = 'none';
+            });
+        }
+    });
 }
+
 //Modal para editar
 function editarusuario() {
     var modal = document.getElementById("miModal2");
@@ -76,8 +116,7 @@ window.onclick = function(event) {
     }
 }
 ///////Edicion sql usuario solo////////////
-function editarsqlcontenidousuariosolo(){
-    
+function editarsqlcontenidousuariosolo() {
     const usuario = document.getElementById('usuariod').value;
     const email = document.getElementById('emaild').value;
     const nombre = document.getElementById('nombred').value;
@@ -87,19 +126,41 @@ function editarsqlcontenidousuariosolo(){
     const contraseñaanterior = document.getElementById('contraseñaanteriord').value;
 
     if (!usuario || !email || !nombre || !apellidop || !apellidom || !contraseñaanterior) {
-        alert('Por favor, completa todos los campos exepto "Nueva contraseña" de no queres cambiar contraseña.');
-        return;  // Detener la ejecución si algún campo está vacío
+        Swal.fire({
+            title: 'Error',
+            text: 'Por favor, completa todos los campos excepto "Nueva contraseña" si no deseas cambiar la contraseña.',
+            icon: 'warning',
+            iconColor: '#ec221f',
+            confirmButtonColor: '#fed800',
+            background: '#bfbfbf',
+            backdrop: 'rgba(0,0,0,0.7)',
+            customClass: {
+                popup: 'mi-alerta-redondeada'
+            }
+        });
+        return;
     }
-    // Validación de la nueva contraseña si se proporciona
+
     if (contraseñanueva) {
-        // Expresión regular para validar la contraseña
         const passwordPattern = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
 
         if (!passwordPattern.test(contraseñanueva)) {
-            alert("La contraseña debe tener al menos 8 caracteres, incluir una letra mayúscula y un número.");
-            return;  // Detener la ejecución si la contraseña no cumple con los requisitos
+            Swal.fire({
+                title: 'Error',
+                text: 'La contraseña debe tener al menos 8 caracteres, incluir una letra mayúscula y un número.',
+                icon: 'warning',
+                iconColor: '#ec221f',
+                confirmButtonColor: '#fed800',
+                background: '#bfbfbf',
+                backdrop: 'rgba(0,0,0,0.7)',
+                customClass: {
+                    popup: 'mi-alerta-redondeada'
+                }
+            });
+            return;
         }
     }
+
     const formData = new FormData();
     formData.append('usuario', usuario);
     formData.append('email', email);
@@ -117,24 +178,46 @@ function editarsqlcontenidousuariosolo(){
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error('Error en la solicitud');
+            return response.json().then(data => {
+                throw new Error(data.message);
+            });
         }
         return response.json();
     })
     .then(data => {
-        ActualizarProducto();
         document.getElementById('loading').style.display = 'none';
-/*         alert(data.message); 
-        window.location.href = '/administrador_productos'; */
+        Swal.fire({
+            title: 'Actualización exitosa',
+            icon: 'success',
+            iconColor: '#2b8c4b',
+            showConfirmButton: false, // No muestra botón
+            timer: 3000, // Desaparece automáticamente
+            background: '#bfbfbf',
+            backdrop: 'rgba(0,0,0,0.7)',
+            customClass: {
+                popup: 'mi-alerta-redondeada'
+            }
+        }).then(() => {
+            window.location.href = '/administrador_productos';
+        });
     })
     .catch(error => {
         console.error('Error:', error);
-/*         alert("Error al registrar: " + error.message); */
         document.getElementById('loading').style.display = 'none';
-        showServerErrorAlert();
+        Swal.fire({
+            title: 'Error',
+            text: 'Error: ' + error.message,
+            icon: 'error',
+            iconColor: '#ec221f',
+            confirmButtonColor: '#fed800',
+            background: '#bfbfbf',
+            backdrop: 'rgba(0,0,0,0.7)',
+            customClass: {
+                popup: 'mi-alerta-redondeada'
+            }
+        });
     });
 }
-
 
 // Alerta de error en el servidor
 function showServerErrorAlert() {

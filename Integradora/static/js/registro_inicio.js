@@ -1,4 +1,4 @@
-//console.log(1);
+// console.log(1);
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('signupForm').addEventListener('submit', function(e) {
         e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
@@ -14,7 +14,18 @@ document.addEventListener('DOMContentLoaded', function() {
         
         for (const key in formData) {
             if (!formData[key]) {  // Si algún campo está vacío
-                alert(`Ningun campo puede estar vacio`);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Ningún campo puede estar vacío.',
+                    icon: 'warning',
+                    iconColor: '#000000',
+                    confirmButtonColor: '#fed800',
+                    background: '#bfbfbf',
+                    backdrop: 'rgba(0,0,0,0.7)',
+                    customClass: {
+                        popup: 'mi-alerta-redondeada'
+                    }
+                });
                 return;  // Detener la ejecución si algún campo está vacío
             }
         }
@@ -23,9 +34,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Verifica si la contraseña cumple con los criterios de seguridad
         if (!passwordPattern.test(formData.password)) {
-            alert("La contraseña debe tener al menos 8 caracteres, incluir una letra mayúscula y un número.");
+            Swal.fire({
+                title: 'Error',
+                text: 'La contraseña debe tener al menos 8 caracteres, incluir una letra mayúscula y un número.',
+                icon: 'warning',
+                iconColor: '#000000',
+                confirmButtonColor: '#fed800',
+                background: '#bfbfbf',
+                backdrop: 'rgba(0,0,0,0.7)',
+                customClass: {
+                    popup: 'mi-alerta-redondeada'
+                }
+            });
             return;  // Detener la ejecución si la contraseña no cumple con los requisitos
         }
+
         // Pantalla de carga
         document.getElementById('loading').style.display = 'flex';
 
@@ -38,37 +61,57 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => {
             if (!response.ok) {
-                // Si la respuesta no es exitosa (por ejemplo, 400 o 500), lanzar un error
                 return response.json().then(data => {
-                    throw new Error(data.message); // Lanzamos el mensaje de error desde la respuesta
+                    throw new Error(data.message);
                 });
             }
-            return response.json(); // Si todo va bien, seguimos con el procesamiento de la respuesta
+            return response.json();
         })
         .then(data => {
             console.log(data.message);
             document.getElementById('loading').style.display = 'none';
-            alert("Registro exitoso: " + data.message);
-            window.location.reload();
+            Swal.fire({
+                title: 'Registro exitoso',
+                text: data.message,
+                icon: 'success',
+                iconColor: '#2b8c4b',
+                showConfirmButton: false, // No muestra botón
+                timer: 3000, // Desaparece automáticamente
+                background: '#bfbfbf',
+                backdrop: 'rgba(0,0,0,0.7)',
+                customClass: {
+                    popup: 'mi-alerta-redondeada'
+                }
+            }).then(() => {
+                window.location.reload();
+            });
         })
         .catch(error => {
             console.error('Error:', error);
-            alert("Error al registrar: " + error.message); // Mostrar alerta con el mensaje de error
+            Swal.fire({
+                title: 'Error',
+                text: 'Error al registrar: ' + error.message,
+                icon: 'error',
+                iconColor: '#d33',
+                confirmButtonColor: '#fed800',
+                background: '#bfbfbf',
+                backdrop: 'rgba(0,0,0,0.7)',
+                customClass: {
+                    popup: 'mi-alerta-redondeada'
+                }
+            });
         })
         .finally(() => {
-            // Desaparecer la pantalla de carga
             document.getElementById('loading').style.display = 'none';
         });
     });
-    
-   
-    //Iniciar secion
+
+    // Iniciar sesión
     document.getElementById('loginForm').addEventListener('submit', function(e) {
         e.preventDefault();
 
         document.getElementById('loading').style.display = 'flex';
 
-        // Obtener los datos del formulario
         const formData = {
             email: document.getElementById('email2').value,
             password: document.getElementById('password2').value,
@@ -90,23 +133,41 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(data => {
             document.getElementById('loading').style.display = 'none';
-            
             if (data.redirect) {
-                // Redirigir a la URL proporcionada
-                showAdminAccessAlert();
-                setTimeout(() => {
+                Swal.fire({
+                    title: 'Acceso concedido',
+                    text: 'Bienvenido administrador. Redirigiendo...',
+                    icon: 'success',
+                    iconColor: '#2b8c4b',
+                    showConfirmButton: false, // No muestra botón
+                    timer: 3000, // Desaparece automáticamente
+                    background: '#bfbfbf',
+                    backdrop: 'rgba(0,0,0,0.7)',
+                    customClass: {
+                        popup: 'mi-alerta-redondeada'
+                    }
+                }).then(() => {
                     window.open(data.redirect, '_self');
-                }, 4000);
-            }else{
-                showInvalidCredentialsAlert();
+                });
+            } else {
+                Swal.fire({
+                    title: 'Credenciales inválidas',
+                    text: 'El correo o la contraseña no son correctos.',
+                    icon: 'error',
+                    iconColor: '#d33',
+                    confirmButtonColor: '#fed800',
+                    background: '#bfbfbf',
+                    backdrop: 'rgba(0,0,0,0.7)',
+                    customClass: {
+                        popup: 'mi-alerta-redondeada'
+                    }
+                });
             }
-            
         })
         .catch(error => {
             console.error('Error:', error);
             document.getElementById('loading').style.display = 'none';
             showServerErrorAlert();
-            //alert("Error al iniciar sesión: " + error.message);
         });
     });
 });

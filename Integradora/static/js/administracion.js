@@ -164,8 +164,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 //Registrar
 function registrarproducto() {
-    //console.log(234567890);
-
     // Obtén los datos
     const temporada = document.getElementById('temporada').value;
     const tamaño = document.getElementById('tamaño').value;
@@ -176,11 +174,23 @@ function registrarproducto() {
     const materia = document.getElementById('materia').value;
 
     if (!temporada || !tamaño || !nombre || !descripcion || !precio_lot || !color) {
-        alert("Por favor, completa todos los campos. (Exeptuando Material)");
-        return;  // Detener la ejecución si algún campo está vacío
+        Swal.fire({
+            title: 'Campos incompletos',
+            text: 'Por favor, completa todos los campos. (Exceptuando Material)',
+            icon: 'warning',
+            iconColor: '#ec221f',
+            showConfirmButton: false,
+            timer: 4000,
+            background: '#f8d7da',
+            backdrop: 'rgba(0,0,0,0.7)',
+            customClass: {
+                popup: 'mi-alerta-redondeada'
+            }
+        });
+        return; // Detener la ejecución si algún campo está vacío
     }
 
-    //Creae un FormData
+    // Crear un FormData
     const formData = new FormData();
     formData.append('image', image);
     formData.append('modelo', modelo);
@@ -193,10 +203,10 @@ function registrarproducto() {
     formData.append('materia', materia);
 
     document.getElementById('loading').style.display = 'flex';
-    
+
     fetch('/registrar_producto', {
         method: 'POST',
-        body: formData 
+        body: formData
     })
     .then(response => {
         if (!response.ok) {
@@ -207,16 +217,41 @@ function registrarproducto() {
     .then(data => {
         RegistrarProducto();
         document.getElementById('loading').style.display = 'none';
-/*         alert(data.message); 
-        window.location.href = '/administrador_productos'; */
+        Swal.fire({
+            title: 'Producto registrado',
+            text: 'El producto se ha registrado correctamente.',
+            icon: 'success',
+            iconColor: '#2b8c4b',
+            showConfirmButton: false,
+            timer: 4000,
+            background: '#d4edda',
+            backdrop: 'rgba(0,0,0,0.7)',
+            customClass: {
+                popup: 'mi-alerta-redondeada'
+            }
+        });
+        // Redirigir después del éxito, si es necesario
+        window.location.href = '/administrador_productos';
     })
     .catch(error => {
         console.error('Error:', error);
-        showServerErrorAlert();
         document.getElementById('loading').style.display = 'none';
-  /*       alert("Error al registrar: " + error.message); */
+        Swal.fire({
+            title: 'Error',
+            text: 'Ocurrió un error al registrar el producto.',
+            icon: 'error',
+            iconColor: '#ec221f',
+            showConfirmButton: false,
+            timer: 4000,
+            background: '#f8d7da',
+            backdrop: 'rgba(0,0,0,0.7)',
+            customClass: {
+                popup: 'mi-alerta-redondeada'
+            }
+        });
     });
 }
+
 //Modal para detalles
 function detallesProducto(id) {
     var modal = document.getElementById("miModal2");
