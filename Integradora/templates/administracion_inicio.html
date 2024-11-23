@@ -12,6 +12,9 @@
     <script src="{{ url_for('static', filename='js/administracion_inicio.js') }}"></script>
     <script src="{{ url_for('static', filename='js/menu.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
 </head>
 <body>
     <header id="header">
@@ -76,7 +79,70 @@
             </ul>
         </section>
         <section id="administracion-tabla">
-            
+            <div class="container">
+                <div class="box best-rated">
+                    
+                    <div class="img-rated">
+                        <!-- Mostrar la imagen -->
+                        <img src="{{ url_for('static', filename='image/imagenes_productos/' + producto_mejor_calificado[2]) }}" alt="Producto mejor calificado">
+                    
+                        <!-- Mostrar el nombre del producto, si quieres -->
+                        <p>{{ producto_mejor_calificado[0] }}</p>  <!-- Suponiendo que el nombre del producto está en [0] -->
+                    </div>
+                    <p>Calificación</p>
+                    {{producto_mejor_calificado[3]}}
+                    <br>
+                    <a href="/producto?id={{ producto_mejor_calificado[1] }}">
+                        <button>Ver producto</button>
+                    </a>
+                </div>
+                <div class="box product-count">
+                    <p>Cantidad de Productos</p>
+                    <p>{{ total_productos }} Productos</p>
+                </div>
+                <div class="box client-count">
+                    <p>Cantidad de Clientes</p>
+                    <p>{{ total_clientes }} Clientes</p>
+                </div>
+                <div class="box products">
+                    
+                    <p>Último producto registrado</p>
+                    <div class="comment-table">
+                        {{ ultimo_producto_registrado }}
+                    </div>
+                </div>
+                <div class="box last-comment">
+                    
+                    <p>Último comentario</p>
+                    <div class="comment-table">
+                        {% if ultimo_comentario_registrado %}
+                            <p>Puntuación del comentario:</p>
+                            {{ ultimo_comentario_registrado[0] }}
+                            
+                            {% if ultimo_comentario_registrado[1] %}
+                                <p>Comentó:</p>
+                                {{ ultimo_comentario_registrado[1] }}
+                            {% endif %}
+
+                            <p>Producto:</p>
+                            {{ ultimo_comentario_registrado[2] }}
+
+                            <br>
+                            <a href="/producto?id={{ ultimo_comentario_registrado[3] }}">
+                                <button>Ver producto</button>
+                            </a>
+                        {% else %}
+                            <p>No hay comentarios registrados.</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="box graph">
+                    <p>Gráfica de calificaciones</p>
+                    <div class="graph-container">
+                        <canvas id="myChart" width="100%" height="100%"></canvas>
+                    </div>
+                </div>
+            </div>
         </section>
     </main>
 
@@ -98,3 +164,41 @@
     </footer>
 </body>
 </html>
+<script>
+    // Datos enviados desde Flask
+    const puntuaciones = {{ puntuaciones | safe }};
+    const conteoComentarios = {{ conteo_comentarios | safe }};
+
+    // Verificar que los datos se están pasando correctamente
+    console.log('Puntuaciones:', puntuaciones);
+    console.log('Conteo de Comentarios:', conteoComentarios);
+
+    // Configuración de la gráfica
+    const data = {
+        labels: puntuaciones,  // Puntuaciones 1, 2, 3, 4, 5
+        datasets: [{
+            label: 'Cantidad de Comentarios',
+            data: conteoComentarios,  // Número de comentarios por puntuación
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',  // Color de fondo
+            borderColor: 'rgba(54, 162, 235, 1)',  // Color del borde
+            borderWidth: 1  // Ancho del borde
+        }]
+    };
+
+    const config = {
+        type: 'bar',  // Tipo de gráfica: barras
+        data: data,
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true  // La escala Y comienza en 0
+                }
+            }
+        }
+    };
+
+    // Renderizar la gráfica
+    const ctx = document.getElementById('myChart').getContext('2d');
+    new Chart(ctx, config);
+</script>

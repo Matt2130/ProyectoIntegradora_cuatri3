@@ -1948,7 +1948,6 @@ def buscador_users_delete():
         app.logger.error(f"Error en la consulta: {e}")
         return Response("Error interno del servidor", mimetype='text/html', status=500)
 
-
 @app.route('/api/buscador_comentario_edit', methods=['POST'])
 def buscador_comentario_edit():
     informacion = request.get_json()
@@ -2819,12 +2818,156 @@ def administrador_user():
 @app.route('/administrador')
 @login_required('administrador')
 def administrador():
-    response = make_response(render_template('administracion_inicio.html'))
+    #Cantidad de productos
+    try:
+        with engine.connect() as connection:
+            # Consulta SQL para obtener el conteo de productos
+            sql_query = """
+                SELECT COUNT(*) AS total_productos FROM products;
+            """
+            result = connection.execute(text(sql_query))
+            contenido = result.fetchone()  # Recupera la fila de resultados
+
+        # Extraer el conteo desde el resultado (accediendo por índice)
+        total_productos = contenido[0] if contenido else 0
+    except Exception as e:
+        app.logger.error(f"Error al obtener el total de productos: {e}")
+        total_productos = "Error al obtener datos"
+
+    #Cantidad de clientes
+    try:
+        with engine.connect() as connection:
+            # Consulta SQL para obtener el conteo de productos
+            sql_query = """
+                SELECT COUNT(*) FROM users WHERE users.Rol="cliente";
+            """
+            result = connection.execute(text(sql_query))
+            contenido = result.fetchone()  # Recupera la fila de resultados
+
+        # Extraer el conteo desde el resultado (accediendo por índice)
+        total_clientes = contenido[0] if contenido else 0
+    except Exception as e:
+        app.logger.error(f"Error al obtener el total de productos: {e}")
+        total_clientes = "Error al obtener datos"
+    
+    #Ultimo producto registrado
+    try:
+        with engine.connect() as connection:
+            # Consulta SQL para obtener el conteo de productos
+            sql_query = """
+                SELECT products.Name FROM products WHERE products.Id_product = ( SELECT MAX(products.Id_product) FROM products );
+            """
+            result = connection.execute(text(sql_query))
+            contenido = result.fetchone()  # Recupera la fila de resultados
+
+        # Extraer el conteo desde el resultado (accediendo por índice)
+        ultimo_producto_registrado = contenido[0] if contenido else 0
+    except Exception as e:
+        app.logger.error(f"Error al obtener el total de productos: {e}")
+        ultimo_producto_registrado = "Error al obtener datos"
+    
+    #Ultimo comentario registrado
+    try:
+        with engine.connect() as connection:
+            # Consulta SQL para obtener el conteo de productos
+            sql_query = """
+                SELECT comments.Punctuation, comments.Comment, products.Name, products.Id_product FROM comments INNER JOIN products ON comments.FK_Id_product=products.Id_product WHERE comments.Id_coment = ( SELECT MAX(comments.Id_coment) FROM comments );
+            """
+            result = connection.execute(text(sql_query))
+            contenido = result.fetchone()  # Recupera la fila de resultados
+
+        # Extraer el conteo desde el resultado (accediendo por índice)
+        ultimo_comentario_registrado = contenido if contenido else "No hay comentarios"
+    except Exception as e:
+        app.logger.error(f"Error al obtener el total de productos: {e}")
+        ultimo_comentario_registrado = "Error al obtener datos"
+        
+    #Producto mejor calificado
+    try:
+        with engine.connect() as connection:
+            # Consulta SQL para obtener el conteo de productos
+            sql_query = """
+                SELECT 
+                    products.Name, products.Id_product, products.url_imagen, 
+                    AVG(comments.Punctuation) AS AvgPunctuation
+                FROM 
+                    products
+                INNER JOIN 
+                    comments ON comments.FK_Id_product = products.Id_product
+                GROUP BY 
+                    products.Name;
+            """
+            result = connection.execute(text(sql_query))
+            contenido = result.fetchone()  # Recupera la fila de resultados
+
+        # Extraer el conteo desde el resultado (accediendo por índice)
+        producto_mejor_calificado = contenido if contenido else "No hay comentarios"
+    except Exception as e:
+        app.logger.error(f"Error al obtener el total de productos: {e}")
+        producto_mejor_calificado = "Error al obtener datos"
+    
+    # Datos de la gráfica
+    try:
+        with engine.connect() as connection:
+            # Consulta SQL para obtener la cantidad de comentarios por puntuación (1-5)
+            sql_query = """
+                SELECT 
+                    comments.Punctuation, 
+                    COUNT(*) AS NumComments
+                FROM 
+                    comments
+                WHERE 
+                    comments.Punctuation BETWEEN 1 AND 5  -- Asegura que las puntuaciones sean entre 1 y 5
+                GROUP BY 
+                    comments.Punctuation
+            """
+            result = connection.execute(text(sql_query))
+            datos_grafica = result.fetchall()  # Recupera todas las filas de resultados
+
+            # Crear listas para las puntuaciones y la cantidad de comentarios
+            puntuaciones = [1, 2, 3, 4, 5]
+            conteo_comentarios = [0] * 5  # Inicializa una lista con 0 para cada puntuación (1-5)
+
+            # Depuración: Imprimir los datos obtenidos
+            for row in datos_grafica:
+                print(f"Puntuación: {row[0]}, Número de Comentarios: {row[1]}")
+
+            # Llenar el conteo de comentarios con los datos obtenidos
+            for row in datos_grafica:
+                puntuacion = int(row[0])  # Asegurarse de que puntuacion sea un entero
+                num_comentarios = row[1]
+                conteo_comentarios[puntuacion - 1] = num_comentarios  # Ajuste porque las puntuaciones empiezan en 1
+
+            # Verificar el contenido de conteo_comentarios después de llenarlo
+            print(f"Conteo de comentarios: {conteo_comentarios}")
+
+    except Exception as e:
+        app.logger.error(f"Error al obtener los datos: {e}")
+        puntuaciones = [1, 2, 3, 4, 5]
+        conteo_comentarios = [0, 0, 0, 0, 0]
+
+    # Crear la respuesta del renderizado con la variable de conteo
+    response = make_response(render_template(
+        'administracion_inicio.html',
+        total_productos=total_productos,
+        total_clientes=total_clientes,
+        ultimo_producto_registrado=ultimo_producto_registrado,
+        ultimo_comentario_registrado=ultimo_comentario_registrado,
+        producto_mejor_calificado=producto_mejor_calificado,
+
+        puntuaciones=puntuaciones,
+        conteo_comentarios=conteo_comentarios,  # Agregamos el conteo de comentarios
+    ))
+
+
     # Control de caché
     response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = '0'
+
     return response
+
+
 
 #######################################################################################################################
 @app.route('/catalogo')
