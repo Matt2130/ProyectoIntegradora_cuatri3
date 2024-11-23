@@ -627,11 +627,9 @@ def buscador_season():
     try:
         init_db()
         with engine.connect() as connection:
+            # Llamar al procedimiento almacenado para obtener las temporadas con paginación
             sql_query = '''
-                SELECT season_specification.season, season_specification.Id_season
-                FROM season_specification
-                WHERE season_specification.season LIKE :buscar
-                LIMIT :limit OFFSET :offset;
+                CALL buscar_temporadas(:buscar, :limit, :offset);
             '''
             result = connection.execute(
                 text(sql_query),
@@ -639,13 +637,18 @@ def buscador_season():
             )
             contenido = result.fetchall()
 
+            # Llamar al procedimiento almacenado para contar las temporadas
+            count_query = '''
+                CALL contar_temporadas(:buscar);
+            '''
             result_count = connection.execute(
-                text('SELECT COUNT(*) FROM season_specification WHERE season_specification.season LIKE :buscar'),
-                {"buscar": f"%{buscar}%"}
+                text(count_query),
+                {"buscar": f"%{buscar}%" }
             )
             total_seasons = result_count.scalar()
             total_pages = (total_seasons + limit - 1) // limit
 
+            # Generar el HTML para la tabla
             html = """
             <table>
                 <thead>
@@ -707,35 +710,19 @@ def buscador_users():
     try:
         init_db()
         with engine.connect() as connection:
-            # Consulta SQL con búsqueda, límite y desplazamiento
+            # Llamar al procedimiento almacenado para obtener los usuarios
             sql_query = """
-                SELECT users.User, users.Email, users.Name, users.Surname, users.Lastname, users.Rol, users.Id_user
-                FROM users
-                WHERE users.User LIKE :buscar
-                OR users.Email LIKE :buscar
-                OR users.Name LIKE :buscar
-                OR users.Surname LIKE :buscar
-                OR users.Lastname LIKE :buscar
-                OR users.Rol LIKE :buscar
-                OR users.Estado LIKE :buscar
-                LIMIT :limit OFFSET :offset;
+                CALL buscar_usuarios(:buscar, :limit, :offset);
             """
             result = connection.execute(text(sql_query), {"buscar": f"%{buscar}%", "limit": limit, "offset": offset})
             contenido = result.fetchall()
 
-            # Contar el total de registros que coinciden con la búsqueda
+            # Llamar al procedimiento almacenado para contar el total de registros
             count_query = """
-                SELECT COUNT(*) 
-                FROM users
-                WHERE users.User LIKE :buscar
-                OR users.Email LIKE :buscar
-                OR users.Name LIKE :buscar
-                OR users.Surname LIKE :buscar
-                OR users.Lastname LIKE :buscar
-                OR users.Rol LIKE :buscar
-                OR users.Estado LIKE :buscar;
+                CALL contar_usuarios(:buscar);
             """
-            total_count = connection.execute(text(count_query), {"buscar": f"%{buscar}%"}).scalar()
+            result_count = connection.execute(text(count_query), {"buscar": f"%{buscar}%"})
+            total_count = result_count.scalar()  # Número total de registros
             total_pages = (total_count + limit - 1) // limit  # Total de páginas
 
             # Generar el HTML para la tabla
@@ -775,7 +762,7 @@ def buscador_users():
                             <button onclick="PantallaeliminacionProducto({info[6]})" class="eliminar"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="icon-del" viewBox="0 0 16 16">
                                 <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
                                 <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
-                                </svg></button>  
+                            </svg></button>  
                         </td>
                     </tr>
                 """
@@ -814,40 +801,16 @@ def buscador_productos():
     try:
         init_db()
         with engine.connect() as connection:
+            # Llamar al procedimiento almacenado para obtener los productos
             sql_query = """
-                SELECT products.Name, products.Model, products.Size, products.Material_composition, products.Price_per_unit, products.Color, products.Id_product
-                FROM products
-                INNER JOIN season_specification ON products.FK_id_season = season_specification.Id_season
-                INNER JOIN users ON products.FK_Id_user = users.Id_user
-                WHERE 
-                    products.Model LIKE :buscar OR
-                    season_specification.season LIKE :buscar OR
-                    products.Size LIKE :buscar OR
-                    products.Name LIKE :buscar OR
-                    products.Description LIKE :buscar OR
-                    products.Price_per_unit LIKE :buscar OR
-                    products.Color LIKE :buscar OR
-                    users.User LIKE :buscar
-                LIMIT :limit OFFSET :offset;
+                CALL GetProducts(:buscar, :limit, :offset);
             """
             result = connection.execute(text(sql_query), {"buscar": f"%{buscar}%", "limit": limit, "offset": offset})
             contenido = result.fetchall()
 
-            # Contar el total de registros para calcular el número total de páginas
+            # Llamar al procedimiento almacenado para contar los productos
             count_query = """
-                SELECT COUNT(*) 
-                FROM products
-                INNER JOIN season_specification ON products.FK_id_season = season_specification.Id_season
-                INNER JOIN users ON products.FK_Id_user = users.Id_user
-                WHERE 
-                    products.Model LIKE :buscar OR
-                    season_specification.season LIKE :buscar OR
-                    products.Size LIKE :buscar OR
-                    products.Name LIKE :buscar OR
-                    products.Description LIKE :buscar OR
-                    products.Price_per_unit LIKE :buscar OR
-                    products.Color LIKE :buscar OR
-                    users.User LIKE :buscar;
+                CALL CountProducts(:buscar);
             """
             result_count = connection.execute(text(count_query), {"buscar": f"%{buscar}%"})
             total_products = result_count.scalar()  # Número total de registros
@@ -995,52 +958,27 @@ def mostrador_productos_buscados():
 
         init_db()
         with engine.connect() as connection:
-            # Definir la consulta según la categoría
-            match categoria:
-                case "Model":
-                    sql_query = """
-                        SELECT products.url_imagen, products.Name, products.Color, products.Price_per_unit, products.Id_product
-                        FROM products WHERE products.Model LIKE :coso LIMIT :limit OFFSET :offset;
-                    """
-                case "Size":
-                    sql_query = """
-                        SELECT products.url_imagen, products.Name, products.Color, products.Price_per_unit, products.Id_product
-                        FROM products WHERE products.Size LIKE :coso LIMIT :limit OFFSET :offset;
-                    """
-                case "Name":
-                    sql_query = """
-                        SELECT products.url_imagen, products.Name, products.Color, products.Price_per_unit, products.Id_product
-                        FROM products WHERE products.Name LIKE :coso LIMIT :limit OFFSET :offset;
-                    """
-                case "Description":
-                    sql_query = """
-                        SELECT products.url_imagen, products.Name, products.Color, products.Price_per_unit, products.Id_product
-                        FROM products WHERE products.Description LIKE :coso LIMIT :limit OFFSET :offset;
-                    """
-                case "Color":
-                    sql_query = """
-                        SELECT products.url_imagen, products.Name, products.Color, products.Price_per_unit, products.Id_product
-                        FROM products WHERE products.Color LIKE :coso LIMIT :limit OFFSET :offset;
-                    """
-                case _:
-                    return Response("Error 404", mimetype='text/html')
-
-            # Ejecutar la consulta para obtener los productos
-            result = connection.execute(text(sql_query), {"coso": f"%{buscar}%", "limit": limit, "offset": offset})
+            # Llamar al procedimiento almacenado para obtener los productos
+            sql_query = """
+                CALL obtener_productos(:buscar, :categoria, :limit, :offset);
+            """
+            result = connection.execute(text(sql_query), {
+                "buscar": f"%{buscar}%",
+                "categoria": categoria,
+                "limit": limit,
+                "offset": offset
+            })
             contenido = result.fetchall()
 
-            # Consultar el número total de productos que coinciden con la búsqueda
+            # Llamar al procedimiento almacenado para contar los productos
             count_query = """
-                SELECT COUNT(*) FROM products WHERE
-                    products.Model LIKE :coso OR
-                    products.Size LIKE :coso OR
-                    products.Name LIKE :coso OR
-                    products.Description LIKE :coso OR
-                    products.Color LIKE :coso;
+                CALL contar_productos(:buscar);
             """
-            result_count = connection.execute(text(count_query), {"coso": f"%{buscar}%"})
+            result_count = connection.execute(text(count_query), {"buscar": f"%{buscar}%"})
             total_products = result_count.scalar()  # Total de productos encontrados
-            total_pages = (total_products + limit - 1) // limit  # Calcular número total de páginas
+
+            # Calcular si hay más productos para la siguiente página
+            has_next_page = len(contenido) == limit  # Si se han recuperado exactamente 'limit' productos, hay más
 
             # Generar el HTML para los productos
             html = ""
@@ -1069,7 +1007,7 @@ def mostrador_productos_buscados():
             if page > 1:
                 html += f'<a href="#" onclick="buscar_producto_select({page-1})">Anterior</a>'
             # Botón "Siguiente"
-            if page < total_pages:
+            if has_next_page:
                 html += f'<a href="#" onclick="buscar_producto_select({page+1})">Siguiente</a>'
             html += """
                 </div>
@@ -2936,10 +2874,10 @@ def administrador():
     try:
         with engine.connect() as connection:
             # Consulta SQL para obtener el conteo de productos
-            sql_query = """
-                SELECT COUNT(*) FROM users WHERE users.Rol="cliente";
-            """
-            result = connection.execute(text(sql_query))
+            connection.execute(text("CALL contar_clientes(@total_clientes);"))
+        
+            # Recuperar el valor de la variable de salida
+            result = connection.execute(text("SELECT @total_clientes;"))
             contenido = result.fetchone()  # Recupera la fila de resultados
 
         # Extraer el conteo desde el resultado (accediendo por índice)
@@ -2952,10 +2890,9 @@ def administrador():
     try:
         with engine.connect() as connection:
             # Consulta SQL para obtener el conteo de productos
-            sql_query = """
-                SELECT products.Name FROM products WHERE products.Id_product = ( SELECT MAX(products.Id_product) FROM products );
-            """
-            result = connection.execute(text(sql_query))
+            connection.execute(text("CALL obtener_producto_reciente(@nombre_producto);"))
+            
+            result = connection.execute(text("SELECT @nombre_producto;"))
             contenido = result.fetchone()  # Recupera la fila de resultados
 
         # Extraer el conteo desde el resultado (accediendo por índice)
@@ -2967,12 +2904,11 @@ def administrador():
     #Ultimo comentario registrado
     try:
         with engine.connect() as connection:
-            # Consulta SQL para obtener el conteo de productos
-            sql_query = """
-                SELECT comments.Punctuation, comments.Comment, products.Name, products.Id_product FROM comments INNER JOIN products ON comments.FK_Id_product=products.Id_product WHERE comments.Id_coment = ( SELECT MAX(comments.Id_coment) FROM comments );
-            """
-            result = connection.execute(text(sql_query))
-            contenido = result.fetchone()  # Recupera la fila de resultados
+
+            connection.execute(text("CALL obtener_comentario_reciente(@puntuacion, @comentario, @producto_nombre, @producto_id);"))
+            
+            result = connection.execute(text("SELECT @puntuacion, @comentario, @producto_nombre, @producto_id;"))
+            contenido = result.fetchone()
 
         # Extraer el conteo desde el resultado (accediendo por índice)
         ultimo_comentario_registrado = contenido if contenido else "No hay comentarios"
@@ -2983,43 +2919,27 @@ def administrador():
     #Producto mejor calificado
     try:
         with engine.connect() as connection:
-            # Consulta SQL para obtener el conteo de productos
-            sql_query = """
-                SELECT 
-                    products.Name, products.Id_product, products.url_imagen, 
-                    AVG(comments.Punctuation) AS AvgPunctuation
-                FROM 
-                    products
-                INNER JOIN 
-                    comments ON comments.FK_Id_product = products.Id_product
-                GROUP BY 
-                    products.Name;
-            """
-            result = connection.execute(text(sql_query))
-            contenido = result.fetchone()  # Recupera la fila de resultados
+            # Llamar al procedimiento almacenado que obtiene los promedios de productos
+            result = connection.execute(text("CALL obtener_promedio_productos();"))
+            productos = result.fetchall()  # Recupera todas las filas de resultados
 
-        # Extraer el conteo desde el resultado (accediendo por índice)
-        producto_mejor_calificado = contenido if contenido else "No hay comentarios"
+        # Verificar si hay productos y ordenarlos por la puntuación promedio
+        if productos:
+            # Ordenar productos por la puntuación promedio (AvgPunctuation) en orden descendente
+            productos_ordenados = sorted(productos, key=lambda x: x.AvgPunctuation, reverse=True)
+            # El primer producto será el mejor calificado
+            producto_mejor_calificado = productos_ordenados[0]
+        else:
+            producto_mejor_calificado = "No hay comentarios disponibles"       
     except Exception as e:
-        app.logger.error(f"Error al obtener el total de productos: {e}")
+        app.logger.error(f"Error al obtener el producto mejor calificado: {e}")
         producto_mejor_calificado = "Error al obtener datos"
-    
+        
     # Datos de la gráfica
     try:
         with engine.connect() as connection:
-            # Consulta SQL para obtener la cantidad de comentarios por puntuación (1-5)
-            sql_query = """
-                SELECT 
-                    comments.Punctuation, 
-                    COUNT(*) AS NumComments
-                FROM 
-                    comments
-                WHERE 
-                    comments.Punctuation BETWEEN 1 AND 5  -- Asegura que las puntuaciones sean entre 1 y 5
-                GROUP BY 
-                    comments.Punctuation
-            """
-            result = connection.execute(text(sql_query))
+            # Llamar al procedimiento almacenado que obtiene el conteo de comentarios por puntuación
+            result = connection.execute(text("CALL obtener_conteo_comentarios_por_puntuacion();"))
             datos_grafica = result.fetchall()  # Recupera todas las filas de resultados
 
             # Crear listas para las puntuaciones y la cantidad de comentarios
@@ -3038,7 +2958,6 @@ def administrador():
 
             # Verificar el contenido de conteo_comentarios después de llenarlo
             print(f"Conteo de comentarios: {conteo_comentarios}")
-
     except Exception as e:
         app.logger.error(f"Error al obtener los datos: {e}")
         puntuaciones = [1, 2, 3, 4, 5]

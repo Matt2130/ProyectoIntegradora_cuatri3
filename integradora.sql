@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 23-11-2024 a las 19:22:28
+-- Tiempo de generación: 24-11-2024 a las 00:02:15
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -20,6 +20,193 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `integradora`
 --
+
+DELIMITER $$
+--
+-- Procedimientos
+--
+CREATE DEFINER=`root`@`localhost` PROCEDURE `buscar_temporadas` (IN `buscar` VARCHAR(255), IN `limit_val` INT, IN `offset_val` INT)   BEGIN
+    SELECT season_specification.season, season_specification.Id_season
+    FROM season_specification
+    WHERE season_specification.season LIKE buscar
+    LIMIT limit_val OFFSET offset_val;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `buscar_usuarios` (IN `buscar` VARCHAR(255), IN `limit_val` INT, IN `offset_val` INT)   BEGIN
+    SELECT 
+        User, Email, Name, Surname, Lastname, Rol, Id_user
+    FROM users
+    WHERE 
+        User LIKE buscar
+        OR Email LIKE buscar
+        OR Name LIKE buscar
+        OR Surname LIKE buscar
+        OR Lastname LIKE buscar
+        OR Rol LIKE buscar
+        OR Estado LIKE buscar
+    LIMIT limit_val OFFSET offset_val;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `contar_clientes` (OUT `total_clientes` INT)   BEGIN
+    SELECT COUNT(*) INTO total_clientes
+    FROM users
+    WHERE users.Rol = 'cliente';
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `contar_productos` (IN `buscar` VARCHAR(255))   BEGIN
+    SELECT COUNT(*) 
+    FROM products
+    WHERE Model LIKE buscar 
+       OR Size LIKE buscar 
+       OR Name LIKE buscar 
+       OR Description LIKE buscar 
+       OR Color LIKE buscar;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `contar_temporadas` (IN `buscar` VARCHAR(255))   BEGIN
+    SELECT COUNT(*) 
+    FROM season_specification
+    WHERE season_specification.season LIKE buscar;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `contar_usuarios` (IN `buscar` VARCHAR(255))   BEGIN
+    SELECT COUNT(*) 
+    FROM users
+    WHERE 
+        User LIKE buscar
+        OR Email LIKE buscar
+        OR Name LIKE buscar
+        OR Surname LIKE buscar
+        OR Lastname LIKE buscar
+        OR Rol LIKE buscar
+        OR Estado LIKE buscar;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `CountProducts` (IN `buscar` VARCHAR(255))   BEGIN
+    SELECT COUNT(*) 
+    FROM products
+    INNER JOIN season_specification ON products.FK_id_season = season_specification.Id_season
+    INNER JOIN users ON products.FK_Id_user = users.Id_user
+    WHERE 
+        products.Model LIKE buscar OR
+        season_specification.season LIKE buscar OR
+        products.Size LIKE buscar OR
+        products.Name LIKE buscar OR
+        products.Description LIKE buscar OR
+        products.Price_per_unit LIKE buscar OR
+        products.Color LIKE buscar OR
+        users.User LIKE buscar;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetProducts` (IN `buscar` VARCHAR(255), IN `limit_param` INT, IN `offset_param` INT)   BEGIN
+    SELECT 
+        products.Name, 
+        products.Model, 
+        products.Size, 
+        products.Material_composition, 
+        products.Price_per_unit, 
+        products.Color, 
+        products.Id_product
+    FROM 
+        products
+    INNER JOIN season_specification ON products.FK_id_season = season_specification.Id_season
+    INNER JOIN users ON products.FK_Id_user = users.Id_user
+    WHERE 
+        products.Model LIKE buscar OR
+        season_specification.season LIKE buscar OR
+        products.Size LIKE buscar OR
+        products.Name LIKE buscar OR
+        products.Description LIKE buscar OR
+        products.Price_per_unit LIKE buscar OR
+        products.Color LIKE buscar OR
+        users.User LIKE buscar
+    LIMIT limit_param OFFSET offset_param;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `obtener_comentario_reciente` (OUT `puntuacion` INT, OUT `comentario` TEXT, OUT `producto_nombre` VARCHAR(255), OUT `producto_id` INT)   BEGIN
+    SELECT 
+        comments.Punctuation, 
+        comments.Comment, 
+        products.Name, 
+        products.Id_product
+    INTO 
+        puntuacion, 
+        comentario, 
+        producto_nombre, 
+        producto_id
+    FROM comments
+    INNER JOIN products ON comments.FK_Id_product = products.Id_product
+    WHERE comments.Id_coment = (SELECT MAX(Id_coment) FROM comments);
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `obtener_conteo_comentarios_por_puntuacion` ()   BEGIN
+    SELECT 
+        comments.Punctuation, 
+        COUNT(*) AS NumComments
+    FROM 
+        comments
+    WHERE 
+        comments.Punctuation BETWEEN 1 AND 5  -- Asegura que las puntuaciones sean entre 1 y 5
+    GROUP BY 
+        comments.Punctuation;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `obtener_productos` (IN `buscar` VARCHAR(255), IN `categoria` VARCHAR(255), IN `limit_val` INT, IN `offset_val` INT)   BEGIN
+    CASE 
+        WHEN categoria = 'Model' THEN
+            SELECT url_imagen, Name, Color, Price_per_unit, Id_product
+            FROM products 
+            WHERE Model LIKE buscar 
+            LIMIT limit_val OFFSET offset_val;
+        WHEN categoria = 'Size' THEN
+            SELECT url_imagen, Name, Color, Price_per_unit, Id_product
+            FROM products 
+            WHERE Size LIKE buscar 
+            LIMIT limit_val OFFSET offset_val;
+        WHEN categoria = 'Name' THEN
+            SELECT url_imagen, Name, Color, Price_per_unit, Id_product
+            FROM products 
+            WHERE Name LIKE buscar 
+            LIMIT limit_val OFFSET offset_val;
+        WHEN categoria = 'Description' THEN
+            SELECT url_imagen, Name, Color, Price_per_unit, Id_product
+            FROM products 
+            WHERE Description LIKE buscar 
+            LIMIT limit_val OFFSET offset_val;
+        WHEN categoria = 'Color' THEN
+            SELECT url_imagen, Name, Color, Price_per_unit, Id_product
+            FROM products 
+            WHERE Color LIKE buscar 
+            LIMIT limit_val OFFSET offset_val;
+        ELSE
+            SELECT 'Error: Categoría no válida' AS Error;
+    END CASE;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `obtener_producto_reciente` (OUT `producto_nombre` VARCHAR(255))   BEGIN
+    SELECT Name 
+    INTO producto_nombre
+    FROM products 
+    WHERE Id_product = (SELECT MAX(Id_product) FROM products);
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `obtener_promedio_productos` ()   BEGIN
+    SELECT 
+        products.Name, 
+        products.Id_product, 
+        products.url_imagen, 
+        AVG(comments.Punctuation) AS AvgPunctuation
+    FROM 
+        products
+    LEFT JOIN 
+        comments ON comments.FK_Id_product = products.Id_product
+    GROUP BY 
+        products.Name, products.Id_product, products.url_imagen
+    ORDER BY 
+        AvgPunctuation;
+END$$
+
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -41,7 +228,8 @@ CREATE TABLE `comments` (
 
 INSERT INTO `comments` (`Id_coment`, `Punctuation`, `Comment`, `FK_Id_customer`, `FK_Id_product`) VALUES
 (5, 5, '', 56, 32),
-(6, 5, 'Es muy comodo', 56, 33);
+(6, 5, 'Es muy comodo', 56, 33),
+(7, 2, '', 54, 34);
 
 -- --------------------------------------------------------
 
@@ -196,6 +384,21 @@ INSERT INTO `users` (`Id_user`, `User`, `Password`, `Email`, `Name`, `Surname`, 
 (56, 't', 'pbkdf2:sha256:600000$FQSCsQb2o1BYOckG$86d20d403383e98627d166dbd18b5b88c348c0163e56b6922c2d694e8653b345', 'test@gmail.com', 'test', 't', 't', 'cliente', 'Activo');
 
 --
+-- Disparadores `users`
+--
+DELIMITER $$
+CREATE TRIGGER `verificar_admin` BEFORE DELETE ON `users` FOR EACH ROW BEGIN
+    IF OLD.Rol = 'Administrador' THEN
+        IF (SELECT COUNT(*) FROM users WHERE Rol = 'Administrador' AND Id_user != OLD.Id_user) = 0 THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'No puedes eliminar este usuario porque debe existir al menos un administrador.';
+        END IF;
+    END IF;
+END
+$$
+DELIMITER ;
+
+--
 -- Índices para tablas volcadas
 --
 
@@ -246,7 +449,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `Id_coment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `Id_coment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `contacts`
