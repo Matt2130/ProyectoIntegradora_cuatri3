@@ -12,6 +12,7 @@ footer{
     padding: 1%;
     flex-wrap: wrap;
     color: white;
+    box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 -2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 footer div{
     flex: 1;
@@ -40,6 +41,13 @@ footer ul {
 footer li {
     margin: 1rem 0;
 }
+
+footer li:hover {
+    border: 2px solid;
+    transition: border-color 0.3s ease;
+    border-radius: 15px;
+}
+
 footer a {
     text-decoration: none; 
     padding-left: 1rem;
