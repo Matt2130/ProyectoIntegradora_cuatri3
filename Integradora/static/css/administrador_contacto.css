@@ -172,7 +172,11 @@ button:hover {
     stroke-width: 1px; /* Grosor del contorno */
     fill: #ffc107; /* Color del icono blanco */
 }
-
+button svg
+{
+    width: 1vw;
+    margin: 0 auto;
+}
 /*//////////////////////////////////////////*/
 .arriba{
     display: flex;

@@ -191,7 +191,11 @@ button:hover {
     stroke-width: 1px; /* Grosor del contorno */
     fill: #ffc107; /* Color del icono blanco */
 }
-
+button svg
+{
+    width: 1vw;
+    margin: 0 auto;
+}
 /*//////////////////////////////////////////*/
 .arriba{
     display: flex;
@@ -233,6 +237,30 @@ button:hover {
     width: 80%;
 }
 /*///////////////////////////////////////*/
+.modal {
+    display: grid;
+    grid-template-columns: 1fr 2fr; /* Dos columnas: una más pequeña (1fr) para las etiquetas y una más grande (2fr) para los valores */
+    gap: 20px; /* Espacio entre las columnas */
+    align-items: start; /* Alinear todo al inicio de cada celda */
+    margin: 20px;
+}
+
+.modal h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.modal p {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.modal img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px; /* Redondear bordes de la imagen */
+}
 .modal textarea{
     width: 80%;
     height: 10vw;

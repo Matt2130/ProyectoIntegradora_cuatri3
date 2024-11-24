@@ -153,15 +153,12 @@ button:hover {
     opacity: 0.5;
     cursor: not-allowed;
 }
+
 .eliminar {
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Sombra pequeña alrededor del botón */
     background-color: #ffc107; /* Fondo amarillo */
     border: none;
-    padding: 10px;
     border-radius: 4px; /* Opcional: bordes redondeados */
-    display: inline-block;
-    align-items: center;
-    justify-content: center;
     height: 2.5vw;
     width: 2.5vw;
 }
@@ -169,23 +166,15 @@ button:hover {
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Sombra pequeña alrededor del botón */
     background-color: #ffc107; /* Fondo amarillo */
     border: none;
-    padding: 10px;
     border-radius: 4px; /* Opcional: bordes redondeados */
-    display: inline-block;
-    align-items: center;
-    justify-content: center;
     height: 2.5vw;
     width: 2.5vw;
 }
  
 .editar {
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Sombra pequeña alrededor del botón */
-    border: none;
-    padding: 10px;
+    border: none;   
     border-radius: 4px; /* Opcional: bordes redondeados */
-    display: inline-block;
-    align-items: center;
-    justify-content: center;
     height: 2.5vw;
     width: 2.5vw;
 }
@@ -196,6 +185,11 @@ button:hover {
     stroke: #ffc107; /* Color del contorno */
     stroke-width: 1px; /* Grosor del contorno */
     fill: #ffc107; /* Color del icono blanco */
+}
+button svg
+{
+    width: 1vw;
+    margin: 0 auto;
 }
 /*//////////////////////////////////////////*/
 .arriba{
@@ -212,6 +206,7 @@ button:hover {
     padding: 0.6vw;
     border: 0.2rem solid black;
     width: 90%;
+    margin-left: 2vw;
 }
 #abrirModal {
     background-color: #dc3545;
@@ -241,6 +236,14 @@ button:hover {
     width: 80%;
 }
 /*///////////////////////////////////////*/
+.modal {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr 2fr; /* Dos columnas: una más pequeña (1fr) para las etiquetas y una más grande (2fr) para los valores */
+    gap: 20px; /* Espacio entre las columnas */
+    align-items: start; /* Alinear todo al inicio de cada celda */
+    margin: 20px;
+}
+
 .modal textarea{
     width: 80%;
     height: 10vw;
@@ -272,7 +275,7 @@ button:hover {
 }
 
 .modal-contenido {
-    background-color: #030225a7;
+    background-color: #d4d7dc;
     margin: 5% auto;
     border: 1px solid #888;
     width: 80%;
@@ -357,57 +360,71 @@ button:hover {
 
 .container {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    padding: 20px;
+    grid-template-columns: repeat(autofit, minmax(28%, 1fr));
+    gap: 2vw;
+    padding: 2vw;
+    grid-template-rows: repeat(3, 1fr);
+    max-width: 90%;   
+    margin: 0 auto; 
 }
-  
+
+.container h3 {
+    font-size: 2.5vh;
+}
+.container .numero {
+    font-size: 6vh;
+    font-weight: bold;
+}
 .box {
     border: 2px solid #ccc;
     border-radius: 10px;
-    padding: 20px;
+    padding: 1vw;
     text-align: center;
     background-color: #f9f9f9;
-  }
-  
-  .best-rated {
+}
+
+.best-rated {
     grid-column: span 1;
-  }
-  
-  .product-count,
-  .client-count {
+}
+
+.product-count,
+.client-count {
     grid-column: span 1;
-  }
-  
-  .comments,
-  .last-comment {
+}
+
+.products{
+    grid-column: span 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.last-comment {
     grid-column: span 3;
     display: flex;
     flex-direction: column;
     align-items: center;
-  }
-  
-  .comments button,
-  .last-comment button {
-    margin-top: 10px;
-    padding: 10px 20px;
+}
+
+.box button {
+    margin-top: .7vw;
+    padding: .7vw 1vw;
     background-color: #007BFF;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 15px;
     cursor: pointer;
-  }
-  
-  .comments button:hover,
-  .last-comment button:hover {
+}
+
+.comments button:hover,
+.last-comment button:hover {
     background-color: #0056b3;
-  }
-  
-  .empty {
+}
+
+.empty {
     grid-column: span 3;
     height: 100px;
     background-color: #eaeaea;
-  }
+}
 
 @media (max-width: 768px) {
     table {

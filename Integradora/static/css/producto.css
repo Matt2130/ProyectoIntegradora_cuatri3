@@ -107,6 +107,40 @@ table h3 {
     border: 0.1vw solid #ddd;
     border-radius: 0.5rem;
 }
+.rating:not(:checked) > input {
+    position: absolute;
+    appearance: none;
+}
+.rating:not(:checked) > label {
+    float: right;
+    width: 1em;
+    overflow: hidden;
+    white-space: nowrap;
+    cursor: pointer;
+    font-size: 2vw;
+    color: #ddd;
+}
+
+.rating:not(:checked) > label:before {
+    content: '★ ';
+}
+
+.rating > input:checked + label:hover ,
+.rating > input:checked + label:hover~ label,
+.rating > input:checked ~ label:hover,
+.rating > input:checked ~ label:hover~ label,
+.rating > label:hover ~ input:checked ~ label {
+    color: #ffdd00;
+}
+
+.rating:not(:checked) > label:hover,
+.rating:not(:checked) > label:hover~ label {
+    color: #040404ea;
+}
+
+.rating > input:checked ~ label{
+    color: #ffdd00;
+}
 
 .comentario-usuario p, .comentario-texto p {
     margin: 0;

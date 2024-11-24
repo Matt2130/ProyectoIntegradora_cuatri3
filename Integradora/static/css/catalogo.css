@@ -19,6 +19,12 @@ main{
     font-size: 2.5vw;
     text-align: center;
 }
+#buscador{
+    border-radius: 5vw;
+    padding: 0.6vw;
+    border: 0.2rem solid black;
+    width: 90%;
+}
 
 #filtros{
     display: flex;
@@ -36,6 +42,43 @@ main{
     box-sizing: border-box;
 }
 
+#categoria {
+    background-color: #f2f2f2; /* Fondo gris claro */
+    color: #333; /* Texto gris oscuro */
+    border: 1px solid #ccc; /* Borde gris medio */
+    border-radius: 4px; /* Bordes redondeados */
+    padding: 10px; /* Espaciado interno */
+    font-size: 1rem; /* Tamaño de texto */
+    font-family: Arial, sans-serif; /* Fuente */
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Sombra */
+    width: fit-content; 
+    outline: none; /* Sin bordes al hacer foco */
+    cursor: pointer; /* Cambia el cursor al pasar */
+    margin: 0 1vw;
+}
+
+/* Estilo en estado hover */
+#categoria:hover {
+    background-color: #e0e0e0; /* Fondo más oscuro al pasar el mouse */
+    color: #000; /* Texto más oscuro */
+    border-color: #bbb; /* Cambia el color del borde */
+}
+
+/* Estilo en estado focus */
+#categoria:focus {
+    background-color: #d9d9d9; /* Fondo gris intermedio */
+    color: #111; /* Texto ligeramente más oscuro */
+    border-color: #888; /* Borde más intenso */
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3); /* Sombra más definida */
+}
+
+/* Estilo para las opciones del select */
+#categoria option {
+    background-color: #f9f9f9; /* Fondo gris claro */
+    color: #333; /* Texto gris oscuro */
+    padding: 5px; /* Espaciado interno */
+}
+
 #filtros img{
     width: 1.5vw;
     margin-left: 1vw;
@@ -50,8 +93,7 @@ main{
     width: 100%;
     padding: 0 20px;
 }
-
-#producto > .info{
+#catalogo > .producto{
     border-radius: 8px;
     width: 100%;
     height: auto;
@@ -59,48 +101,78 @@ main{
 }
 #catalogo{
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(18vw, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
     gap: 2vw;
     width: 100%;
     padding: 0 20px;
 }
-.producto{
-    padding: 2vw;
-    border-radius: 5px;
-    background-color:rgb(207, 207, 207);
-    margin-bottom: 2vw;
-    box-shadow : 0 2px 7px #dfdfdf;
-    color: white;
+.producto {
+    padding: 2vw; /* Espaciado interno proporcional al ancho de la pantalla */
+    border-radius: 5px; /* Bordes ligeramente redondeados */
+    background-color: rgb(207, 207, 207); /* Fondo gris */
+    margin-bottom: 2vw; /* Separación entre productos */
+    box-shadow: 0 2px 7px #dfdfdf; /* Sombra para efecto de elevación */
+    color: #333; /* Color de texto para contraste adecuado */
+    display: grid;
+    grid-template-rows: auto auto auto auto; /* Filas automáticas adaptables al contenido */
+    grid-gap: 1vw; /* Espaciado entre las filas */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transiciones para hover */
+    text-transform: capitalize; 
 }
 
 .producto:hover {
-    transform: scale(1.1);
-    transition: transform 0.3s ease;
+    transform: scale(1.1); /* Ampliar ligeramente al pasar el mouse */
+    box-shadow: 0 4px 14px #ccc; /* Incrementar sombra al hacer hover */
 }
 
-.producto #nombre-producto:hover{
-    color: #fbb72c;
+/* Imagen del producto */
+.producto img {
+    max-width: 100%; /* Ajustar al ancho del contenedor */
+    height: 16vw; /* Mantener proporción de la imagen */
+    border-radius: 10%; /* Redondear bordes */
+    background: #f0f0f0; /* Fondo gris claro */
+    margin: 0 auto; /* Centrar la imagen */
+    grid-row: 1 / 2; /* Ubicar en la primera fila */
+    object-fit: cover; /* Ajustar imagen al contenedor */
 }
 
-.producto img{
-    width: 90%;
-    border-radius: 20%;
-    background: #f0f0f0;
-    place-items: center;
-}
 
-
-.producto #nombre-producto{
-    font-size: 3rem;
+/* Nombre del producto */
+.producto #nombre-producto {
+    font-size: 1.5rem; /* Tamaño de texto ajustado */
     font-weight: 500;
-    display: block;
     margin: 0;
-    transition: 0.3s;
-    line-height: 2;
+    text-transform: capitalize;
+    line-height: 1.5;
+    transition: color 0.3s ease; /* Transición de color */
+    grid-row: 2 / 3; /* Ubicar en la segunda fila */
+}
+/* Efecto hover en el nombre del producto */
+.producto #nombre-producto:hover {
+    color: #fbb72c; /* Cambiar a color amarillo vibrante */
 }
 
+/* Detalles del color y modelo */
+.producto #color-modelo {
+    font-size: 1.5rem;
+    font-weight: 400; /* Menor peso para diferenciarlo del título */
+    text-align: center;
+    margin: 0;
+    grid-row: 3 / 4; /* Ubicar en la tercera fila */
+}
 
-.producto a{
+/* Precio del producto */
+.producto #precio {
+    font-size: 1.5rem;
+    font-weight: 600; /* Mayor peso para destacar el precio */
+    color: #444; /* Color oscuro para visibilidad */
+    text-align: center;
+    margin: 0;
+    grid-row: 4 / 5; /* Ubicar en la cuarta fila */
+}
+
+/* Enlaces dentro del producto */
+.producto a {
     text-decoration: none;
     color: black;
 }
