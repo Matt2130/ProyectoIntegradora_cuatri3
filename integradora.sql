@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 24-11-2024 a las 03:42:35
+-- Tiempo de generación: 24-11-2024 a las 23:19:22
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -183,10 +183,10 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `obtener_productos` (IN `buscar` VAR
     END CASE;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `obtener_producto_reciente` (OUT `producto_nombre` VARCHAR(255))   BEGIN
-    SELECT Name 
-    INTO producto_nombre
-    FROM products 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `obtener_producto_reciente` (OUT `nombre_producto` VARCHAR(255), OUT `url_producto` VARCHAR(255))   BEGIN
+    SELECT Name, url_imagen
+    INTO nombre_producto, url_producto
+    FROM products
     WHERE Id_product = (SELECT MAX(Id_product) FROM products);
 END$$
 
@@ -359,6 +359,26 @@ INSERT INTO `season_specification` (`Id_season`, `season`) VALUES
 (11, 'verano'),
 (12, 'otoño');
 
+--
+-- Disparadores `season_specification`
+--
+DELIMITER $$
+CREATE TRIGGER `conteo_temporadas` BEFORE DELETE ON `season_specification` FOR EACH ROW BEGIN
+    -- Declarar una variable para contar las temporadas existentes
+    DECLARE total_seasons INT;
+
+    -- Contar las temporadas restantes en la tabla
+    SELECT COUNT(*) INTO total_seasons FROM season_specification;
+
+    -- Verificar si queda solo una temporada
+    IF total_seasons = 1 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'No puedes eliminar esta temporada porque debe existir al menos una temporada en la tabla.';
+    END IF;
+END
+$$
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -383,8 +403,10 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`Id_user`, `User`, `Password`, `Email`, `Name`, `Surname`, `Lastname`, `Rol`, `Estado`) VALUES
 (54, 'a', 'pbkdf2:sha256:600000$qdR0fJ74gu39ta2u$727ca8e7b8060804bdf8e1d9f93c972c8ae6ca822e0bc92a9b3c8c8885b8315d', 'mario@gmail.com', 'a', 'a', 'a', 'administrador', 'Activo'),
-(55, 'b', 'pbkdf2:sha256:600000$LKwiSGE4slUlcYsT$5227b12a6be4603ff47c7230646c259466c7008430a7e70ea8dac5ea3bf8dd8b', 'Manuel@gmail.com', 'b', 'b', 'b', 'administrador', 'Activo'),
-(56, 't', 'pbkdf2:sha256:600000$FQSCsQb2o1BYOckG$86d20d403383e98627d166dbd18b5b88c348c0163e56b6922c2d694e8653b345', 'test@gmail.com', 'test', 't', 't', 'cliente', 'Activo');
+(55, 'b', 'pbkdf2:sha256:600000$LKwiSGE4slUlcYsT$5227b12a6be4603ff47c7230646c259466c7008430a7e70ea8dac5ea3bf8dd8b', 'Manuel@gmail.com', 'b', 'apellidoP', 'apellidoM', 'administrador', 'Activo'),
+(56, 't', 'pbkdf2:sha256:600000$FQSCsQb2o1BYOckG$86d20d403383e98627d166dbd18b5b88c348c0163e56b6922c2d694e8653b345', 'test@gmail.com', 'test', 't', 't', 'cliente', 'Activo'),
+(60, 'fgh', 'pbkdf2:sha256:600000$ULmggWqtcH0wAFEu$1cdf298918958bf75298b4dff227ecf1b68f2f0c140e979aa2a9d4f2c4340f08', 'admin@hotmail.com', 'dfth', 'Materno', 'Paterno', 'administrador', 'Activo'),
+(61, 'ulfvy', 'pbkdf2:sha256:600000$RF9606eaMpjCyglV$6c54ee6eeb92535d72d83cfff2e19db1d397a07c83355911c279f3fbc88cbfe6', 'ghcj@gsdf.gse', 'Mario', 'Zamora', 'Lira', 'cliente', 'Activo');
 
 --
 -- Disparadores `users`
@@ -470,7 +492,7 @@ ALTER TABLE `content`
 -- AUTO_INCREMENT de la tabla `products`
 --
 ALTER TABLE `products`
-  MODIFY `Id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
+  MODIFY `Id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
 
 --
 -- AUTO_INCREMENT de la tabla `season_specification`
@@ -482,7 +504,7 @@ ALTER TABLE `season_specification`
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `Id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+  MODIFY `Id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
 -- Restricciones para tablas volcadas
