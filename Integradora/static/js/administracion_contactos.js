@@ -20,7 +20,7 @@ function eliminarProducto(param) {
         title: '¿Estás seguro?',
         text: "Esta acción eliminará los contactos. No podrás recuperarlos.",
         icon: 'warning',
-        iconColor: '#000000',
+        iconColor: '#ec221f',
         showCancelButton: true,
         cancelButtonColor: '#d33',
         cancelButtonText: 'Cancelar',
@@ -113,9 +113,7 @@ function abrirModal() {
 }
 ////////////////////////////////////////////////////////////////////////////////
 
-function registrarcontactos(){
-    //console.log(3456789);
-    
+function registrarcontactos() {
     const facebook = document.getElementById('Facebook').value;
     const instagram = document.getElementById('Instagram').value;
     const tik_tok = document.getElementById('Tik_Tok').value;
@@ -124,9 +122,23 @@ function registrarcontactos(){
     const whatsapp = document.getElementById('Whatsapp').value;
     const phone = document.getElementById('Telefono').value;
 
+    // Validar que al menos un campo esté lleno
     if (!facebook && !instagram && !tik_tok && !email && !twitter && !whatsapp && !phone) {
-        alert("Por favor, llena al menos un campo.");
-        return; // Detener la ejecución si todos los campos están vacíos
+        Swal.fire({
+            title: 'Advertencia',
+            text: 'Por favor, llena al menos un campo.',
+            icon: 'warning',
+            iconColor: '#ec221f',
+            confirmButtonColor: '#fed800',
+            background: '#bfbfbf',
+            backdrop: 'rgba(0,0,0,0.7)',
+            timer: 4000,
+            showConfirmButton: false,
+            customClass: {
+                popup: 'mi-alerta-redondeada'
+            }
+        });
+        return;
     }
 
     document.getElementById('loading').style.display = 'flex';
@@ -134,39 +146,62 @@ function registrarcontactos(){
     fetch('/registrar_contactos', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         },
         body: JSON.stringify({
             facebook: facebook,
             instagram: instagram,
-            tik_tok:tik_tok,
-            email:email,
-            twitter:twitter,
-            whatsapp:whatsapp,
-            phone:phone
-
+            tik_tok: tik_tok,
+            email: email,
+            twitter: twitter,
+            whatsapp: whatsapp,
+            phone: phone,
+        }),
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error en la solicitud');
+            }
+            return response.json();
         })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Error en la solicitud');
-        }
-        return response.json();
-    })
-    .then(data => {
-        ActualizarProducto();
-        document.getElementById('loading').style.display = 'none';
-/*         alert(data.message); 
-        window.location.href = '/administrador_contact'; */
-    })
-    .catch(error => {
-        console.error('Error:', error);
-/*         alert("Error al registrar: " + error.message); */
-        showServerErrorAlert();
-        document.getElementById('loading').style.display = 'none';
-    });
-    
+        .then(data => {
+            Swal.fire({
+                title: 'Éxito',
+                text: 'Contacto registrado correctamente.',
+                icon: 'success',
+                iconColor: '#2b8c4b',
+                confirmButtonColor: '#fed800',
+                background: '#bfbfbf',
+                backdrop: 'rgba(0,0,0,0.7)',
+                timer: 4000,
+                showConfirmButton: false,
+                customClass: {
+                    popup: 'mi-alerta-redondeada'
+                }
+            });
+            ActualizarProducto(); // Llama a la función necesaria para actualizar el producto
+            document.getElementById('loading').style.display = 'none';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                title: 'Error',
+                text: `Error al registrar: ${error.message}`,
+                icon: 'error',
+                iconColor: '#ec221f',
+                confirmButtonColor: '#fed800',
+                background: '#bfbfbf',
+                backdrop: 'rgba(0,0,0,0.7)',
+                timer: 4000,
+                showConfirmButton: false,
+                customClass: {
+                    popup: 'mi-alerta-redondeada'
+                }
+            });
+            document.getElementById('loading').style.display = 'none';
+        });
 }
+
 //Modal edicion
 function editarProducto(id) {
     var modal = document.getElementById("miModal2");
@@ -209,58 +244,95 @@ window.onclick = function(event) {
  */
 
 //Actualizar bd
-function actualizartabalcontactos(idw){
-    //console.log(idw);
-    const facebook = document.getElementById('Facebookd').value;
-    const instagram = document.getElementById('Instagramd').value;
-    const tik_tok = document.getElementById('Tik_Tokd').value;
-    const email = document.getElementById('Emaild').value;
-    const twitter = document.getElementById('Twiterd').value;
-    const whatsapp = document.getElementById('Whatsappd').value;
-    const phone = document.getElementById('Telefonod').value;
+function actualizartabalcontactos(idw) {
+    const facebook = document.getElementById('Facebookd').value.trim();
+    const instagram = document.getElementById('Instagramd').value.trim();
+    const tik_tok = document.getElementById('Tik_Tokd').value.trim();
+    const email = document.getElementById('Emaild').value.trim();
+    const twitter = document.getElementById('Twiterd').value.trim();
+    const whatsapp = document.getElementById('Whatsappd').value.trim();
+    const phone = document.getElementById('Telefonod').value.trim();
     const id = idw;
 
+    // Validar que al menos un campo esté lleno
     if (!facebook && !instagram && !tik_tok && !email && !twitter && !whatsapp && !phone) {
-        alert("Por favor, llena al menos un campo.");
-        return; // Detener la ejecución si todos los campos están vacíos
+        Swal.fire({
+            title: 'Advertencia',
+            text: 'Por favor, llena al menos un campo.',
+            icon: 'warning',
+            iconColor: '#ec221f',
+            confirmButtonColor: '#fed800',
+            background: '#bfbfbf',
+            backdrop: 'rgba(0,0,0,0.7)',
+            timer: 4000,
+            showConfirmButton: false,
+            customClass: {
+                popup: 'mi-alerta-redondeada',
+            },
+        });
+        return;
     }
-    
+
     document.getElementById('loading').style.display = 'flex';
 
     fetch('/actualizar_contacto', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         },
         body: JSON.stringify({
             facebook: facebook,
             instagram: instagram,
-            tik_tok:tik_tok,
-            email:email,
-            twitter:twitter,
-            whatsapp:whatsapp,
-            phone:phone,
-            id_contact: id
+            tik_tok: tik_tok,
+            email: email,
+            twitter: twitter,
+            whatsapp: whatsapp,
+            phone: phone,
+            id_contact: id,
+        }),
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error en la solicitud');
+            }
+            return response.json();
         })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Error en la solicitud');
-        }
-        return response.json();
-    })
-    .then(data => {
-        ActualizarProducto();
-        document.getElementById('loading').style.display = 'none';
-        /* alert(data.message); */ 
-        //window.location.href = '/administrador_contact';
-    })
-    .catch(error => {
-        console.error('Error:', error);
-/*         alert("Error al actualizar: " + error.message); */
-        showServerErrorAlert();
-        document.getElementById('loading').style.display = 'none';
-    });
+        .then(data => {
+            Swal.fire({
+                title: 'Éxito',
+                text: 'Contacto actualizado correctamente.',
+                icon: 'success',
+                iconColor: '#2b8c4b',
+                confirmButtonColor: '#fed800',
+                background: '#bfbfbf',
+                backdrop: 'rgba(0,0,0,0.7)',
+                timer: 4000,
+                showConfirmButton: false,
+                customClass: {
+                    popup: 'mi-alerta-redondeada',
+                },
+            });
+            ActualizarProducto();
+            document.getElementById('loading').style.display = 'none';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                title: 'Error',
+                text: `Error al actualizar el contacto: ${error.message}`,
+                icon: 'error',
+                iconColor: '#ec221f',
+                confirmButtonColor: '#fed800',
+                background: '#bfbfbf',
+                backdrop: 'rgba(0,0,0,0.7)',
+                timer: 4000,
+                showConfirmButton: false,
+                customClass: {
+                    popup: 'mi-alerta-redondeada',
+                },
+            });
+            document.getElementById('loading').style.display = 'none';
+        });
 }
 
 function ActualizarProducto() {

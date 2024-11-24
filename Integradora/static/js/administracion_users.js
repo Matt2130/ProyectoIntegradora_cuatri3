@@ -262,14 +262,24 @@ function detallesProducto(id) {
     });
 }
 //Actualizacion
-function editarsqlcontenido(idw){
+function editarsqlcontenido(idw) {
     const rol = document.getElementById('rol').value;
     const estado = document.getElementById('estado').value;
     const id = idw;
 
     if (!rol || !estado || !id) {
-        alert("Por favor, completa todos los campos.");
-        return;  // Detener la ejecución si algún campo está vacío
+        Swal.fire({
+            title: 'Advertencia',
+            text: 'Por favor, completa todos los campos.',
+            icon: 'warning',
+            iconColor: '#ec221f',
+            confirmButtonColor: '#fed800',
+            background: '#bfbfbf',
+            customClass: {
+                popup: 'mi-alerta-redondeada'
+            }
+        });
+        return; // Detener la ejecución si algún campo está vacío
     }
 
     document.getElementById('loading').style.display = 'flex';
@@ -282,7 +292,7 @@ function editarsqlcontenido(idw){
         body: JSON.stringify({
             rol: rol,
             estado: estado,
-            id:id
+            id: id
         })
     })
     .then(response => {
@@ -292,16 +302,41 @@ function editarsqlcontenido(idw){
         return response.json();
     })
     .then(data => {
-        alert(data.message); 
         document.getElementById('loading').style.display = 'none';
-        window.location.href = '/administrador_user';
+        Swal.fire({
+            title: 'Actualización exitosa',
+            text: data.message,
+            icon: 'success',
+            iconColor: '#2b8c4b',
+            showConfirmButton: false,
+            timer: 4000,
+            background: '#bfbfbf',
+            customClass: {
+                popup: 'mi-alerta-redondeada'
+            }
+        }).then(() => {
+            window.location.href = '/administrador_user';
+        });
     })
     .catch(error => {
         console.error('Error:', error);
         document.getElementById('loading').style.display = 'none';
-        alert("Error al registrar: " + error.message);
+        Swal.fire({
+            title: 'Error',
+            text: `Error al actualizar: ${error.message}`,
+            icon: 'error',
+            iconColor: '#ec221f',
+            showConfirmButton: false,
+            timer: 4000,
+            background: '#bfbfbf',
+            customClass: {
+                popup: 'mi-alerta-redondeada'
+            }
+        });
     });
 }
+
+
 //Registrar
 function registrartemporadao() {
     const formData = {

@@ -39,7 +39,17 @@ function registrarcomentario() {
 
     // Validación de campos
     if (!calif) {
-        alert("Por favor, Llenar el campo de calificación.");
+        Swal.fire({
+            title: 'Advertencia',
+            text: 'Por favor, llena el campo de calificación.',
+            icon: 'warning',
+            iconColor: '#ec221f',
+            confirmButtonColor: '#fed800',
+            background: '#bfbfbf',
+            customClass: {
+                popup: 'mi-alerta-redondeada'
+            }
+        });
         return;
     }
 
@@ -64,13 +74,36 @@ function registrarcomentario() {
     })
     .then(data => {
         document.getElementById('loading').style.display = 'none';
-        alert(data.message);
-        window.location.reload();// Recarga solo la sección de comentarios
+        Swal.fire({
+            title: 'Registro exitoso',
+            text: data.message,
+            icon: 'success',
+            iconColor: '#2b8c4b',
+            showConfirmButton: false,
+            timer: 4000,
+            background: '#bfbfbf',
+            customClass: {
+                popup: 'mi-alerta-redondeada'
+            }
+        }).then(() => {
+            window.location.reload(); // Recarga solo la sección de comentarios
+        });
     })
     .catch(error => {
         console.error('Error:', error);
         document.getElementById('loading').style.display = 'none';
-        alert("Error al registrar el comentario: " + error.message);
+        Swal.fire({
+            title: 'Error',
+            text: `Error al registrar el comentario: ${error.message}`,
+            icon: 'error',
+            iconColor: '#ec221f',
+            showConfirmButton: false,
+            timer: 4000,
+            background: '#bfbfbf',
+            customClass: {
+                popup: 'mi-alerta-redondeada'
+            }
+        });
     });
 }
 
@@ -80,9 +113,9 @@ function eliminarComentario(param) {
     // Mostrar alerta de confirmación
     Swal.fire({
         title: '¿Estás seguro?',
-        text: "Esta acción eliminará los contactos. No podrás recuperarlos.",
+        text: "Esta acción eliminará el comentario. No podrás recuperarlos.",
         icon: 'warning',
-        iconColor: '#000000',
+        iconColor: '#ec221f',
         showCancelButton: true,
         cancelButtonColor: '#d33',
         cancelButtonText: 'Cancelar',
@@ -117,7 +150,7 @@ function eliminarComentario(param) {
                 document.getElementById('loading').style.display = 'none';
                 Swal.fire({
                     title: 'Eliminado',
-                    text: 'Contacto eliminado correctamente',
+                    text: 'Comentario eliminado correctamente',
                     icon: 'success',
                     iconColor: '#2b8c4b',
                     background: '#bfbfbf',
@@ -191,13 +224,22 @@ window.onclick = function(event) {
     }
 }
 //////////////////////////////////////////////////////////////////////
-function editarsqlcomentario(id_comentario){
-    //console.log(id);
-    let comentario = document.getElementById('comentariod').value;
-    let calif = document.getElementById('califad').value;
+function editarsqlcomentario(id_comentario) {
+    const comentario = document.getElementById('comentariod').value;
+    const calif = document.getElementById('califad').value;
 
     if (!calif) {
-        alert("Por favor, Llenar el campo de calificación.");
+        Swal.fire({
+            title: 'Advertencia',
+            text: 'Por favor, llena el campo de calificación.',
+            icon: 'warning',
+            iconColor: '#ec221f',
+            confirmButtonColor: '#fed800',
+            background: '#bfbfbf',
+            customClass: {
+                popup: 'mi-alerta-redondeada'
+            }
+        });
         return;
     }
 
@@ -210,8 +252,8 @@ function editarsqlcomentario(id_comentario){
         },
         body: JSON.stringify({
             comentario: comentario,
-            calif:calif,
-            id_comentario:id_comentario,
+            calif: calif,
+            id_comentario: id_comentario,
         })
     })
     .then(response => {
@@ -222,15 +264,39 @@ function editarsqlcomentario(id_comentario){
     })
     .then(data => {
         document.getElementById('loading').style.display = 'none';
-        ActualizarProducto();
+        Swal.fire({
+            title: 'Actualización exitosa',
+            text: 'El comentario se ha actualizado correctamente.',
+            icon: 'success',
+            iconColor: '#2b8c4b',
+            showConfirmButton: false,
+            timer: 4000,
+            background: '#bfbfbf',
+            customClass: {
+                popup: 'mi-alerta-redondeada'
+            }
+        }).then(() => {
+            ActualizarProducto(); // Llamar la función tras el éxito
+        });
     })
     .catch(error => {
         console.error('Error:', error);
         document.getElementById('loading').style.display = 'none';
-        showServerErrorAlert();
-        //alert("Error al registrar: " + error.message);
+        Swal.fire({
+            title: 'Error',
+            text: `Ocurrió un error al actualizar: ${error.message}`,
+            icon: 'error',
+            iconColor: '#ec221f',
+            showConfirmButton: false,
+            timer: 4000,
+            background: '#bfbfbf',
+            customClass: {
+                popup: 'mi-alerta-redondeada'
+            }
+        });
     });
 }
+
 // Alerta de error en el servidor
 function showServerErrorAlert() {
     Swal.fire({

@@ -156,7 +156,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.redirect) {
                 Swal.fire({
                     title: 'Acceso concedido',
-                    text: 'Bienvenido administrador. Redirigiendo...',
+                    text: 'Bienvenido. Redirigiendo...',
                     icon: 'success',
                     iconColor: '#2b8c4b',
                     showConfirmButton: false, // No muestra botón

@@ -39,7 +39,7 @@ function eliminarProducto(param) {
         title: '¿Estás seguro?',
         text: "Esta acción eliminará el producto. ¡No podrás recuperarlo!",
         icon: 'warning',
-        iconColor: '#000000',
+        iconColor: '#ec221f',
         showCancelButton: true,
         cancelButtonColor: '#d33',
         cancelButtonText: 'Cancelar',

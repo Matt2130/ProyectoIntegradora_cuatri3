@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
             title: '¿Estás seguro?',
             text: "¿Estás seguro que quieres cerrar sesión?",
             icon: 'warning',
-            iconColor: '#000000',
+            iconColor: '#ec221f',
             showCancelButton: true,
             cancelButtonColor: '#d33',
             cancelButtonText: 'Cancelar',

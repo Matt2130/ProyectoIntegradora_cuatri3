@@ -17,7 +17,7 @@ function eliminarProducto(param) {
         title: '¿Estás seguro?',
         text: "Esta acción eliminará el contenido. ¡No podrás recuperarlo!",
         icon: 'warning',
-        iconColor: '#000000',
+        iconColor: '#ec221f',
         showCancelButton: true,
         cancelButtonColor: '#d33',
         cancelButtonText: 'Cancelar',
@@ -208,48 +208,94 @@ function editarsqlcontenido(contenidoId) {
 
     // Validar que los campos no estén vacíos
     if (!titulo || !descripcion) {
-        alert("El título y la descripción no pueden estar vacíos.");
-        return;
-    }
-
-    // Confirmar la acción
-    if (!confirm("¿Estás seguro de que deseas actualizar este contenido?")) {
-        return;
-    }
-
-    document.getElementById('loading').style.display = 'flex';
-
-    // Enviar la solicitud para actualizar el contenido
-    fetch('/actualizar_contenido', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            titulo: titulo,
-            descripcion: descripcion,
-            id: contenidoId,
-        }),
-    })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(data => {
-                    throw new Error(data.message || 'Error al actualizar contenido');
-                });
+        Swal.fire({
+            title: 'Advertencia',
+            text: 'El título y la descripción no pueden estar vacíos.',
+            icon: 'warning',
+            iconColor: '#ec221f',
+            confirmButtonColor: '#fed800',
+            background: '#bfbfbf',
+            customClass: {
+                popup: 'mi-alerta-redondeada'
             }
-            return response.json();
-        })
-        .then(data => {
-            ActualizarProducto();
-            document.getElementById('loading').style.display = 'none';
-            // Redireccionar si es necesario
-            // window.location.href = '/administrador_content';
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert("Error al actualizar: " + error.message);
-            document.getElementById('loading').style.display = 'none';
         });
+        return;
+    }
+
+    // Confirmar la acción con SweetAlert2
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: '¿Deseas actualizar este contenido?',
+        icon: 'question',
+        iconColor: '#ec221f',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, actualizar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#fed800',
+        cancelButtonColor: '#ec221f',
+        background: '#bfbfbf',
+        customClass: {
+            popup: 'mi-alerta-redondeada'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('loading').style.display = 'flex';
+
+            // Enviar la solicitud para actualizar el contenido
+            fetch('/actualizar_contenido', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    titulo: titulo,
+                    descripcion: descripcion,
+                    id: contenidoId,
+                }),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.message || 'Error al actualizar contenido');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('loading').style.display = 'none';
+                    Swal.fire({
+                        title: 'Actualización exitosa',
+                        text: data.message || 'El contenido ha sido actualizado correctamente.',
+                        icon: 'success',
+                        iconColor: '#2b8c4b',
+                        showConfirmButton: false,
+                        timer: 4000,
+                        background: '#bfbfbf',
+                        customClass: {
+                            popup: 'mi-alerta-redondeada'
+                        }
+                    });
+                    // Redireccionar si es necesario
+                    // window.location.href = '/administrador_content';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('loading').style.display = 'none';
+                    Swal.fire({
+                        title: 'Error',
+                        text: `Error al actualizar: ${error.message}`,
+                        icon: 'error',
+                        iconColor: '#ec221f',
+                        showConfirmButton: false,
+                        timer: 4000,
+                        background: '#bfbfbf',
+                        customClass: {
+                            popup: 'mi-alerta-redondeada'
+                        }
+                    });
+                });
+        }
+    });
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -258,7 +304,20 @@ function registrarcontenido() {
     const descripcion = document.getElementById('descripcion').value.trim();
 
     if (!titulo || !descripcion) {
-        alert("El título y la descripción no pueden estar vacíos.");
+        Swal.fire({
+            title: 'Advertencia',
+            text: 'El título y la descripción no pueden estar vacíos.',
+            icon: 'warning',
+            iconColor: '#ec221f',
+            confirmButtonColor: '#fed800',
+            background: '#bfbfbf',
+            backdrop: 'rgba(0,0,0,0.7)',
+            timer: 4000,
+            showConfirmButton: false,
+            customClass: {
+                popup: 'mi-alerta-redondeada'
+            }
+        });
         return;
     }
 
@@ -280,17 +339,42 @@ function registrarcontenido() {
             return response.json();
         })
         .then(data => {
+            Swal.fire({
+                title: 'Éxito',
+                text: 'Contenido registrado correctamente.',
+                icon: 'success',
+                iconColor: '#2b8c4b',
+                confirmButtonColor: '#fed800',
+                background: '#bfbfbf',
+                backdrop: 'rgba(0,0,0,0.7)',
+                timer: 4000,
+                showConfirmButton: false,
+                customClass: {
+                    popup: 'mi-alerta-redondeada'
+                }
+            });
             RegistrarProducto(); // Llamada a la función de registro de productos
             document.getElementById('loading').style.display = 'none';
-            // window.location.href = '/administrador_content';
         })
         .catch(error => {
+            Swal.fire({
+                title: 'Error',
+                text: `Error al registrar: ${error.message}`,
+                icon: 'error',
+                iconColor: '#ec221f',
+                confirmButtonColor: '#fed800',
+                background: '#bfbfbf',
+                backdrop: 'rgba(0,0,0,0.7)',
+                timer: 4000,
+                showConfirmButton: false,
+                customClass: {
+                    popup: 'mi-alerta-redondeada'
+                }
+            });
             console.error('Error:', error);
-            alert("Error al registrar: " + error.message);
             document.getElementById('loading').style.display = 'none';
         });
 }
-
 
 //////////////Mostrar contenido de la base de datos//////////////////
 //Todos se pueden a la vez

@@ -3,7 +3,7 @@ function eliminarusuariosolito(param) {
         title: '¿Estás seguro?',
         text: "Esta acción eliminará el usuario. ¡No podrás recuperarlo!",
         icon: 'warning',
-        iconColor: '#000000',
+        iconColor: '#ec221f',
         showCancelButton: true,
         cancelButtonColor: '#d33',
         cancelButtonText: 'Cancelar',
