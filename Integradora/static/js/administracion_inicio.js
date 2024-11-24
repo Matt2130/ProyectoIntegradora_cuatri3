@@ -13,3 +13,13 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => console.error('Error:', error));
     });
      */
+let c1=document.getElementById('numero-pro'),
+    c2=document.getElementById('numero-clie');
+let tiempo=25, cant1=0, cant2=0;
+let totalProductos = 100; // Replace this with the actual value or fetch it from the server
+let tiempo1= setInterval(() => {
+    c1.textContent=cant1+=1;
+    if(cant1==totalProductos){
+        clearInterval(tiempo1);
+    }
+})
