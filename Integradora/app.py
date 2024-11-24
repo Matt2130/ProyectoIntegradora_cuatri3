@@ -1336,7 +1336,7 @@ def registrar_producto():
     try:
         # Guardar la imagen
         image = request.files.get('image')
-
+        
         if not image or not image.filename.endswith(('.png', '.jpg', '.jpeg')):
             return jsonify({"message": "El archivo debe ser una imagen válida (.png, .jpg, .jpeg)"}), 400
 
@@ -2856,21 +2856,6 @@ def administrador():
         app.logger.error(f"Error al obtener el total de productos: {e}")
         total_clientes = "Error al obtener datos"
     
-    #Ultimo producto registrado
-    try:
-        with engine.connect() as connection:
-            # Consulta SQL para obtener el conteo de productos
-            connection.execute(text("CALL obtener_producto_reciente(@nombre_producto);"))
-            
-            result = connection.execute(text("SELECT @nombre_producto;"))
-            contenido = result.fetchone()  # Recupera la fila de resultados
-
-        # Extraer el conteo desde el resultado (accediendo por índice)
-        ultimo_producto_registrado = contenido[0] if contenido else 0
-    except Exception as e:
-        app.logger.error(f"Error al obtener el total de productos: {e}")
-        ultimo_producto_registrado = "Error al obtener datos"
-    
     #Ultimo comentario registrado
     try:
         with engine.connect() as connection:
@@ -2928,6 +2913,21 @@ def administrador():
         puntuaciones = [1, 2, 3, 4, 5]
         conteo_comentarios = [0, 0, 0, 0, 0]
 
+    #Ultimo producto registrado
+    try:
+        with engine.connect() as connection:
+            # Consulta SQL para obtener el conteo de productos
+            connection.execute(text("CALL `obtener_producto_reciente`(@p0, @p1);"))
+            
+            result = connection.execute(text("SELECT @p0 AS `nombre_producto`, @p1 AS `url_producto`;"))
+            contenido = result.fetchone()  # Recupera la fila de resultados
+
+        # Extraer el conteo desde el resultado (accediendo por índice)
+        ultimo_producto_registrado = contenido
+    except Exception as e:
+        app.logger.error(f"Error al obtener el total de productos: {e}")
+        ultimo_producto_registrado = "Error al obtener datos"
+        
     # Crear la respuesta del renderizado con la variable de conteo
     response = make_response(render_template(
         'administracion_inicio.html',
