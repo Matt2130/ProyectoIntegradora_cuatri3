@@ -113,7 +113,9 @@
                 <div class="box products">
                     <h3>Último producto registrado</h3>
                     <div class="comment-table">
-                        {{ ultimo_producto_registrado }}
+                        <img src="{{ url_for('static', filename='image/imagenes_productos/' + ultimo_producto_registrado[1]) }}" alt="Producto mejor calificado">
+                        <br>
+                        {{ ultimo_producto_registrado[0] }}
                     </div>
                 </div>
                 <div class="box graph">
