@@ -469,7 +469,7 @@ def tabla_users():
         with engine.connect() as connection:
             # Consulta SQL con LIMIT y OFFSET para la paginación
             sql_query = """
-                SELECT users.User, users.Email, users.Name, users.Surname, users.Lastname, users.Rol, users.Id_user
+                SELECT users.User, users.Email, users.Name, users.Lastname, users.Surname, users.Rol, users.Id_user
                 FROM users
                 ORDER BY users.Id_user DESC
                 LIMIT :limit OFFSET :offset;
@@ -752,8 +752,8 @@ def buscador_users():
                         <td>{info[0]}</td>
                         <td>{info[1]}</td>
                         <td>{info[2]}</td>
-                        <td>{info[3]}</td>
                         <td>{info[4]}</td>
+                        <td>{info[3]}</td>
                         <td>{info[5]}</td>
                         <td>
                             <button onclick="detallesProducto({info[6]})" class="detalles"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="icon-details" viewBox="0 0 16 16">
