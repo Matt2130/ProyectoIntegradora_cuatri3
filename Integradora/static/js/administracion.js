@@ -165,6 +165,7 @@ document.addEventListener("DOMContentLoaded", function() {
 //Registrar
 function registrarproducto() {
     // Obtén los datos
+    const modelo = document.getElementById('modelo').value;
     const temporada = document.getElementById('temporada').value;
     const tamaño = document.getElementById('tamaño').value;
     const nombre = document.getElementById('nombre').value;
@@ -173,7 +174,8 @@ function registrarproducto() {
     const color = document.getElementById('color').value;
     const materia = document.getElementById('materia').value;
 
-    if (!temporada || !tamaño || !nombre || !descripcion || !precio_lot || !color) {
+
+    if (!temporada || !tamaño || !nombre || !descripcion || !precio_lot || !color || !modelo) {
         Swal.fire({
             title: 'Campos incompletos',
             text: 'Por favor, completa todos los campos. (Exceptuando Material)',
@@ -190,9 +192,10 @@ function registrarproducto() {
         return; // Detener la ejecución si algún campo está vacío
     }
 
+    const image = document.getElementById('image');
     // Crear un FormData
     const formData = new FormData();
-    formData.append('image', image);
+    formData.append('image', image.files[0]);
     formData.append('modelo', modelo);
     formData.append('temporada', temporada);
     formData.append('tamaño', tamaño);

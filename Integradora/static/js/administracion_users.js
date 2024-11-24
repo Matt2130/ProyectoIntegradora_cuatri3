@@ -263,11 +263,10 @@ function detallesProducto(id) {
 }
 //Actualizacion
 function editarsqlcontenido(idw) {
-    const rol = document.getElementById('rol').value;
     const estado = document.getElementById('estado').value;
     const id = idw;
 
-    if (!rol || !estado || !id) {
+    if (!estado || !id) {
         Swal.fire({
             title: 'Advertencia',
             text: 'Por favor, completa todos los campos.',
@@ -290,7 +289,6 @@ function editarsqlcontenido(idw) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            rol: rol,
             estado: estado,
             id: id
         })
