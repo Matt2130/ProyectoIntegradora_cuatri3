@@ -141,6 +141,7 @@ def mostrador_productos():
             sql_query = """
                 SELECT products.url_imagen, products.Name, products.Color, products.Price_per_unit, products.Id_product 
                 FROM products
+                ORDER BY products.Id_product DESC
                 LIMIT :limit OFFSET :offset;
             """
             result = connection.execute(text(sql_query), {"limit": limit, "offset": offset})
@@ -206,6 +207,7 @@ def tabla_productos():
             sql_query = """
                 SELECT products.Name, products.Model, products.Size, products.Material_composition, products.Price_per_unit, products.Color, products.Id_product
                 FROM products
+                ORDER BY products.Id_product DESC
                 LIMIT :limit OFFSET :offset;
             """
             result = connection.execute(text(sql_query), {"limit": limit, "offset": offset})
@@ -295,6 +297,7 @@ def tabla_season_specification():
             sql_query = '''
                 SELECT season_specification.season, season_specification.Id_season
                 FROM season_specification
+                ORDER BY season_specification.Id_season DESC
                 LIMIT :limit OFFSET :offset;
             '''
             result = connection.execute(
@@ -429,7 +432,7 @@ def tabla_content():
     try:
         init_db()
         with engine.connect() as connection:
-            result = connection.execute(text('SELECT content.Title, content.Describe, content.Id_contenido FROM content;'))
+            result = connection.execute(text('SELECT content.Title, content.Describe, content.Id_contenido FROM content ORDER BY content.Id_contenido DESC;;'))
             contenido = result.fetchall()
             
             html = ""
@@ -467,6 +470,7 @@ def tabla_users():
             sql_query = """
                 SELECT users.User, users.Email, users.Name, users.Surname, users.Lastname, users.Rol, users.Id_user
                 FROM users
+                ORDER BY users.Id_user DESC
                 LIMIT :limit OFFSET :offset;
             """
             result = connection.execute(text(sql_query), {"limit": limit, "offset": offset})
@@ -1321,81 +1325,63 @@ def registrar_producto():
     # Captura los datos del formulario
     modelo = request.form.get('modelo')
     temporada = request.form.get('temporada')
-    tamaño = request.form.get('tamaño')
+    tamano = request.form.get('tamaño')
     nombre = request.form.get('nombre')
     descripcion = request.form.get('descripcion')
     precio_lot = request.form.get('precio_lot')
     color = request.form.get('color')
     materia = request.form.get('materia')
     
-
     try:
         # Guardar la imagen
         image = request.files.get('image')
-        if image and image.filename.endswith(('.png', '.jpg', '.jpeg')):
-            unique_filename = f"{modelo}.png"
-            image_path = os.path.join("Integradora","static", "image", "imagenes_productos", unique_filename)
-            #image_path = f"static/image/imagenes_productos/{unique_filename}"
-            
-            '''
-            image_dir = os.path.join("static", "image", "imagenes_productos")
 
-            # Verificar si la carpeta existe
-            if not os.path.exists(image_dir):
-                # Crear la carpeta (y subcarpetas si no existen)
-                os.makedirs(image_dir)
-            # Generar la ruta completa de la imagen
-            unique_filename = f"{modelo}.png"
-            image_path = os.path.join(image_dir, unique_filename)
-            '''
+        if not image or not image.filename.endswith(('.png', '.jpg', '.jpeg')):
+            return jsonify({"message": "El archivo debe ser una imagen válida (.png, .jpg, .jpeg)"}), 400
+
+        
+        unique_filename = f"{modelo}.png"
+        image_dir = os.path.join(os.getcwd(),"Integradora", "static", "image", "imagenes_productos")
+        if not os.path.exists(image_dir):
+            os.makedirs(image_dir)
+
+        image_path = os.path.join(image_dir, unique_filename)
+        image.save(image_path)
+
+        with engine.connect() as connection:
+            # Iniciar transacción
+            connection.execute(text("START TRANSACTION;"))
+
+            sql_query = """
+            INSERT INTO `products` (`Material_composition`, `Model`, `FK_id_season`, `Size`, `Name`, `Description`, `Price_per_unit`, `Color`, `url_imagen`, `FK_Id_user`) 
+            VALUES (:materia, :modelo, :temporada, :tamano, :nombre, :descripcion, :precio_lot, :color, :image_path, :user_id);
             """
-            #Coso opara ver donde esta guardando las imagenes cuando truene la funcion
-            import os
-            image_dir = os.path.dirname(image_path)
-            if not os.path.exists(image_dir):
-                os.makedirs(image_dir)
-            """
-            
-            image.save(image_path)
+
+            # Ejecutar consulta con la ruta de la imagen
+            connection.execute(text(sql_query), {
+                "materia": materia,
+                "modelo": modelo,
+                "temporada": temporada,
+                "tamano": tamano,
+                "nombre": nombre,
+                "descripcion": descripcion,
+                "precio_lot": precio_lot,
+                "color": color,
+                "image_path": unique_filename,
+                "user_id": session['id_usuario']
+            })
             #return jsonify({"message": "Registro exitoso"}), 200
 
-            with engine.connect() as connection:
-                # Iniciar transacción
-                connection.execute(text("START TRANSACTION;"))
-
-                sql_query = """
-                INSERT INTO `products` (`Material_composition`, `Model`, `FK_id_season`, `Size`, `Name`, `Description`, `Price_per_unit`, `Color`, `url_imagen`, `FK_Id_user`) 
-                VALUES (:materia, :modelo, :temporada, :tamaño, :nombre, :descripcion, :precio_lot, :color, :image_path, :user_id);
-                """
-
-                # Ejecutar consulta con la ruta absoluta
-                connection.execute(text(sql_query), {
-                    "materia": materia,
-                    "modelo": modelo,
-                    "temporada": temporada,
-                    "tamaño": tamaño,
-                    "nombre": nombre,
-                    "descripcion": descripcion,
-                    "precio_lot": precio_lot,
-                    "color": color,
-                    "image_path": unique_filename,  # Ruta absoluta
-                    "user_id": session['id_usuario']
-                })
-
-                # Confirmar transacción
-                connection.execute(text("COMMIT;"))
-
+            # Confirmar transacción
+            connection.execute(text("COMMIT;"))
             return jsonify({"message": "Registro exitoso"}), 200
-        else:
-            return jsonify({"message": "El archivo debe ser una imagen válida (.png, .jpg, .jpeg)"}), 400
     except Exception as e:
         # Hacer rollback en caso de error
         with engine.connect() as connection:
             connection.execute(text("ROLLBACK;"))
 
-        # Manejo de errores (nimodillo)
         return jsonify({"message": f"Error al registrar: {str(e)}"}), 500
-    
+
 #Eliminación
 @app.route('/eliminar_season', methods=['POST'])
 def eliminar_season():
@@ -2053,25 +2039,10 @@ def buscador_users_edit():
             <h2>Apellido materno</h2>
             <p>{contenido[4]}</p>
             <br>
+            <h2>Rol</h2>
+            <p>{contenido[5]}</p>
+            <br>
             """
-            if contenido[5]=="administrador":
-                html+=f"""
-                    <h2 for="estado">Rol</h2>
-                    <select id="rol" name="rol">
-                        <option value="administrador" selected>Administrador</option>
-                        <option value="cliente">Cliente</option>
-                    </select>
-                    <br>
-                """
-            else:
-                html+=f"""
-                    <h2 for="estado">Rol:</h2>
-                    <select id="rol" name="rol">
-                        <option value="administrador">Administrador</option>
-                        <option value="cliente" selected>Cliente</option>
-                    </select>
-                    <br>
-                """
             if contenido[6]=="Activo":
                 html+=f"""
                     <h2 for="estado">Estado:</h2>
@@ -2683,7 +2654,6 @@ def actualizar_user():
     data = request.get_json()
 
     # Extraer los valores del JSON
-    rol = data.get('rol')
     estado = data.get('estado')
     id = data.get('id')
     #time.sleep(5)  #Espera 5 segundos para testear pantalla de carga
@@ -2692,11 +2662,10 @@ def actualizar_user():
     try:
         with engine.connect() as connection:
             sql_query = """
-                        UPDATE `users` SET `Rol` = :rol, `Estado` = :estado WHERE `users`.`Id_user` = :id_usuario;
+                        UPDATE `users` SET `Estado` = :estado WHERE `users`.`Id_user` = :id_usuario;
                 """
             # Ejecutar la consulta con los datos
             connection.execute(text(sql_query), {
-                "rol":rol,
                 "estado":estado,
                 "id_usuario": id,
             })
@@ -2929,6 +2898,7 @@ def administrador():
             productos_ordenados = sorted(productos, key=lambda x: x.AvgPunctuation, reverse=True)
             # El primer producto será el mejor calificado
             producto_mejor_calificado = productos_ordenados[0]
+            print(producto_mejor_calificado)
         else:
             producto_mejor_calificado = "No hay comentarios disponibles"       
     except Exception as e:
@@ -2946,18 +2916,12 @@ def administrador():
             puntuaciones = [1, 2, 3, 4, 5]
             conteo_comentarios = [0] * 5  # Inicializa una lista con 0 para cada puntuación (1-5)
 
-            # Depuración: Imprimir los datos obtenidos
-            for row in datos_grafica:
-                print(f"Puntuación: {row[0]}, Número de Comentarios: {row[1]}")
-
             # Llenar el conteo de comentarios con los datos obtenidos
             for row in datos_grafica:
                 puntuacion = int(row[0])  # Asegurarse de que puntuacion sea un entero
                 num_comentarios = row[1]
                 conteo_comentarios[puntuacion - 1] = num_comentarios  # Ajuste porque las puntuaciones empiezan en 1
 
-            # Verificar el contenido de conteo_comentarios después de llenarlo
-            print(f"Conteo de comentarios: {conteo_comentarios}")
     except Exception as e:
         app.logger.error(f"Error al obtener los datos: {e}")
         puntuaciones = [1, 2, 3, 4, 5]
