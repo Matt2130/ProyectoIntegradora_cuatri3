@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 24-11-2024 a las 00:02:15
+-- Tiempo de generación: 24-11-2024 a las 03:42:35
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -195,15 +195,17 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `obtener_promedio_productos` ()   BE
         products.Name, 
         products.Id_product, 
         products.url_imagen, 
-        AVG(comments.Punctuation) AS AvgPunctuation
+        IFNULL(AVG(comments.Punctuation), 0) AS AvgPunctuation  -- Reemplazar NULL por 0
     FROM 
         products
     LEFT JOIN 
         comments ON comments.FK_Id_product = products.Id_product
     GROUP BY 
         products.Name, products.Id_product, products.url_imagen
+    HAVING 
+        AvgPunctuation > 0  -- Opcional: Filtrar productos sin puntuación válida
     ORDER BY 
-        AvgPunctuation;
+        AvgPunctuation DESC;
 END$$
 
 DELIMITER ;
@@ -228,8 +230,9 @@ CREATE TABLE `comments` (
 
 INSERT INTO `comments` (`Id_coment`, `Punctuation`, `Comment`, `FK_Id_customer`, `FK_Id_product`) VALUES
 (5, 5, '', 56, 32),
-(6, 5, 'Es muy comodo', 56, 33),
-(7, 2, '', 54, 34);
+(6, 4, 'Es muy comodo', 56, 33),
+(7, 2, '', 54, 34),
+(8, 4, '', 54, 61);
 
 -- --------------------------------------------------------
 
@@ -449,7 +452,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `Id_coment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `Id_coment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `contacts`
@@ -467,19 +470,19 @@ ALTER TABLE `content`
 -- AUTO_INCREMENT de la tabla `products`
 --
 ALTER TABLE `products`
-  MODIFY `Id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+  MODIFY `Id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
 
 --
 -- AUTO_INCREMENT de la tabla `season_specification`
 --
 ALTER TABLE `season_specification`
-  MODIFY `Id_season` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `Id_season` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `Id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+  MODIFY `Id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
 
 --
 -- Restricciones para tablas volcadas
