@@ -165,7 +165,6 @@ document.addEventListener("DOMContentLoaded", function() {
 //Registrar
 function registrarproducto() {
     // Obtén los datos
-    const modelo = document.getElementById('modelo').value;
     const temporada = document.getElementById('temporada').value;
     const tamaño = document.getElementById('tamaño').value;
     const nombre = document.getElementById('nombre').value;
@@ -174,8 +173,7 @@ function registrarproducto() {
     const color = document.getElementById('color').value;
     const materia = document.getElementById('materia').value;
 
-
-    if (!temporada || !tamaño || !nombre || !descripcion || !precio_lot || !color || !modelo) {
+    if (!temporada || !tamaño || !nombre || !descripcion || !precio_lot || !color) {
         Swal.fire({
             title: 'Campos incompletos',
             text: 'Por favor, completa todos los campos. (Exceptuando Material)',
@@ -183,7 +181,7 @@ function registrarproducto() {
             iconColor: '#ec221f',
             showConfirmButton: false,
             timer: 4000,
-            background: '#f8d7da',
+            background: '#bfbfbf',
             backdrop: 'rgba(0,0,0,0.7)',
             customClass: {
                 popup: 'mi-alerta-redondeada'
@@ -192,10 +190,9 @@ function registrarproducto() {
         return; // Detener la ejecución si algún campo está vacío
     }
 
-    const image = document.getElementById('image');
     // Crear un FormData
     const formData = new FormData();
-    formData.append('image', image.files[0]);
+    formData.append('image', image);
     formData.append('modelo', modelo);
     formData.append('temporada', temporada);
     formData.append('tamaño', tamaño);
@@ -227,7 +224,7 @@ function registrarproducto() {
             iconColor: '#2b8c4b',
             showConfirmButton: false,
             timer: 4000,
-            background: '#d4edda',
+            background: '#bfbfbf',
             backdrop: 'rgba(0,0,0,0.7)',
             customClass: {
                 popup: 'mi-alerta-redondeada'
@@ -246,7 +243,7 @@ function registrarproducto() {
             iconColor: '#ec221f',
             showConfirmButton: false,
             timer: 4000,
-            background: '#f8d7da',
+            background: '#bfbfb',
             backdrop: 'rgba(0,0,0,0.7)',
             customClass: {
                 popup: 'mi-alerta-redondeada'
