@@ -87,9 +87,9 @@
                         <img src="{{ url_for('static', filename='image/imagenes_productos/' + producto_mejor_calificado[2]) }}" alt="Producto mejor calificado">
                     
                         <!-- Mostrar el nombre del producto, si quieres -->
-                        <p>{{ producto_mejor_calificado[0] }}</p>  <!-- Suponiendo que el nombre del producto está en [0] -->
+                        <p>{{ producto_mejor_calificado[0]}}</p>  <!-- Suponiendo que el nombre del producto está en [0] -->
                     </div>
-                    <p>Calificación</p>
+                    <h3>Calificación</h3>
                     {{producto_mejor_calificado[3]}}
                     <br>
                     <a href="/producto?id={{ producto_mejor_calificado[1] }}">
@@ -97,23 +97,30 @@
                     </a>
                 </div>
                 <div class="box product-count">
-                    <p>Cantidad de Productos</p>
-                    <p>{{ total_productos }} Productos</p>
+                    <h3>Cantidad de Productos</h3>
+                    <p> <span class="numero" id="numero-pro">0</span> <br>Productos</p>
+                    <a href="/administrador_productos">
+                        <button>Ver productos</button>
+                    </a>
                 </div>
                 <div class="box client-count">
-                    <p>Cantidad de Clientes</p>
-                    <p>{{ total_clientes }} Clientes</p>
+                    <h3>Cantidad de Clientes</h3>
+                    <p> <span class="numero" id="numero-clie"> 0</span> <br> Clientes</p>
                 </div>
                 <div class="box products">
-                    
-                    <p>Último producto registrado</p>
+                    <h3>Último producto registrado</h3>
                     <div class="comment-table">
                         {{ ultimo_producto_registrado }}
                     </div>
                 </div>
+                <div class="box graph">
+                    <h3>Gráfica de calificaciones</h3>
+                    <div class="graph-container">
+                        <canvas id="myChart" width="100%" height="100%"></canvas>
+                    </div>
+                </div>
                 <div class="box last-comment">
-                    
-                    <p>Último comentario</p>
+                    <h3>Último comentario</h3>
                     <div class="comment-table">
                         {% if ultimo_comentario_registrado %}
                             <p>Puntuación del comentario:</p>
@@ -134,12 +141,6 @@
                         {% else %}
                             <p>No hay comentarios registrados.</p>
                         {% endif %}
-                    </div>
-                </div>
-                <div class="box graph">
-                    <p>Gráfica de calificaciones</p>
-                    <div class="graph-container">
-                        <canvas id="myChart" width="100%" height="100%"></canvas>
                     </div>
                 </div>
             </div>
@@ -165,6 +166,21 @@
 </body>
 </html>
 <script>
+    let c1=document.getElementById('numero-pro'),
+        c2=document.getElementById('numero-clie');
+    let tiempo=25, cant1=0, cant2=0;
+    let tiempo1= setInterval(() => {
+        c1.textContent=cant1+=1;
+        if(cant1=={{ total_productos }}){
+            clearInterval(tiempo1);
+        }
+    }, 100);
+    let tiempo2= setInterval(() => {
+        c2.textContent=cant2+=1;
+        if(cant2=={{ total_clientes }}){
+            clearInterval(tiempo2);
+        }
+    }, 50);
     // Datos enviados desde Flask
     const puntuaciones = {{ puntuaciones | safe }};
     const conteoComentarios = {{ conteo_comentarios | safe }};
