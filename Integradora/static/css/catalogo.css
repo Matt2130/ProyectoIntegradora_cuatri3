@@ -1,3 +1,4 @@
+
 @import "index.css";
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 * {
@@ -27,33 +28,33 @@ main{
 }
 
 #filtros{
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
+    display: grid; /* Cambiamos a Grid para alineación responsiva */
+    grid-template-columns: 2fr 1fr 1fr; /* Distribución de columnas */
     margin: 2vw 0vw  2vw 0vw;
-    width: 100%;
+    width: 100%; /* Ocupa todo el ancho */
     padding: 0 20px;
 }
+
 #filtros #buscador{
     color: black;
     font-size: 1.5vw;
-    width: 30%;
+    width: 100%;
     box-sizing: border-box;
+    grid-column: 1 / 2; /* Ubicar en la primera columna */
 }
 
-#categoria {
+#filtros #categoria {
     background-color: #f2f2f2; /* Fondo gris claro */
     color: #333; /* Texto gris oscuro */
     border: 1px solid #ccc; /* Borde gris medio */
     border-radius: 4px; /* Bordes redondeados */
     padding: 10px; /* Espaciado interno */
-    font-size: 1rem; /* Tamaño de texto */
-    font-family: Arial, sans-serif; /* Fuente */
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Sombra */
-    width: fit-content; 
+    width: 100%; /* Ajuste automático del ancho */
+    max-width: 16vw;
     outline: none; /* Sin bordes al hacer foco */
     cursor: pointer; /* Cambia el cursor al pasar */
+    grid-column: 2 / 3; /* Ubicar en la segunda columna */
     margin: 0 1vw;
 }
 
@@ -80,8 +81,8 @@ main{
 }
 
 #filtros img{
-    width: 1.5vw;
-    margin-left: 1vw;
+    width: 2vw; /* Tamaño fijo para la imagen del icono */
+    margin-left: 1rem;
 }
 
 #container{
@@ -128,12 +129,10 @@ main{
 /* Imagen del producto */
 .producto img {
     max-width: 100%; /* Ajustar al ancho del contenedor */
-    height: 16vw; /* Mantener proporción de la imagen */
+    height: auto; /* Ajustar proporción */
     border-radius: 10%; /* Redondear bordes */
     background: #f0f0f0; /* Fondo gris claro */
-    margin: 0 auto; /* Centrar la imagen */
-    grid-row: 1 / 2; /* Ubicar en la primera fila */
-    object-fit: cover; /* Ajustar imagen al contenedor */
+    object-fit: cover; /
 }
 
 
@@ -175,4 +174,63 @@ main{
 .producto a {
     text-decoration: none;
     color: black;
+}
+
+.paginacion{
+    grid-column: 1/5;
+
+}
+.paginacion a{
+    text-decoration: none;
+    color: black;
+    display: inline-block;
+    margin: 2vw;
+}
+
+.paginacion .siguiente:hover{
+    background-color:#f5f086;
+    border-radius: 5px;
+    transition: ease-in 0.3s;
+    padding: 0 .5vw;
+}
+
+.paginacion .anterior:hover{
+    background-color:#f5f086;
+    border-radius: 5px;
+    transition: ease-in 0.3s;
+    padding: 0 .5vw;
+}
+
+svg{
+    width: 4vw;
+    margin: 0 auto;
+}
+
+/* Responsivo en pantallas pequeñas */
+@media screen and (max-width: 768px) {
+    #filtros #buscador{
+        font-size: 2.5vw;
+    }
+    #filtros #categoria {
+        max-width: 18vw;
+        font-size: 2.5vw;
+    }
+    #filtros img{
+        width: 7vw;
+    }
+    .producto {
+        padding: 1rem; /* Reducir espaciado interno */
+    }
+
+    .producto img {
+        width: 50vw; /* Altura fija para evitar imágenes demasiado grandes */
+    }
+    #catalogo {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); /* Diseño responsivo para las tarjetas */
+        gap: 1.5rem; /* Espaciado entre productos */
+        width: 60%; /* Ocupa todo el ancho */
+        padding: 1rem; /* Espaciado interno */
+    }
+    
 }

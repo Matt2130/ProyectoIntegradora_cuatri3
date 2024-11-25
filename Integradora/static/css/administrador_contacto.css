@@ -35,7 +35,6 @@ main{
     font-size: 25px;
     width: auto;
     height: 2em;
-    color: rgb(17, 0, 255);
     border-left: 0.08em none;
     position: relative;
     margin-top: 0.8em;
@@ -103,7 +102,7 @@ main{
 #administracion-tabla{
     text-align: justify;
     width: 100%;
-    background-color: rgba(127, 127, 255, 0.788);
+    background-color: #bcc6e6;
     margin-top: 1vw;
     padding: 1.5vw;
     border-radius: 2vw;
@@ -119,6 +118,10 @@ button {
     cursor: pointer;
     transition: background-color 0.3s;
     font-size: 1vw;
+}
+
+button #registrar{
+    background-color: #ffc107;
 }
 
 button:hover {
@@ -247,7 +250,7 @@ button svg
 }
 
 .modal-contenido {
-    background-color: #fff;
+    background-color: #d4d7dc;
     margin: 5% auto;
     padding: 2vw;
     border: 1px solid #888;
@@ -264,6 +267,9 @@ button svg
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
+}
+.cerrar:hover {
+    color: #000000;
 }
 
 #registrar {

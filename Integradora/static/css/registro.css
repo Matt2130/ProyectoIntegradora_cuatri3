@@ -315,18 +315,18 @@ button:hover{
 @media screen and (min-width:490px) and (max-width:740px){
     .main{
         width: 70%;
-        height: 55vw;
+        height: 77vw;
         overflow: hidden;
     }
     
     .login {
-        height: 40vw;
+        height: 70vw;
         transform: translateY(.5vw);
         transition: .8s ease-in-out;
     }
     input{
-        width: 50%;
-        height: 2vw;
+        width: 60%;
+        height: 4vw;
         font-size: .9rem;
         margin: 1.5vw auto;
         padding: .5vw;
@@ -352,8 +352,8 @@ button:hover{
         margin:4vw;
     }
     #chk:checked ~ .login{
-        transform: translateY(-35vw);
-        height: 60vw;
+        transform: translateY(-47vw);
+        height: 70vw;
         margin: 0 auto;
     }
     .login button{

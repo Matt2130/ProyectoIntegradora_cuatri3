@@ -1,13 +1,23 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;400;700&display=swap');
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: "Poppins", sans-serif;
+    font-family: 'Poppins', sans-serif;
 }
-.container {
+
+body {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2vw;
     max-width: 95%;
     background-color: white;
     padding: 2vh;
@@ -17,104 +27,114 @@
 }
 
 #spa-imagenes {
-    flex: 1;
-    border: 0.2vw solid #ddd;
-    border-radius: 0.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 2vw;
+    border: 0.2vw solid #ddd;
+    border-radius: 0.5rem;
     padding: 2vh;
     height: 50vh;
-    min-width: 20vw;
 }
-#spa-imagenes img{
+
+#spa-imagenes img {
     height: 100%;
     width: auto;
     border-radius: 1vw;
 }
 
-
 #spa-info {
-    flex: 2;
-    min-width: 35vw;
+    display: grid;
+    gap: 1vw;
 }
 
 #spa-info h2 {
-    margin: 0 0 2vh 0;
     font-size: 1.5em;
+    color: #333;
 }
 
-table {
-    width: 80%;
-    border-collapse: collapse;
-    border-radius: 15px;
-    margin: 0 8vh 8vh 8vh;
+.product-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Dos columnas por defecto */
+    gap: 1rem;
+    background-color: white;
+    padding: 2rem;
+    border: 0.1rem solid #ddd;
+    border-radius: 1rem;
+    max-width: 100%;
+    margin: 0 auto;
 }
 
-table td {
-    width: 50%;
-    height: 3vw;
-    border: 0.1vw solid #ddd;
-    vertical-align: top;
+.product-grid h3 {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #555;
+    margin: 0;
 }
 
-table .izq {
-    width: 50%;
-    height: 3vw;
+.product-grid p {
+    font-size: 1rem;
+    color: #333;
+    margin: 0;
+    padding: 0.2rem 0;
 }
 
-table h3 {
-    display: inline-block;
-    font-weight: normal;
-    color: #666;
-    font-size: 1em;
+/* Las filas que ocupan toda la columna */
+.product-grid .full {
+    grid-column: span 2; /* Ocupa las dos columnas */
 }
 
-.info-text{
-    display: inline-block;
-    
+/* Responsivo */
+@media (max-width: 768px) {
+    .product-grid {
+        grid-template-columns: 1fr; /* Una sola columna en pantallas pequeñas */
+    }
+    .product-grid .full {
+        grid-column: span 1;
+    }
 }
+
+
+.product-grid .grid-row {
+    display: contents;
+}
+
 
 #descripcion-producto {
-    margin-top: 1vh;
     font-style: italic;
     color: #555;
-    font-size: 1em;
 }
 
 #comentarios {
-    margin-top: 2vh;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+    margin-left: 2rem; /* Espaciado desde la izquierda */
+    max-width: 400px; /* Controlar el ancho de la sección */
+}
+
+#nuevocomentario {
     width: 100%;
+    background-color: #f9f9f9;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    box-shadow: 0 0 .8vw rgba(0, 0, 0, 0.1);
 }
 
-#nuevo-comentario {
-    width: 40%;
-    height: 20vh;
-    border: 0.1vw solid #ddd;
-    border-radius: 0.5rem;
-    padding: 1vh;
-    margin: 5vh;
-    font-size: 1em;
-    resize: none;
+#nuevocomentario h2 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: #333;
 }
 
-.comentario {
-    margin-top: 1.5vh;
-    margin-left: 8vh;
-    width: 70%;
-    padding: 1vh;
-    border: 0.1vw solid #ddd;
-    border-radius: 0.5rem;
-}
 .rating:not(:checked) > input {
     position: absolute;
     appearance: none;
 }
 .rating:not(:checked) > label {
     float: right;
-    width: 1em;
-    overflow: hidden;
     white-space: nowrap;
     cursor: pointer;
     font-size: 2vw;
@@ -142,9 +162,51 @@ table h3 {
     color: #ffdd00;
 }
 
-.comentario-usuario p, .comentario-texto p {
-    margin: 0;
-    font-size: 1em;
+#nuevo-comentario {
+    width: 100%;
+    height: 80px;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    resize: none;
+    margin-bottom: 1rem;
+}
+
+#registrar {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: #007BFF;
+    color: white;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#registrar:hover {
+    background-color: #0056b3;
+}
+
+/* Sección de comentarios */
+.comentario {
+    width: 100%;
+}
+
+.comentario h1 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+
+.comentario {
+    border: 0.1vw solid #ddd;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-shadow: 0 0 .5vw rgba(0, 0, 0, 0.1);
+
 }
 
 .comentario-usuario p {
@@ -156,40 +218,29 @@ table h3 {
     color: #555;
 }
 
-/* Media Queries para adaptabilidad */
-
-/* Tablets */
-@media (max-width: 768px) {
-    .container {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    #spa-imagenes {
-        margin-right: 0;
-        margin-bottom: 2vh;
-        width: 100%;
-        height: 25vh;
-    }
-
-    #spa-info {
-        width: 100%;
-    }
-
-    table td {
-        padding: 0.8vh;
-    }
-
-    #nuevo-comentario {
-        height: 8vh;
-    }
+footer {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+    background: #f9f9f9;
+    width: 100%;
+    margin-top: 2rem;
 }
 
-/* Móviles */
-@media (max-width: 480px) {
+footer div {
+    text-align: center;
+}
+
+footer p {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+/* Responsividad específica */
+@media (max-width: 768px) {
     #spa-imagenes {
-        height: 20vh;
-        padding: 1vh;
+        height: 40vh;
     }
 
     #spa-info h2 {
@@ -197,24 +248,25 @@ table h3 {
         text-align: center;
     }
 
-    table h3 {
+    table td {
         font-size: 0.9em;
+    }
+
+    .rating label {
+        font-size: 1.5vw;
+    }
+}
+
+@media (max-width: 480px) {
+    #spa-imagenes {
+        height: 30vh;
     }
 
     table td {
-        font-size: 0.9em;
-        padding: 0.6vh;
+        font-size: 0.8em;
     }
 
-    #nuevo-comentario {
-        height: 7vh;
-    }
-
-    .comentario {
-        padding: 0.8vh;
-    }
-
-    .comentario-usuario p, .comentario-texto p {
-        font-size: 0.9em;
+    .rating label {
+        font-size: 1.2rem;
     }
 }
