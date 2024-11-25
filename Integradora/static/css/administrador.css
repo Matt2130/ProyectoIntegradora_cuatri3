@@ -458,7 +458,19 @@ svg{
     padding: 1vw;
     margin: 0 auto;
     text-align: center;
-}   
+}  
+
+.registrar {
+    background-color: #e3b326;
+    color: white;
+    text-decoration: none;
+    border-radius: 0.5vw;
+    width: 20%;
+    font-size: 1vw;
+    padding: 1vw;
+    margin: 0 auto;
+    text-align: center;
+}  
 #registrar:hover {
     transform: scale(1.1);
 }
