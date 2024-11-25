@@ -450,16 +450,15 @@ svg{
 
 #registrar {
     background-color: #e3b326;
+    color: white;
     text-decoration: none;
     border-radius: 0.5vw;
-    text-align: center;
-    width: 8%;
+    width: 30%;
     font-size: 1vw;
-    display: flex;
     padding: 1vw;
-    transition: all 0.3s ease;
     margin: 0 auto;
-}
+    text-align: center;
+}   
 #registrar:hover {
     transform: scale(1.1);
 }

@@ -535,3 +535,15 @@ svg{
         width: 90%; /* Más ancho en dispositivos pequeños */
     }
 }
+
+#registrar {
+    background-color: #e3b326;
+    color: white;
+    text-decoration: none;
+    border-radius: 0.5vw;
+    width: 30%;
+    font-size: 1vw;
+    padding: 1vw;
+    margin: 0 auto;
+    text-align: center;
+}
