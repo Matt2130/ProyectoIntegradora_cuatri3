@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 24-11-2024 a las 23:19:22
--- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.2.12
+-- Host: localhost
+-- Generation Time: Nov 25, 2024 at 04:24 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,12 +18,12 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `integradora`
+-- Database: `integradora`
 --
 
 DELIMITER $$
 --
--- Procedimientos
+-- Procedures
 --
 CREATE DEFINER=`root`@`localhost` PROCEDURE `buscar_temporadas` (IN `buscar` VARCHAR(255), IN `limit_val` INT, IN `offset_val` INT)   BEGIN
     SELECT season_specification.season, season_specification.Id_season
@@ -213,7 +213,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `comments`
+-- Table structure for table `comments`
 --
 
 CREATE TABLE `comments` (
@@ -225,7 +225,7 @@ CREATE TABLE `comments` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `comments`
+-- Dumping data for table `comments`
 --
 
 INSERT INTO `comments` (`Id_coment`, `Punctuation`, `Comment`, `FK_Id_customer`, `FK_Id_product`) VALUES
@@ -237,7 +237,7 @@ INSERT INTO `comments` (`Id_coment`, `Punctuation`, `Comment`, `FK_Id_customer`,
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `contacts`
+-- Table structure for table `contacts`
 --
 
 CREATE TABLE `contacts` (
@@ -252,7 +252,7 @@ CREATE TABLE `contacts` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `contacts`
+-- Dumping data for table `contacts`
 --
 
 INSERT INTO `contacts` (`Id_contact`, `Facebook`, `Instagram`, `Tik_tok`, `Email`, `Twitter`, `Whatsapp`, `Phone`) VALUES
@@ -261,7 +261,7 @@ INSERT INTO `contacts` (`Id_contact`, `Facebook`, `Instagram`, `Tik_tok`, `Email
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `content`
+-- Table structure for table `content`
 --
 
 CREATE TABLE `content` (
@@ -271,7 +271,7 @@ CREATE TABLE `content` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `content`
+-- Dumping data for table `content`
 --
 
 INSERT INTO `content` (`Id_contenido`, `Title`, `Describe`) VALUES
@@ -285,7 +285,7 @@ INSERT INTO `content` (`Id_contenido`, `Title`, `Describe`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `products`
+-- Table structure for table `products`
 --
 
 CREATE TABLE `products` (
@@ -303,7 +303,7 @@ CREATE TABLE `products` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `products`
+-- Dumping data for table `products`
 --
 
 INSERT INTO `products` (`Id_product`, `Material_composition`, `Model`, `FK_id_season`, `Size`, `Name`, `Description`, `Price_per_unit`, `Color`, `url_imagen`, `FK_Id_user`) VALUES
@@ -336,12 +336,14 @@ INSERT INTO `products` (`Id_product`, `Material_composition`, `Model`, `FK_id_se
 (58, '', 'Cobertor Luxus Felisa', 1, 'Individual', 'Cobertor Luxus Felisa', 'Esquimal se caracteriza por siempre ofrecer la mejor calidad y variedad en cobertores invernales. Nuestro Cobertor Luxus Felisa está confeccionado con tela tipo piel y está texturizado con acabado rasurado. Su diseño es contemporáneo y sobrio, ideal para tus espacios elegantes.\r\n\r\n\r\n¿Por qué es extraordinario?\r\n\r\nSúper precio.\r\nTela frontal con acabado tipo piel y acabado rasurado.\r\nReverso de tela plus de alta calidad rosa.\r\nTecnología Termofabric.\r\nNivel de calidez: Media.', 1199, 'Rosa', 'Cobertor Luxus Felisa.png', 54),
 (59, '', 'ALASKA BEIGE', 12, 'Matrimonial', 'ALASKA BEIGE', 'Cobertor ligero Alaska, de increíble diseño para un descanso cálido y suave.\r\n\r\nAtributos:\r\n– Color: beige.\r\n– Muy suave al contacto.\r\n– Cobertor ligero de microfibra.\r\n– Reverso de borrega.\r\n– Hipoalergénico.\r\n– Hecho en México.\r\n– Capitonado.\r\n– Fácil almacenamiento.\r\n– De fácil lavado en casa, a máquina. No usar blanqueador. Tender a la sombra sobre una superficie plana.', 349, 'cafe', 'ALASKA BEIGE.png', 54),
 (60, '', 'ALASKA GRIS', 12, 'Matrimonial', 'ALASKA GRIS', 'Cobertor ligero Alaska, de increíble diseño para un descanso cálido y suave.\r\n\r\nAtributos:\r\n– Color: Gris.\r\n– Muy suave al contacto.\r\n– Cobertor ligero de microfibra.\r\n– Reverso de borrega.\r\n– Hipoalergénico.\r\n– Hecho en México.\r\n– Capitonado.\r\n– Fácil almacenamiento.\r\n– De fácil lavado en casa, a máquina. No usar blanqueador. Tender a la sombra sobre una superficie plana.', 349, 'gris', 'ALASKA GRIS.png', 54),
-(61, '', 'ALBERTA', 12, 'Matrimonial', 'ALBERTA', 'Bello cobertor ligero Alberta, con diseño de rayas muy bonito para decorar tu recámara y para tener un descanso cálido y suave.\r\n\r\nAtributos:\r\n– Color gris\r\n– Diseño a rayas\r\n– Muy suave al contacto\r\n– Cobertor ligero de microfibra\r\n– Reverso de borrega\r\n– Hipoalergénico\r\n– Hecho en México\r\n– Capitonado\r\n– Fácil almacenamiento\r\n– De fácil lavado en casa, a máquina. No usar blanqueador. Tender a la sombra sobre una superficie plana', 399, 'gris', 'ALBERTA.png', 54);
+(61, '', 'ALBERTA', 12, 'Matrimonial', 'ALBERTA', 'Bello cobertor ligero Alberta, con diseño de rayas muy bonito para decorar tu recámara y para tener un descanso cálido y suave.\r\n\r\nAtributos:\r\n– Color gris\r\n– Diseño a rayas\r\n– Muy suave al contacto\r\n– Cobertor ligero de microfibra\r\n– Reverso de borrega\r\n– Hipoalergénico\r\n– Hecho en México\r\n– Capitonado\r\n– Fácil almacenamiento\r\n– De fácil lavado en casa, a máquina. No usar blanqueador. Tender a la sombra sobre una superficie plana', 399, 'gris', 'ALBERTA.png', 54),
+(75, '456', 'gh', 1, '56', '56', '56', 56, '56', 'gh.png', 54),
+(76, '54', 'kj', 1, 'hj', 'vhj', 'vhj', 5, '564', 'kj.png', 54);
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `season_specification`
+-- Table structure for table `season_specification`
 --
 
 CREATE TABLE `season_specification` (
@@ -350,7 +352,7 @@ CREATE TABLE `season_specification` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `season_specification`
+-- Dumping data for table `season_specification`
 --
 
 INSERT INTO `season_specification` (`Id_season`, `season`) VALUES
@@ -360,7 +362,7 @@ INSERT INTO `season_specification` (`Id_season`, `season`) VALUES
 (12, 'otoño');
 
 --
--- Disparadores `season_specification`
+-- Triggers `season_specification`
 --
 DELIMITER $$
 CREATE TRIGGER `conteo_temporadas` BEFORE DELETE ON `season_specification` FOR EACH ROW BEGIN
@@ -382,7 +384,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `users`
+-- Table structure for table `users`
 --
 
 CREATE TABLE `users` (
@@ -398,7 +400,7 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `users`
+-- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`Id_user`, `User`, `Password`, `Email`, `Name`, `Surname`, `Lastname`, `Rol`, `Estado`) VALUES
@@ -409,7 +411,7 @@ INSERT INTO `users` (`Id_user`, `User`, `Password`, `Email`, `Name`, `Surname`, 
 (61, 'ulfvy', 'pbkdf2:sha256:600000$RF9606eaMpjCyglV$6c54ee6eeb92535d72d83cfff2e19db1d397a07c83355911c279f3fbc88cbfe6', 'ghcj@gsdf.gse', 'Mario', 'Zamora', 'Lira', 'cliente', 'Activo');
 
 --
--- Disparadores `users`
+-- Triggers `users`
 --
 DELIMITER $$
 CREATE TRIGGER `verificar_admin` BEFORE DELETE ON `users` FOR EACH ROW BEGIN
@@ -424,29 +426,29 @@ $$
 DELIMITER ;
 
 --
--- Índices para tablas volcadas
+-- Indexes for dumped tables
 --
 
 --
--- Indices de la tabla `comments`
+-- Indexes for table `comments`
 --
 ALTER TABLE `comments`
   ADD PRIMARY KEY (`Id_coment`);
 
 --
--- Indices de la tabla `contacts`
+-- Indexes for table `contacts`
 --
 ALTER TABLE `contacts`
   ADD PRIMARY KEY (`Id_contact`);
 
 --
--- Indices de la tabla `content`
+-- Indexes for table `content`
 --
 ALTER TABLE `content`
   ADD PRIMARY KEY (`Id_contenido`);
 
 --
--- Indices de la tabla `products`
+-- Indexes for table `products`
 --
 ALTER TABLE `products`
   ADD PRIMARY KEY (`Id_product`),
@@ -454,64 +456,64 @@ ALTER TABLE `products`
   ADD KEY `FK_Id_user` (`FK_Id_user`);
 
 --
--- Indices de la tabla `season_specification`
+-- Indexes for table `season_specification`
 --
 ALTER TABLE `season_specification`
   ADD PRIMARY KEY (`Id_season`);
 
 --
--- Indices de la tabla `users`
+-- Indexes for table `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`Id_user`),
   ADD KEY `FK_id_rol` (`Rol`);
 
 --
--- AUTO_INCREMENT de las tablas volcadas
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT de la tabla `comments`
+-- AUTO_INCREMENT for table `comments`
 --
 ALTER TABLE `comments`
   MODIFY `Id_coment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT de la tabla `contacts`
+-- AUTO_INCREMENT for table `contacts`
 --
 ALTER TABLE `contacts`
   MODIFY `Id_contact` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT de la tabla `content`
+-- AUTO_INCREMENT for table `content`
 --
 ALTER TABLE `content`
   MODIFY `Id_contenido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
--- AUTO_INCREMENT de la tabla `products`
+-- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `Id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
+  MODIFY `Id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
 
 --
--- AUTO_INCREMENT de la tabla `season_specification`
+-- AUTO_INCREMENT for table `season_specification`
 --
 ALTER TABLE `season_specification`
   MODIFY `Id_season` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
--- AUTO_INCREMENT de la tabla `users`
+-- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
   MODIFY `Id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
--- Restricciones para tablas volcadas
+-- Constraints for dumped tables
 --
 
 --
--- Filtros para la tabla `products`
+-- Constraints for table `products`
 --
 ALTER TABLE `products`
   ADD CONSTRAINT `Products_ibfk_1` FOREIGN KEY (`FK_id_season`) REFERENCES `season_specification` (`Id_season`) ON DELETE CASCADE,
