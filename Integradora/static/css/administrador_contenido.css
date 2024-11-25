@@ -547,3 +547,54 @@ svg{
     margin: 0 auto;
     text-align: center;
 }
+@media (max-width: 768px) {
+    table {
+        font-size: 2.5vw;
+    }
+    .eliminar, .detalles, .editar {
+        min-height: 3.5vw; 
+        min-width: 3.5vw; 
+    }
+}
+
+@media (max-width: 480px) {
+    table {
+        font-size: 1vw;
+    }
+    .eliminar, .detalles, .editar {
+        min-height: 3.5vw; 
+        min-width: 3.5vw; 
+    }
+}
+
+
+/* Media Queries para dispositivos pequeños (tabletas y celulares) */
+@media (max-width: 767px) {
+    .modal-contenido {
+        width: 90%; /* Ancho del modal ajustado para pantallas pequeñas */
+        max-width: 90%;
+        padding: 4vw; /* Aumentamos el padding para dar espacio */
+    }
+
+    .modal input[type="text"], 
+    .modal input[type="email"], 
+    .modal input[type="password"], 
+    .modal select {
+        width: 80%; /* Los campos de entrada ocupan más espacio en pantallas pequeñas */
+        font-size: 3vw; /* Ajuste del tamaño de la fuente para mejorar la legibilidad */
+    }
+    button svg
+    {
+    width: 150%;
+    margin: 0 auto;
+    }
+    .modal textarea {
+        width: 80%; /* Ancho mayor del textarea */
+        height: 12vw; /* Ajustamos la altura para pantallas pequeñas */
+    }
+
+    .modal-contenido h1, 
+    .modal-contenido h2 {
+        font-size: 3vw; /* Ajuste dinámico de los tamaños de los títulos */
+    }
+}
