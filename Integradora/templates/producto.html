@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/cargando.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/administrador_prod.css') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='image/favicon.ico') }}" type="image/x-icon">
     <script src="{{ url_for('static', filename='js/footer.js') }}"></script>
     <script src="{{ url_for('static', filename='js/menu.js') }}"></script>
@@ -35,7 +36,7 @@
             {% if inicio %}
                 <button id="salir">Cerrar sesión</button>
             {% else %}
-                <button id="iniciar" onclick="window.location.href='/inicio_usuario'">Iniciar sesión</button>
+                <button id="iniciar" onclick="window.location.href='/inicio_sesion'">Iniciar sesión</button>
                 <button id="registrarse" onclick="window.location.href='/inicio_usuario'">Registrarse</button>
             {% endif %}
         </nav>
@@ -57,79 +58,75 @@
             </div>
             <div id="spa-info">
                 <h2 id="nombre-producto"></h2>
-                <table>
-                    <tr>
-                        <td>
-                            <h3>Nombre:</h3>
-                            <p>{{ cont.Name }}</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="izq"><h3>Material:</h3>
-                            <p>
-                                {{ cont.Material_composition }}
-                            </p><div id="material-producto"></div></td>
-                        <td class="der"><h3>Modelo:</h3>
-                            <p>
-                                {{ cont.Model }}
-                            </p><div id="modelo-producto"></div></td>
-                    </tr>
-                    <tr>
-                        <td class="izq"><h3>Color:</h3>
-                            <p>
-                                {{ cont.Color }}
-                            </p>
-                            <div class="info-text"  id="color-producto"></div></td>
-                        <td class="der"><h3>Tamaño:</h3>
-                            <p>
-                                {{ cont.Size }}
-                            </p><div class="info-text" id="tamaño-producto"></div></td>
-                    </tr>
-                    <tr>
-                        <td class="izq"><h3>Temporada:</h3>
-                            <p>
-                                {{ cont.season }}
-                            </p><div class="info-text" id="temporada-producto"></div></td>
-                        <td class="der"><h3>Precio:</h3>
-                            <p>
-                                ${{ cont.Price_per_unit }}
-                            </p><div class="info-text" id="precio-producto"></div></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><h3>Descripción:</h3>
-                            <p>
-                                {{ cont.Description }}
-                            </p><div class="info-text" id="descripcion-producto"></div></td>
-                    </tr>
-                </table>
+                <div class="product-grid">
+                    <!-- Nombre ocupa toda la fila -->
+                    <div class="full">
+                        <h3>Nombre:</h3>
+                        <p>{{ cont.Name }}</p>
+                    </div>
+                
+                    <!-- Sección de dos columnas -->
+                    <div>
+                        <h3>Material:</h3>
+                        <p>{{ cont.Material_composition }}</p>
+                    </div>
+                    <div>
+                        <h3>Modelo:</h3>
+                        <p>{{ cont.Model }}</p>
+                    </div>
+                    <div>
+                        <h3>Color:</h3>
+                        <p>{{ cont.Color }}</p>
+                    </div>
+                    <div>
+                        <h3>Tamaño:</h3>
+                        <p>{{ cont.Size }}</p>
+                    </div>
+                    <div>
+                        <h3>Temporada:</h3>
+                        <p>{{ cont.season }}</p>
+                    </div>
+                    <div>
+                        <h3>Precio:</h3>
+                        <p>${{ cont.Price_per_unit }}</p>
+                    </div>
+                
+                    <!-- Descripción ocupa toda la fila -->
+                    <div class="full">
+                        <h3>Descripción:</h3>
+                        <p>{{ cont.Description }}</p>
+                    </div>
+                </div>
+                
+                
             </div>
         </div>
         <div id="comentarios">
-            <!-- sección para usuarios registrados -->
-            {% if inicio %}
-            <div id="nuevocomentario">
-                <input type="number" name="" id="califa">
-                <div class="rating">
-                    <input type="radio" name="rate" id="star5" value="5">
-                    <label for="star5" title="text"></label>
-                    <input type="radio" name="rate" id="star4" value="4">
-                    <label for="star4" title="text"></label>
-                    <input type="radio" name="rate" id="star3" value="3">
-                    <label for="star3" title="text"></label>
-                    <input type="radio" name="rate" id="star2" value="2">
-                    <label for="star2" title="text"></label>
-                    <input type="radio" name="rate" id="star1" value="1">
-                    <label for="star1" title="text"></label>
-                </div>
-                <textarea name="" id="nuevo-comentario" placeholder="Escribe un comentario"></textarea>
-                <button id="registrar" onclick="registrarcomentario()">Subir comentario</button>
-            </div>  
-            {% endif %}
-            <!-- sección para todos los usuarios -->
-            <div class="comentario" id="comentario_del_producto1">
-                <h1>Comentarios</h1>
-                <div id="comentario_del_producto">
-
+                <!-- sección para usuarios registrados -->
+                {% if inicio %}
+                <div id="nuevocomentario">
+                    <h2>Deja tu comentario</h2>
+                    <div class="rating">
+                        <input type="radio" name="rate" id="star5" value="5">
+                        <label for="star5" title="Excelente"></label>
+                        <input type="radio" name="rate" id="star4" value="4">
+                        <label for="star4" title="Muy bueno"></label>
+                        <input type="radio" name="rate" id="star3" value="3">
+                        <label for="star3" title="Bueno"></label>
+                        <input type="radio" name="rate" id="star2" value="2">
+                        <label for="star2" title="Regular"></label>
+                        <input type="radio" name="rate" id="star1" value="1">
+                        <label for="star1" title="Malo"></label>
+                    </div>
+                    <textarea name="" id="nuevo-comentario" placeholder="Escribe un comentario"></textarea>
+                    <button id="registrar" onclick="registrarcomentario()">Subir comentario</button>
+                </div>  
+                {% endif %}
+                <!-- sección para todos los usuarios -->
+                <div class="comentario" id="comentario_del_producto1">
+                    <h1>Comentarios</h1>
+                    <div id="comentario_del_producto">
+                    </div>
                 </div>
             </div>
         </div>

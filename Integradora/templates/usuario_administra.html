@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/producto.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/administrador.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/cargando.css') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='image/favicon.ico') }}" type="image/x-icon">
     <script src="{{ url_for('static', filename='js/footer.js') }}"></script>
@@ -61,8 +62,8 @@
                 <p><strong>Apellido Paterno:</strong> {{ cont.Surname }}</p>
                 <p><strong>Apellido Materno:</strong> {{ cont.Lastname }}</p>
             </div>
-            <button onclick="eliminarusuariosolito()">Borrar cuenta</button>
-            <button onclick="editarusuario()">Editar cuenta</button>            
+            <button class="registro" onclick="eliminarusuariosolito()">Borrar cuenta</button>
+            <button class="registro" onclick="editarusuario()">Editar cuenta</button>            
         </section>
         
     </main>
