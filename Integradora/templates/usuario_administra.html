@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/catalogo.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/producto.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/administrador.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/cargando.css') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='image/favicon.ico') }}" type="image/x-icon">
@@ -50,21 +49,34 @@
     </div>
     
     <main>
-        <section>
-            <h2>Información del Usuario</h2>
-            <div class="izquierda">
-                <img src="{{ url_for('static', filename='image/group.png') }}" alt="">
+        <section class="user-info-section">
+            <h2 class="user-info-title">Información del Usuario</h2>
+            <div class="user-info-img">
+                <img src="{{ url_for('static', filename='image/group.png') }}" alt="Imagen de usuario">
             </div>
-            <div class="derecha">
-                <p><strong>Usuario:</strong> {{ cont.User }}</p>
-                <p><strong>Correo Electrónico:</strong> {{ cont.Email }}</p>
-                <p><strong>Nombre:</strong> {{ cont.Name }}</p>
-                <p><strong>Apellido Paterno:</strong> {{ cont.Surname }}</p>
-                <p><strong>Apellido Materno:</strong> {{ cont.Lastname }}</p>
+            <div class="user-info-content">
+                    <div class="user-info-labels">
+                        <p>Usuario:</p>
+                        <p>Correo Electrónico:</p>
+                        <p>Nombre:</p>
+                        <p>Apellido Paterno:</p>
+                        <p>Apellido Materno:</p>
+                    </div>
+                    <div class="user-info-data">
+                        <p>{{ cont.User }}</p>
+                        <p>{{ cont.Email }}</p>
+                        <p>{{ cont.Name }}</p>
+                        <p>{{ cont.Surname }}</p>
+                        <p>{{ cont.Lastname }}</p>
+                    </div>
             </div>
-            <button class="registro" onclick="eliminarusuariosolito()">Borrar cuenta</button>
-            <button class="registro" onclick="editarusuario()">Editar cuenta</button>            
+            <div class="user-info-buttons">
+                <button class="user-btn blue-btn" onclick="eliminarusuariosolito()">Borrar cuenta</button>
+                <button class="user-btn blue-btn" onclick="editarusuario()">Editar cuenta</button>
+            </div>
         </section>
+        
+        
         
     </main>
 
