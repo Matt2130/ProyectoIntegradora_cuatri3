@@ -179,10 +179,10 @@ def mostrador_productos():
             """
             # Mostrar botón "Anterior" si no es la primera página
             if page > 1:
-                html += f'<a href="#" onclick="mostrarProductos({page-1})">Anterior</a>'
+                html += f'<a href="#" onclick="mostrarProductos({page-1})"><svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="icon-before" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/><svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="icon-before" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/></svg></a>'
             # Mostrar botón "Siguiente" si no es la última página
             if page < total_pages:
-                html += f'<a href="#" onclick="mostrarProductos({page+1})">Siguiente</a>'
+                html += f'<a href="#" onclick="mostrarProductos({page+1})"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="icon-next" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/></svg></a>'
             html += """
                 </div>
             """
@@ -271,10 +271,10 @@ def tabla_productos():
             """
             # Mostrar botón "Anterior" si no es la primera página
             if page > 1:
-                html += f'<a href="#" onclick="cargarProductos({page-1})">Anterior</a>'
+                html += f'<a href="#" onclick="cargarProductos({page-1})"><svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="icon-before" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/><svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="icon-before" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/></svg></a>'
             # Mostrar botón "Siguiente" si no es la última página
             if page < total_pages:
-                html += f'<a href="#" onclick="cargarProductos({page+1})">Siguiente</a>'
+                html += f'<a href="#" onclick="cargarProductos({page+1})"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="icon-next" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/></svg></a>'
             html += """
                 </div>
             """
@@ -349,11 +349,11 @@ def tabla_season_specification():
             """
             if page > 1:
                 html += f"""
-                    <a href="#" onclick="paginacion({page-1})">Anterior</a>
+                    <a href="#" onclick="paginacion({page-1})"><svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="icon-before" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/><svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="icon-before" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/></svg></a>
                 """
             if page < total_pages:
                 html += f"""
-                    <a href="#" onclick="paginacion({page+1})">Siguiente</a>
+                    <a href="#" onclick="paginacion({page+1})"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="icon-next" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/></svg></a>
                 """
             html += "</div>"
 
@@ -383,26 +383,27 @@ def tabla_contact():
                 html += '<div class="contacto_contenedor">'
                 for url, nombre in zip(redes, nombre_columnas):
                     # Excluir Id_contact del HTML
-                    if nombre == "Id_contact":
-                        continue
-                    
-                    if nombre == 'Email':
-                        link = f"mailto:{url}"
-                    elif nombre == 'Whatsapp':
-                        link = f"https://wa.me/{url}"
-                    elif nombre == 'Phone':
-                        link = f"tel:{url}"
-                    else:
-                        link = url  # Redes sociales como Facebook, Instagram, etc.
+                    if url:
+                        if nombre == "Id_contact":
+                            continue
+                        
+                        if nombre == 'Email':
+                            link = f"mailto:{url}"
+                        elif nombre == 'Whatsapp':
+                            link = f"https://wa.me/{url}"
+                        elif nombre == 'Phone':
+                            link = f"tel:{url}"
+                        else:
+                            link = url  # Redes sociales como Facebook, Instagram, etc.
 
-                    # Generar los elementos visuales
-                    html += f"""
-                    <div class="elementos">
-                        <a target="_blank" href="{link}">
-                            <img src="static/image/{nombre}.svg" alt="{nombre}" class="{nombre}">
-                        </a>
-                    </div>
-                    """
+                        # Generar los elementos visuales
+                        html += f"""
+                        <div class="elementos">
+                            <a target="_blank" href="{link}">
+                                <img src="static/image/{nombre}.svg" alt="{nombre}" class="{nombre}">
+                            </a>
+                        </div>
+                        """
                 html += f"""
                 <hr>
                 <br>
@@ -534,10 +535,10 @@ def tabla_users():
             """
             # Mostrar botón "Anterior" si no es la primera página
             if page > 1:
-                html += f'<button onclick="cargarUsuarios({page-1})">Anterior</button>'
+                html += f'<button onclick="cargarUsuarios({page-1})"><svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="icon-before" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/><svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="icon-before" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/></svg></button>'
             # Mostrar botón "Siguiente" si no es la última página
             if page < total_pages:
-                html += f'<button onclick="cargarUsuarios({page+1})">Siguiente</button>'
+                html += f'<button onclick="cargarUsuarios({page+1})"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="icon-next" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/></svg></button>'
             html += """
                 </div>
             """
@@ -690,11 +691,11 @@ def buscador_season():
             """
             if page > 1:
                 html += f"""
-                    <a href="#" onclick="paginacion({page-1})">Anterior</a>
+                    <a href="#" onclick="paginacion({page-1})"><svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="icon-before" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/><svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="icon-before" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/></svg></a>
                 """
             if page < total_pages:
                 html += f"""
-                    <a href="#" onclick="paginacion({page+1})">Siguiente</a>
+                    <a href="#" onclick="paginacion({page+1})"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="icon-next" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/></svg></a>
                 """
             html += "</div>"
 
@@ -781,9 +782,9 @@ def buscador_users():
                 <div class="paginacion">
             """
             if page > 1:
-                html += f'<button onclick="buscarUsuarios(\'{buscar}\', {page-1})">Anterior</button>'
+                html += f'<button onclick="buscarUsuarios(\'{buscar}\', {page-1})"><svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="icon-before" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/><svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="icon-before" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/></svg></button>'
             if page < total_pages:
-                html += f'<button onclick="buscarUsuarios(\'{buscar}\', {page+1})">Siguiente</button>'
+                html += f'<button onclick="buscarUsuarios(\'{buscar}\', {page+1})"><svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="icon-before" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/><svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="icon-before" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/></svg></button>'
             html += """
                 </div>
             """
@@ -873,10 +874,10 @@ def buscador_productos():
             """
             # Mostrar botón "Anterior" si no es la primera página
             if page > 1:
-                html += f'<a href="#" onclick="buscador({page-1})">Anterior</a>'
+                html += f'<a href="#" onclick="buscador({page-1})"><svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="icon-before" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/><svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="icon-before" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/></svg></a>'
             # Mostrar botón "Siguiente" si no es la última página
             if page < total_pages:
-                html += f'<a href="#" onclick="buscador({page+1})">Siguiente</a>'
+                html += f'<a href="#" onclick="buscador({page+1})"><svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="icon-before" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/><svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="icon-before" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/></svg></a>'
             html += """
                 </div>
             """
@@ -1010,10 +1011,10 @@ def mostrador_productos_buscados():
             """
             # Botón "Anterior"
             if page > 1:
-                html += f'<a href="#" onclick="buscar_producto_select({page-1})">Anterior</a>'
+                html += f'<a href="#" onclick="buscar_producto_select({page-1})"><svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="icon-before" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/><svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="icon-before" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/></svg></a>'
             # Botón "Siguiente"
             if has_next_page:
-                html += f'<a href="#" onclick="buscar_producto_select({page+1})">Siguiente</a>'
+                html += f'<a href="#" onclick="buscar_producto_select({page+1})"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="icon-next" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/></svg></a>'
             html += """
                 </div>
             """
@@ -1830,7 +1831,7 @@ def buscador_season_edit():
 
             html = f"""
             <span class="cerrar" onclick="cerrarModal()">&times;</span>
-            <div class="alinear">
+
                 <h1>
                     Edición de temporada
                 </h1>
@@ -1844,7 +1845,6 @@ def buscador_season_edit():
                 </label>
                 <br>
                 <button id="registrar" onclick="editarsqltemporada({contenido[1]})">Actualizar</button>
-            </div>
             """
             
             return Response(html, mimetype='text/html')
@@ -1882,7 +1882,6 @@ def buscador_season_delete():
             # Construcción del HTML
             html = f"""
             <span class="cerrar" onclick="cerrarModal()">&times;</span>
-            <div class="alinear">
                 <h1>Eliminación de temporada</h1>
                 <br>
                 <h2>Selecciona una temporada para remplazar la temporada a los productos</h2>
@@ -1896,7 +1895,6 @@ def buscador_season_delete():
                 </select>
                 <br>
                 <button id="registrar" onclick="eliminarProducto({contenido[1]})">Eliminar</button>
-            </div>
             """
             
             return Response(html, mimetype='text/html')
@@ -1935,7 +1933,6 @@ def buscador_users_delete():
             # Construcción del HTML
             html = """
             <span class="cerrar" onclick="cerrarModal()">&times;</span>
-            <div class="alinear">
                 <h1>Eliminación de Usuarios</h1>
                 <br>
                 <h2>Selecciona otro administrador para reasignar los productos:</h2>
@@ -1948,7 +1945,6 @@ def buscador_users_delete():
                 </select>
                 <br>
                 <button id="registrar" onclick="eliminarProducto({id_contenido})">Actualizar</button>
-            </div>
             """
 
             return Response(html, mimetype='text/html', status=200)
@@ -2144,10 +2140,13 @@ def buscador_producto_edit():
             <span class="cerrar" onclick="cerrarModal()">&times;</span>
             <h1>Edición de producto</h1>
 
-            <div class="izquierda">
-                <img src="{direccion_imagen}" alt="{contenido[8]}" style="width:300px;height:auto;">
-                <br>
-                <label for="modelo">Modelo:{contenido[1]}
+            <div class="form-grid">
+            <!-- Columna izquierda -->
+            <div class="form-column">
+                <img src="{direccion_imagen}" alt="{contenido[8]}" style="width: 100%; max-width: 300px; height: auto; margin-bottom: 20px;">
+                    <br>
+                <label for="modelo">Modelo:
+                    <span>{contenido[1]}</span>
                 </label>
                 <br>
                 """
@@ -2155,6 +2154,7 @@ def buscador_producto_edit():
                 result = connection.execute(text('SELECT season_specification.Id_season, season_specification.season FROM season_specification;'))
                 temporadas = result.fetchall()
                 html += f"""
+                <label for="temporada">Temporada:
                 <select id="temporadad">
                     """
                 for info in temporadas:
@@ -2168,20 +2168,22 @@ def buscador_producto_edit():
                         """
                 html += f"""
                     </select>
+                    </label>
+                    <br>
                 """
             html +=f"""
-                <br>
                 <label for="tamaño">Tamaño:
                     <input type="text" name="tamaño" id="tamañod" value="{contenido[3]}">
                 </label>
-                <br>
+                    <br>
                 <label for="nombre">Nombre:
                     <input type="text" name="nombre" id="nombred" value="{contenido[4]}">
                 </label>
                 <br>
             </div>
 
-            <div class="derecha">
+            <!-- Columna derecha -->
+            <div class="form-column">
                 <label for="descripcion">Descripción:
                     <textarea name="descripcion" id="descripciond">{contenido[5]}</textarea>
                 </label>
@@ -2189,19 +2191,20 @@ def buscador_producto_edit():
                 <label for="precio_lot">Precio (lote):
                     <input type="number" name="precio_lot" id="precio_lotd" value="{contenido[6]}">
                 </label>
-                <br>
+<br>
                 <label for="color">Color:
                     <input type="text" name="color" id="colord" value="{contenido[7]}">
                 </label>
-                <br>
+                    <br>
                 <label for="materia">Material de composición:
                     <input type="text" name="materia" id="materiad" value="{contenido[0]}">
                 </label>
-                <br>
             </div>
+        </div>
 
-            <br>
+        <div class="button-container">
             <button id="registrar" onclick="editarsqlcontenido({contenido[10]})">Editar</button>
+
             """
 
             return Response(html, mimetype='text/html')
@@ -2230,38 +2233,52 @@ def buscador_producto_dettalles():
             direccion_imagen= url_for('static', filename=f'image/imagenes_productos/{contenido[8]}', _external=True)
             
             html = f"""
-            <span class="cerrar" onclick="cerrarModal()">&times;</span>
-            <h1>Detalles de producto</h1>
+        <span class="cerrar" onclick="cerrarModal()">&times;</span>
+        <h1>Detalles de producto</h1>
 
-            <h2>Imagen</h2>
-            <img src="{direccion_imagen}" alt="{contenido[8]}" style="width:300px;height:auto;">
+        <div class="detalles-grid">
+            <div class="detalle-item">
+                <h2>Imagen</h2>
+                <img src="{direccion_imagen}" alt="{contenido[8]}" />
+            </div>
+            <div class="detalle-item">
+                <h2>Modelo</h2>
+                <p>{contenido[1]}</p>
+            </div>
+            <div class="detalle-item">
+                <h2>Temporada</h2>
+                <p>{contenido[2]}</p>
+            </div>
+            <div class="detalle-item">
+                <h2>Tamaño</h2>
+                <p>{contenido[3]}</p>
+            </div>
+            <div class="detalle-item">
+                <h2>Nombre</h2>
+                <p>{contenido[4]}</p>
+            </div>
+            <div class="detalle-item">
+                <h2>Descripción</h2>
+                <p>{contenido[5]}</p>
+            </div>
+            <div class="detalle-item">
+                <h2>Precio por unidad</h2>
+                <p>${contenido[6]}</p>
+            </div>
+            <div class="detalle-item">
+                <h2>Color</h2>
+                <p>{contenido[7]}</p>
+            </div>
+            <div class="detalle-item">
+                <h2>Composición del material</h2>
+                <p>{contenido[0]}</p>
+            </div>
+            <div class="detalle-item">
+                <h2>Usuario que lo registró</h2>
+                <p>{contenido[9]}</p>
+            </div>
+        </div>
 
-            <h2>Modelo</h2>
-            <p>{contenido[1]}</p>
-
-            <h2>Temporada</h2>
-            <p>{contenido[2]}</p>
-
-            <h2>Tamaño</h2>
-            <p>{contenido[3]}</p>
-
-            <h2>Nombre</h2>
-            <p>{contenido[4]}</p>
-
-            <h2>Descripción</h2>
-            <p>{contenido[5]}</p>
-
-            <h2>Precio por unidad</h2>
-            <p>${contenido[6]}</p>
-
-            <h2>Color</h2>
-            <p>{contenido[7]}</p>
-
-            <h2>Composición del material</h2>
-            <p>{contenido[0]}</p>
-
-            <h2>Usuario que lo registro</h2>
-            <p>{contenido[9]}</p>
             """
             return Response(html, mimetype='text/html')
     except Exception as e:
