@@ -144,6 +144,11 @@ button {
     margin: 0.1vw;
 }
 
+button #registrar´{
+    width: 30%;
+    padding: 1vw;
+}
+
 button:hover {
     opacity: 0.9;
     transform: scale(1.1); /* Aumenta ligeramente el tamaño al pasar el cursor */
@@ -318,6 +323,35 @@ h1 {
     max-width: 30%;
     height: auto;
     border-radius: 4px;
+}
+.paginacion{
+    grid-column: 1/5;
+
+}
+.paginacion a{
+    text-decoration: none;
+    color: black;
+    display: inline-block;
+    margin: 2vw;
+}
+
+.paginacion .siguiente:hover{
+    background-color:#f5f086;
+    border-radius: 5px;
+    transition: ease-in 0.3s;
+    padding: 0 .5vw;
+}
+
+.paginacion .anterior:hover{
+    background-color:#f5f086;
+    border-radius: 5px;
+    transition: ease-in 0.3s;
+    padding: 0 .5vw;
+}
+
+svg{
+    width: 4vw;
+    margin: 0 auto;
 }
 
 /* Responsivo */

@@ -234,3 +234,133 @@ svg{
     }
     
 }
+/* Sección principal */
+.user-info-section {
+    width: 90%;
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: #d4d7dc;
+    padding: 2vw; /* Espaciado proporcional */
+    border-radius: 1vw; /* Bordes redondeados relativos */
+    box-shadow: 0 0.4vw 1vw rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+/* Título */
+.user-info-title {
+    text-align: center;
+    font-size: 2.4vw;
+    font-weight: bold;
+    margin-bottom: 2vh;
+}
+
+/* Contenedor principal con imagen y datos */
+.user-info-content {
+    display: grid;
+    grid-template-columns: 1fr; /* Una columna para móviles */
+    grid-template-rows: auto 1fr; /* Imagen en la parte superior */
+    grid-gap: 2vw;
+    justify-items: center;
+    align-items: center;
+    margin-bottom: 3vh;
+}
+
+/* Contenedor de la imagen */
+.user-info-img {
+    grid-column: 1 / 2;
+    justify-self: center;
+    width: 100%;
+    max-width: 200px;
+}
+
+/* Imagen */
+.user-info-img img {
+    width: 100%;
+    height: auto;
+}
+
+/* Contenedor de las etiquetas y los datos */
+.user-info-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr; /* Leyendas y datos */
+    grid-gap: 1vw;
+    width: 100%;
+    max-width: 600px;
+}
+
+/* Columna de etiquetas (izquierda) */
+.user-info-labels p {
+    grid-column: span 1;
+    font-weight: bold;
+    color: #333;
+    margin: 5px 0;
+}
+
+/* Columna de datos (derecha) */
+.user-info-data p {
+    grid-column: span 1;
+    margin: 5px 0;
+    color: #555;
+    font-size: 16px;
+}
+
+/* Botones */
+.user-info-buttons {
+    text-align: center;
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+/* Botones personalizados */
+.user-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2vw;
+    cursor: pointer;
+}
+
+/* Estilo para los botones azules */
+.blue-btn {
+    background-color: #fbb72c;
+    color: white;
+    transition: background-color 0.3s;
+}
+
+.blue-btn:hover {
+    background-color: #f79c42;
+}
+
+/* Media queries para hacer responsivo el diseño */
+@media (min-width: 600px) {
+    /* Para pantallas de tablets y más grandes */
+    .user-info-content {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+    }
+
+    /* Asegura que la imagen no ocupe más del 30% en pantallas grandes */
+    .user-info-img {
+        max-width: 150px;
+    }
+
+    /* Columna de etiquetas y datos en pantallas más grandes */
+    .user-info-container {
+        grid-template-columns: 1fr 2fr;
+        grid-gap: 2vw;
+    }
+}
+
+@media (max-width: 600px) {
+    /* Para dispositivos móviles */
+    .user-info-container {
+        grid-template-columns: 1fr; /* Una sola columna */
+    }
+
+    .user-info-img {
+        max-width: 80%;
+    }
+}
+
