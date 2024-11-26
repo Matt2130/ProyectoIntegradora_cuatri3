@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost
--- Generation Time: Nov 25, 2024 at 04:24 PM
+-- Host: 127.0.0.1
+-- Generation Time: Nov 26, 2024 at 11:27 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -232,7 +232,9 @@ INSERT INTO `comments` (`Id_coment`, `Punctuation`, `Comment`, `FK_Id_customer`,
 (5, 5, '', 56, 32),
 (6, 4, 'Es muy comodo', 56, 33),
 (7, 2, '', 54, 34),
-(8, 4, '', 54, 61);
+(8, 4, '', 54, 61),
+(9, 1, 'no me gustó olvidenlo\n', 54, 60),
+(10, 5, 'Me gusto', 62, 60);
 
 -- --------------------------------------------------------
 
@@ -336,9 +338,7 @@ INSERT INTO `products` (`Id_product`, `Material_composition`, `Model`, `FK_id_se
 (58, '', 'Cobertor Luxus Felisa', 1, 'Individual', 'Cobertor Luxus Felisa', 'Esquimal se caracteriza por siempre ofrecer la mejor calidad y variedad en cobertores invernales. Nuestro Cobertor Luxus Felisa está confeccionado con tela tipo piel y está texturizado con acabado rasurado. Su diseño es contemporáneo y sobrio, ideal para tus espacios elegantes.\r\n\r\n\r\n¿Por qué es extraordinario?\r\n\r\nSúper precio.\r\nTela frontal con acabado tipo piel y acabado rasurado.\r\nReverso de tela plus de alta calidad rosa.\r\nTecnología Termofabric.\r\nNivel de calidez: Media.', 1199, 'Rosa', 'Cobertor Luxus Felisa.png', 54),
 (59, '', 'ALASKA BEIGE', 12, 'Matrimonial', 'ALASKA BEIGE', 'Cobertor ligero Alaska, de increíble diseño para un descanso cálido y suave.\r\n\r\nAtributos:\r\n– Color: beige.\r\n– Muy suave al contacto.\r\n– Cobertor ligero de microfibra.\r\n– Reverso de borrega.\r\n– Hipoalergénico.\r\n– Hecho en México.\r\n– Capitonado.\r\n– Fácil almacenamiento.\r\n– De fácil lavado en casa, a máquina. No usar blanqueador. Tender a la sombra sobre una superficie plana.', 349, 'cafe', 'ALASKA BEIGE.png', 54),
 (60, '', 'ALASKA GRIS', 12, 'Matrimonial', 'ALASKA GRIS', 'Cobertor ligero Alaska, de increíble diseño para un descanso cálido y suave.\r\n\r\nAtributos:\r\n– Color: Gris.\r\n– Muy suave al contacto.\r\n– Cobertor ligero de microfibra.\r\n– Reverso de borrega.\r\n– Hipoalergénico.\r\n– Hecho en México.\r\n– Capitonado.\r\n– Fácil almacenamiento.\r\n– De fácil lavado en casa, a máquina. No usar blanqueador. Tender a la sombra sobre una superficie plana.', 349, 'gris', 'ALASKA GRIS.png', 54),
-(61, '', 'ALBERTA', 12, 'Matrimonial', 'ALBERTA', 'Bello cobertor ligero Alberta, con diseño de rayas muy bonito para decorar tu recámara y para tener un descanso cálido y suave.\r\n\r\nAtributos:\r\n– Color gris\r\n– Diseño a rayas\r\n– Muy suave al contacto\r\n– Cobertor ligero de microfibra\r\n– Reverso de borrega\r\n– Hipoalergénico\r\n– Hecho en México\r\n– Capitonado\r\n– Fácil almacenamiento\r\n– De fácil lavado en casa, a máquina. No usar blanqueador. Tender a la sombra sobre una superficie plana', 399, 'gris', 'ALBERTA.png', 54),
-(75, '456', 'gh', 1, '56', '56', '56', 56, '56', 'gh.png', 54),
-(76, '54', 'kj', 1, 'hj', 'vhj', 'vhj', 5, '564', 'kj.png', 54);
+(61, '', 'ALBERTA', 12, 'Matrimonial', 'ALBERTA', 'Bello cobertor ligero Alberta, con diseño de rayas muy bonito para decorar tu recámara y para tener un descanso cálido y suave.\r\n\r\nAtributos:\r\n– Color gris\r\n– Diseño a rayas\r\n– Muy suave al contacto\r\n– Cobertor ligero de microfibra\r\n– Reverso de borrega\r\n– Hipoalergénico\r\n– Hecho en México\r\n– Capitonado\r\n– Fácil almacenamiento\r\n– De fácil lavado en casa, a máquina. No usar blanqueador. Tender a la sombra sobre una superficie plana', 399, 'gris', 'ALBERTA.png', 54);
 
 -- --------------------------------------------------------
 
@@ -404,11 +404,12 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`Id_user`, `User`, `Password`, `Email`, `Name`, `Surname`, `Lastname`, `Rol`, `Estado`) VALUES
-(54, 'a', 'pbkdf2:sha256:600000$qdR0fJ74gu39ta2u$727ca8e7b8060804bdf8e1d9f93c972c8ae6ca822e0bc92a9b3c8c8885b8315d', 'mario@gmail.com', 'a', 'a', 'a', 'administrador', 'Activo'),
+(54, 'AlanAlvarado', 'pbkdf2:sha256:600000$qdR0fJ74gu39ta2u$727ca8e7b8060804bdf8e1d9f93c972c8ae6ca822e0bc92a9b3c8c8885b8315d', 'mario@gmail.com', 'Alan', 'Alvarado', 'Martinez', 'administrador', 'Activo'),
 (55, 'b', 'pbkdf2:sha256:600000$LKwiSGE4slUlcYsT$5227b12a6be4603ff47c7230646c259466c7008430a7e70ea8dac5ea3bf8dd8b', 'Manuel@gmail.com', 'b', 'apellidoP', 'apellidoM', 'administrador', 'Activo'),
 (56, 't', 'pbkdf2:sha256:600000$FQSCsQb2o1BYOckG$86d20d403383e98627d166dbd18b5b88c348c0163e56b6922c2d694e8653b345', 'test@gmail.com', 'test', 't', 't', 'cliente', 'Activo'),
 (60, 'fgh', 'pbkdf2:sha256:600000$ULmggWqtcH0wAFEu$1cdf298918958bf75298b4dff227ecf1b68f2f0c140e979aa2a9d4f2c4340f08', 'admin@hotmail.com', 'dfth', 'Materno', 'Paterno', 'administrador', 'Activo'),
-(61, 'ulfvy', 'pbkdf2:sha256:600000$RF9606eaMpjCyglV$6c54ee6eeb92535d72d83cfff2e19db1d397a07c83355911c279f3fbc88cbfe6', 'ghcj@gsdf.gse', 'Mario', 'Zamora', 'Lira', 'cliente', 'Activo');
+(61, 'ulfvy', 'pbkdf2:sha256:600000$RF9606eaMpjCyglV$6c54ee6eeb92535d72d83cfff2e19db1d397a07c83355911c279f3fbc88cbfe6', 'ghcj@gsdf.gse', 'Mario', 'Zamora', 'Lira', 'cliente', 'Activo'),
+(62, 'MarLopez', 'pbkdf2:sha256:1000000$uud8ISnEhBP7ownP$e62b6f2cd13da0703b51deb055703349dd7fa7df37053cad76aa6a61c498dd8a', 'mar@utd.edu.mx', 'Mar', 'Rodriguez', 'Lopez', 'cliente', 'Activo');
 
 --
 -- Triggers `users`
@@ -476,7 +477,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `Id_coment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `Id_coment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `contacts`
@@ -506,7 +507,7 @@ ALTER TABLE `season_specification`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `Id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+  MODIFY `Id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
 
 --
 -- Constraints for dumped tables
