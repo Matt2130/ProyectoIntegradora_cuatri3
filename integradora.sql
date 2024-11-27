@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Nov 26, 2024 at 11:27 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 27-11-2024 a las 14:08:25
+-- Versión del servidor: 10.4.32-MariaDB
+-- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,12 +18,12 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `integradora`
+-- Base de datos: `integradora`
 --
 
 DELIMITER $$
 --
--- Procedures
+-- Procedimientos
 --
 CREATE DEFINER=`root`@`localhost` PROCEDURE `buscar_temporadas` (IN `buscar` VARCHAR(255), IN `limit_val` INT, IN `offset_val` INT)   BEGIN
     SELECT season_specification.season, season_specification.Id_season
@@ -213,7 +213,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Table structure for table `comments`
+-- Estructura de tabla para la tabla `comments`
 --
 
 CREATE TABLE `comments` (
@@ -225,21 +225,21 @@ CREATE TABLE `comments` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `comments`
+-- Volcado de datos para la tabla `comments`
 --
 
 INSERT INTO `comments` (`Id_coment`, `Punctuation`, `Comment`, `FK_Id_customer`, `FK_Id_product`) VALUES
 (5, 5, '', 56, 32),
 (6, 4, 'Es muy comodo', 56, 33),
 (7, 2, '', 54, 34),
-(8, 4, '', 54, 61),
-(9, 1, 'no me gustó olvidenlo\n', 54, 60),
+(8, 2, 'Me gustó ', 54, 61),
+(9, 1, 'Fue buena\n', 54, 60),
 (10, 5, 'Me gusto', 62, 60);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `contacts`
+-- Estructura de tabla para la tabla `contacts`
 --
 
 CREATE TABLE `contacts` (
@@ -254,7 +254,7 @@ CREATE TABLE `contacts` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `contacts`
+-- Volcado de datos para la tabla `contacts`
 --
 
 INSERT INTO `contacts` (`Id_contact`, `Facebook`, `Instagram`, `Tik_tok`, `Email`, `Twitter`, `Whatsapp`, `Phone`) VALUES
@@ -263,7 +263,7 @@ INSERT INTO `contacts` (`Id_contact`, `Facebook`, `Instagram`, `Tik_tok`, `Email
 -- --------------------------------------------------------
 
 --
--- Table structure for table `content`
+-- Estructura de tabla para la tabla `content`
 --
 
 CREATE TABLE `content` (
@@ -273,7 +273,7 @@ CREATE TABLE `content` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `content`
+-- Volcado de datos para la tabla `content`
 --
 
 INSERT INTO `content` (`Id_contenido`, `Title`, `Describe`) VALUES
@@ -287,7 +287,7 @@ INSERT INTO `content` (`Id_contenido`, `Title`, `Describe`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `products`
+-- Estructura de tabla para la tabla `products`
 --
 
 CREATE TABLE `products` (
@@ -305,7 +305,7 @@ CREATE TABLE `products` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `products`
+-- Volcado de datos para la tabla `products`
 --
 
 INSERT INTO `products` (`Id_product`, `Material_composition`, `Model`, `FK_id_season`, `Size`, `Name`, `Description`, `Price_per_unit`, `Color`, `url_imagen`, `FK_Id_user`) VALUES
@@ -343,7 +343,7 @@ INSERT INTO `products` (`Id_product`, `Material_composition`, `Model`, `FK_id_se
 -- --------------------------------------------------------
 
 --
--- Table structure for table `season_specification`
+-- Estructura de tabla para la tabla `season_specification`
 --
 
 CREATE TABLE `season_specification` (
@@ -352,7 +352,7 @@ CREATE TABLE `season_specification` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `season_specification`
+-- Volcado de datos para la tabla `season_specification`
 --
 
 INSERT INTO `season_specification` (`Id_season`, `season`) VALUES
@@ -362,7 +362,7 @@ INSERT INTO `season_specification` (`Id_season`, `season`) VALUES
 (12, 'otoño');
 
 --
--- Triggers `season_specification`
+-- Disparadores `season_specification`
 --
 DELIMITER $$
 CREATE TRIGGER `conteo_temporadas` BEFORE DELETE ON `season_specification` FOR EACH ROW BEGIN
@@ -384,7 +384,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Table structure for table `users`
+-- Estructura de tabla para la tabla `users`
 --
 
 CREATE TABLE `users` (
@@ -400,11 +400,11 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `users`
+-- Volcado de datos para la tabla `users`
 --
 
 INSERT INTO `users` (`Id_user`, `User`, `Password`, `Email`, `Name`, `Surname`, `Lastname`, `Rol`, `Estado`) VALUES
-(54, 'AlanAlvarado', 'pbkdf2:sha256:600000$qdR0fJ74gu39ta2u$727ca8e7b8060804bdf8e1d9f93c972c8ae6ca822e0bc92a9b3c8c8885b8315d', 'mario@gmail.com', 'Alan', 'Alvarado', 'Martinez', 'administrador', 'Activo'),
+(54, 'admiministrador', 'pbkdf2:sha256:600000$qdR0fJ74gu39ta2u$727ca8e7b8060804bdf8e1d9f93c972c8ae6ca822e0bc92a9b3c8c8885b8315d', 'mario@gmail.com', 'administrador', 'principal', 'Master', 'administrador', 'Activo'),
 (55, 'b', 'pbkdf2:sha256:600000$LKwiSGE4slUlcYsT$5227b12a6be4603ff47c7230646c259466c7008430a7e70ea8dac5ea3bf8dd8b', 'Manuel@gmail.com', 'b', 'apellidoP', 'apellidoM', 'administrador', 'Activo'),
 (56, 't', 'pbkdf2:sha256:600000$FQSCsQb2o1BYOckG$86d20d403383e98627d166dbd18b5b88c348c0163e56b6922c2d694e8653b345', 'test@gmail.com', 'test', 't', 't', 'cliente', 'Activo'),
 (60, 'fgh', 'pbkdf2:sha256:600000$ULmggWqtcH0wAFEu$1cdf298918958bf75298b4dff227ecf1b68f2f0c140e979aa2a9d4f2c4340f08', 'admin@hotmail.com', 'dfth', 'Materno', 'Paterno', 'administrador', 'Activo'),
@@ -412,7 +412,7 @@ INSERT INTO `users` (`Id_user`, `User`, `Password`, `Email`, `Name`, `Surname`, 
 (62, 'MarLopez', 'pbkdf2:sha256:1000000$uud8ISnEhBP7ownP$e62b6f2cd13da0703b51deb055703349dd7fa7df37053cad76aa6a61c498dd8a', 'mar@utd.edu.mx', 'Mar', 'Rodriguez', 'Lopez', 'cliente', 'Activo');
 
 --
--- Triggers `users`
+-- Disparadores `users`
 --
 DELIMITER $$
 CREATE TRIGGER `verificar_admin` BEFORE DELETE ON `users` FOR EACH ROW BEGIN
@@ -427,29 +427,29 @@ $$
 DELIMITER ;
 
 --
--- Indexes for dumped tables
+-- Índices para tablas volcadas
 --
 
 --
--- Indexes for table `comments`
+-- Indices de la tabla `comments`
 --
 ALTER TABLE `comments`
   ADD PRIMARY KEY (`Id_coment`);
 
 --
--- Indexes for table `contacts`
+-- Indices de la tabla `contacts`
 --
 ALTER TABLE `contacts`
   ADD PRIMARY KEY (`Id_contact`);
 
 --
--- Indexes for table `content`
+-- Indices de la tabla `content`
 --
 ALTER TABLE `content`
   ADD PRIMARY KEY (`Id_contenido`);
 
 --
--- Indexes for table `products`
+-- Indices de la tabla `products`
 --
 ALTER TABLE `products`
   ADD PRIMARY KEY (`Id_product`),
@@ -457,64 +457,64 @@ ALTER TABLE `products`
   ADD KEY `FK_Id_user` (`FK_Id_user`);
 
 --
--- Indexes for table `season_specification`
+-- Indices de la tabla `season_specification`
 --
 ALTER TABLE `season_specification`
   ADD PRIMARY KEY (`Id_season`);
 
 --
--- Indexes for table `users`
+-- Indices de la tabla `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`Id_user`),
   ADD KEY `FK_id_rol` (`Rol`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT de las tablas volcadas
 --
 
 --
--- AUTO_INCREMENT for table `comments`
+-- AUTO_INCREMENT de la tabla `comments`
 --
 ALTER TABLE `comments`
   MODIFY `Id_coment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
--- AUTO_INCREMENT for table `contacts`
+-- AUTO_INCREMENT de la tabla `contacts`
 --
 ALTER TABLE `contacts`
   MODIFY `Id_contact` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `content`
+-- AUTO_INCREMENT de la tabla `content`
 --
 ALTER TABLE `content`
   MODIFY `Id_contenido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
--- AUTO_INCREMENT for table `products`
+-- AUTO_INCREMENT de la tabla `products`
 --
 ALTER TABLE `products`
   MODIFY `Id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
 
 --
--- AUTO_INCREMENT for table `season_specification`
+-- AUTO_INCREMENT de la tabla `season_specification`
 --
 ALTER TABLE `season_specification`
   MODIFY `Id_season` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
--- AUTO_INCREMENT for table `users`
+-- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
   MODIFY `Id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
 
 --
--- Constraints for dumped tables
+-- Restricciones para tablas volcadas
 --
 
 --
--- Constraints for table `products`
+-- Filtros para la tabla `products`
 --
 ALTER TABLE `products`
   ADD CONSTRAINT `Products_ibfk_1` FOREIGN KEY (`FK_id_season`) REFERENCES `season_specification` (`Id_season`) ON DELETE CASCADE,
