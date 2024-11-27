@@ -913,36 +913,45 @@ def comentarios_producto():
             """
             for info in contenido:
                 html += f"""
-                <div class="comentario-usuario">
-                    <p>{info[0]}</p>
-                    Puntuación:{info[1]}
+                <div  class="comentario-disp">
+                    <div class="comentario-usuario">
+                        <h4>{info[0]}</h4>
+                        <div class="puntuacion">
+                        <!-- Generar estrellas dinámicamente -->
+                        <span class="estrellas">
+                            {"".join(f'<span class="estrella {"llena" if i <= info[1] else "vacía"}">&#9733;</span>' for i in range(1, 6))}
+                        </span>
+                    </div>
+                    <div class="comentario-texto">
+                        <div id="comentario">
+                            {info[2]}
+                        </div>
+                    </div>
+                    <hr>
                     """
                 if session['id_usuario'] == info[3]:
                     html += f"""
-                    <button onclick="editarComentario({info[4]})" class="editar"><svg xmlns="http://www.w3.org/2000/svg"     fill="currentColor" class="icon-edit" viewBox="0 0 16 16">
-                        <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                        <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
-                        </svg></button>
-                    <button onclick="eliminarComentario({info[4]})" class="eliminar"><svg xmlns="http://www.w3.org/2000/svg"     fill="currentColor" class="icon-del" viewBox="0 0 16 16">
-                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
-                        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
-                        </svg></button>
+                        <button onclick="editarComentario({info[4]})" class="editar"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="icon-edit" viewBox="0 0 16 16">
+                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                            <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                            </svg></button>
+                        <button onclick="eliminarComentario({info[4]})" class="eliminar"><svg xmlns="http://www.w3.org/2000/svg"     fill="currentColor" class="icon-del" viewBox="0 0 16 16">
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                            </svg></button>
                     """
                 elif session['permiso_admin'] == True:
                     html += f"""
-                    <button onclick="eliminarComentario({info[4]})" class="eliminar"><svg xmlns="http://www.w3.org/2000/svg"     fill="currentColor" class="icon-del" viewBox="0 0 16 16">
-                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
-                        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
-                        </svg></button>
+                        <button onclick="eliminarComentario({info[4]})" class="eliminar"><svg xmlns="http://www.w3.org/2000/svg"     fill="currentColor" class="icon-del" viewBox="0 0 16 16">
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                            </svg></button>
                     """
                 html +=f"""
+                        </div>
+                    
                 </div>
-                <div class="comentario-texto">
-                    <div id="comentario">
-                        {info[2]}
-                    </div>
-                </div>
-                <hr>
+                
                 """
             html += """
                 
@@ -1982,7 +1991,18 @@ def buscador_comentario_edit():
                         Comentario
                     </h2>
                     <br>
-                    <input type="number" id="califad" placeholder="Calificación" value="{contenido[0]}">
+                    <div class="rating">
+                        <input type="radio" name="rate" id="star5" value="5" {"checked" if contenido[0] == 5 else ""}>
+                        <label for="star5" title="Excelente"></label>
+                        <input type="radio" name="rate" id="star4" value="4" {"checked" if contenido[0] == 4 else ""}>
+                        <label for="star4" title="Muy bueno"></label>
+                        <input type="radio" name="rate" id="star3" value="3" {"checked" if contenido[0] == 3 else ""}>
+                        <label for="star3" title="Bueno"></label>
+                        <input type="radio" name="rate" id="star2" value="2" {"checked" if contenido[0] == 2 else ""}>
+                        <label for="star2" title="Regular"></label>
+                        <input type="radio" name="rate" id="star1" value="1" {"checked" if contenido[0] == 1 else ""}>
+                        <label for="star1" title="Malo"></label>
+                    </div>
                 </label>
                 <label for="comentariod">
                     <h2>
@@ -2021,6 +2041,9 @@ def buscador_users_edit():
             html = f"""
             <span class="cerrar" onclick="cerrarModal()">&times;</span>
             <h1>Datos del usuario</h1>
+            
+            <div class="form">
+            <div class="izquierda">
             <h2>Usuario</h2>
             <p>{contenido[0]}</p>
             <br>
@@ -2033,6 +2056,9 @@ def buscador_users_edit():
             <h2>Apellido paterno</h2>
             <p>{contenido[3]}</p>
             <br>
+            
+            </div>
+            <div class="derecha">
             <h2>Apellido materno</h2>
             <p>{contenido[4]}</p>
             <br>
@@ -2057,8 +2083,12 @@ def buscador_users_edit():
                         <option value="Inactivo" selected>Inactivo</option>
                     </select>
                     <br>
+                    
                 """
             html+=f"""
+            <br>
+            </div>
+            </div>
             <br>
             <button id="registrar" onclick="editarsqlcontenido({contenido[7]})">Actualizar</button>
             """
@@ -2086,30 +2116,29 @@ def buscador_users_edit_solo():
                 return Response("No se encontró contenido", mimetype='text/html')
 
             html = f"""
-            <span class="cerrar" onclick="cerrarModal()">&times;</span>
-            <h1>Datos del usuario</h1>
+           <span class="cerrar" onclick="cerrarModal()">&times;</span>
+    <h1>Datos del usuario</h1>
+    <div class="form">
+        <div class="columna">
             <h2>Usuario</h2>
             <input type="text" name="" id="usuariod" value="{contenido[0]}">
-            <br>
             <h2>Email</h2>
             <input type="text" name="" id="emaild" value="{contenido[1]}">
-            <br>
             <h2>Nombre</h2>
             <input type="text" name="" id="nombred" value="{contenido[2]}">
-            <br>
             <h2>Apellido paterno</h2>
             <input type="text" name="" id="apellidopaternod" value="{contenido[3]}">
-            <br>
+        </div>
+        <div class="columna">
             <h2>Apellido materno</h2>
             <input type="text" name="" id="apellidomaternod" value="{contenido[4]}">
-            <br>
             <h2>Nueva contraseña</h2>
             <input type="password" name="" id="contraseñanuevad">
-            <br>
             <h2>Contraseña anterior</h2>
             <input type="password" name="" id="contraseñaanteriord">
-            <br>
-            <button id="registrar" onclick="editarsqlcontenidousuariosolo()">Actualizar</button>
+        </div>
+    </div>
+    <button id="registrar" onclick="editarsqlcontenidousuariosolo()">Actualizar</button>
             """
             
             return Response(html, mimetype='text/html')
@@ -2140,22 +2169,22 @@ def buscador_producto_edit():
             <span class="cerrar" onclick="cerrarModal()">&times;</span>
             <h1>Edición de producto</h1>
 
-            <div class="form-grid">
-            <!-- Columna izquierda -->
-            <div class="form-column">
-                <img src="{direccion_imagen}" alt="{contenido[8]}" style="width: 100%; max-width: 300px; height: auto; margin-bottom: 20px;">
-                    <br>
-                <label for="modelo">Modelo:
+            <div class="grid-contenedor">
+                <!-- Contenedor de la Imagen y Modelo -->
+                <div class="imagen-contenedor">
+                    <img src="{direccion_imagen}" alt="{contenido[8]}" style="width: 100%; max-width: 300px; height: auto; margin-bottom: 20px;">
+                    <label for="modelo">Modelo:</label>
                     <span>{contenido[1]}</span>
-                </label>
-                <br>
+                </div>
                 """
             with engine.connect() as connection:
                 result = connection.execute(text('SELECT season_specification.Id_season, season_specification.season FROM season_specification;'))
                 temporadas = result.fetchall()
                 html += f"""
+                <div class="grid-item">
                 <label for="temporada">Temporada:
                 <select id="temporadad">
+                
                     """
                 for info in temporadas:
                     if contenido[2]==info[0]:
@@ -2170,40 +2199,39 @@ def buscador_producto_edit():
                     </select>
                     </label>
                     <br>
+                    </div>
                 """
             html +=f"""
-                <label for="tamaño">Tamaño:
-                    <input type="text" name="tamaño" id="tamañod" value="{contenido[3]}">
-                </label>
-                    <br>
-                <label for="nombre">Nombre:
-                    <input type="text" name="nombre" id="nombred" value="{contenido[4]}">
-                </label>
-                <br>
-            </div>
-
-            <!-- Columna derecha -->
-            <div class="form-column">
-                <label for="descripcion">Descripción:
-                    <textarea name="descripcion" id="descripciond">{contenido[5]}</textarea>
-                </label>
-                <br>
-                <label for="precio_lot">Precio (lote):
-                    <input type="number" name="precio_lot" id="precio_lotd" value="{contenido[6]}">
-                </label>
-<br>
-                <label for="color">Color:
-                    <input type="text" name="color" id="colord" value="{contenido[7]}">
-                </label>
-                    <br>
-                <label for="materia">Material de composición:
-                    <input type="text" name="materia" id="materiad" value="{contenido[0]}">
-                </label>
-            </div>
+           <div class="grid-item">
+            <label for="tamaño">Tamaño:</label>
+            <input type="text" name="tamaño" id="tamañod" value="{contenido[3]}">
         </div>
+        <div class="grid-item">
+            <label for="nombre">Nombre:</label>
+            <input type="text" name="nombre" id="nombred" value="{contenido[4]}">
+        </div>
+        <div class="grid-item">
+            <label for="precio_lot">Precio (lote):</label>
+            <input type="number" name="precio_lot" id="precio_lotd" value="{contenido[6]}">
+        </div>
+        <div class="grid-item">
+            <label for="color">Color:</label>
+            <input type="text" name="color" id="colord" value="{contenido[7]}">
+        </div>
+        <div class="grid-item">
+            <label for="materia">Material de composición:</label>
+            <input type="text" name="materia" id="materiad" value="{contenido[0]}">
+        </div>
+        <div class="grid-item-descripcion">
+            <label for="descripcion">Descripción:</label>
+            <textarea name="descripcion" id="descripciond">{contenido[5]}</textarea>
+        </div>
+    <div class="button-container">
+        <button id="registrar" onclick="editarsqlcontenido({contenido[10]})">Editar</button>
+    </div>
+</div>
 
-        <div class="button-container">
-            <button id="registrar" onclick="editarsqlcontenido({contenido[10]})">Editar</button>
+
 
             """
 
@@ -2236,44 +2264,43 @@ def buscador_producto_dettalles():
         <span class="cerrar" onclick="cerrarModal()">&times;</span>
         <h1>Detalles de producto</h1>
 
-        <div class="detalles-grid">
-            <div class="detalle-item">
+        <div class="grid-contenedor">
+                <!-- Contenedor de la Imagen y Modelo -->
+                <div class="imagen-contenedor">
                 <h2>Imagen</h2>
                 <img src="{direccion_imagen}" alt="{contenido[8]}" />
-            </div>
-            <div class="detalle-item">
                 <h2>Modelo</h2>
                 <p>{contenido[1]}</p>
             </div>
-            <div class="detalle-item">
+            <div class="grid-item">
                 <h2>Temporada</h2>
                 <p>{contenido[2]}</p>
             </div>
-            <div class="detalle-item">
+            <div class="grid-item">
                 <h2>Tamaño</h2>
                 <p>{contenido[3]}</p>
             </div>
-            <div class="detalle-item">
+            <div class="grid-item">
                 <h2>Nombre</h2>
                 <p>{contenido[4]}</p>
             </div>
-            <div class="detalle-item">
+            <div class="grid-item-descripcion">
                 <h2>Descripción</h2>
                 <p>{contenido[5]}</p>
             </div>
-            <div class="detalle-item">
+            <div class="grid-item">
                 <h2>Precio por unidad</h2>
                 <p>${contenido[6]}</p>
             </div>
-            <div class="detalle-item">
+            <div class="grid-item">
                 <h2>Color</h2>
                 <p>{contenido[7]}</p>
             </div>
-            <div class="detalle-item">
+            <div class="grid-item">
                 <h2>Composición del material</h2>
                 <p>{contenido[0]}</p>
             </div>
-            <div class="detalle-item">
+            <div class="grid-item">
                 <h2>Usuario que lo registró</h2>
                 <p>{contenido[9]}</p>
             </div>
@@ -2305,6 +2332,8 @@ def buscador_users_detalles():
             html = f"""
             <span class="cerrar" onclick="cerrarModal()">&times;</span>
             <h1>Datos del usuario</h1>
+            <div class="form">
+            <div class="izquierda">
             <h2>Usuario</h2>
             <p>{contenido[0]}</p>
             <br>
@@ -2317,6 +2346,8 @@ def buscador_users_detalles():
             <h2>Apellido paterno</h2>
             <p>{contenido[3]}</p>
             <br>
+            </div>
+            <div class="derecha">
             <h2>Apellido materno</h2>
             <p>{contenido[4]}</p>
             <br>
@@ -2326,6 +2357,8 @@ def buscador_users_detalles():
             <h2>Estado</h2>
             <p>{contenido[6]}</p>   
             <br>
+                </div>
+        </div>
             """
             
             return Response(html, mimetype='text/html')
