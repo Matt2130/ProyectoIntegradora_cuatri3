@@ -43,48 +43,58 @@
             <h1>
                 Registro de producto
             </h1>
+            <div class="form">
             <div class="izquierda">
                 <label for="image">Imagen del producto:
-                    <input type="file" name="" id="image" accept="image/">
                 </label>
+                <input type="file" name="" id="image" accept="image/">
                 <br>
                 <label for="modelo">Modelo:
-                    <input type="text" name="" id="modelo">
                 </label>
                 <br>
+                <input type="text" name="" id="modelo">
+                <br>
                 <label for="temporada">Temporada:
+                    <br>
                     {{temporada_form | safe}}
                     <!--
                         <input type="text" name="" id="temporada">
-                    -->
-                </label>
-                <br>
-                <label for="tamaño">Tamaño:
-                    <input type="text" name="" id="tamaño">
-                </label>
-                <br>
-                <label for="nombre">Nombre:
-                    <input type="text" name="" id="nombre">
-                </label>
+                        </label>
+                        -->
+                        <br>
+                        <label for="tamaño">Tamaño:
+                        </label>
+                        <br>
+                        <input type="text" name="" id="tamaño">
+                        <br>
+                        <label for="nombre">Nombre:
+                        </label>
+                        <br>
+                        <input type="text" name="" id="nombre">
+                        <br>
+                    </div>
+                    <div class="derecha">
+                        <label for="descripcion">Descripción:
+                        </label>
+                        <br>
+                        <textarea name="" id="descripcion"></textarea>
+                        <br>
+                        <label for="precio_lot">Precio (lote):
+                        </label>
+                        <br>
+                        <input type="number" name="" id="precio_lot">
+                        <br>
+                        <label for="color">Color:
+                        </label>
+                        <br>
+                        <input type="text" name="" id="color">
+                        <br>
+                        <label for="materia">Material de composisión:
+                        </label>
+                        <br>
+                    <input type="text" name="" id="materia">
                 <br>
             </div>
-            <div class="derecha">
-                <label for="descripcion">Descripción:
-                    <textarea name="" id="descripcion"></textarea>
-                </label>
-                <br>
-                <label for="precio_lot">Precio (lote):
-                    <input type="number" name="" id="precio_lot">
-                </label>
-                <br>
-                <label for="color">Color:
-                    <input type="text" name="" id="color">
-                </label>
-                <br>
-                <label for="materia">Material de composisión:
-                    <input type="text" name="" id="materia">
-                </label>
-                <br>
             </div>
             <br>
             <button id="registrar" onclick="registrarproducto()">Registrar</button>
