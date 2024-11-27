@@ -39,7 +39,7 @@ body {
     width: auto;
     height: 40vh;
     margin-top: 5vh;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.6));
 }
 #inicio button {
     padding: 1.5vh 3vh;

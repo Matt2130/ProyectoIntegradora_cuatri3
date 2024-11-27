@@ -20,12 +20,7 @@ main{
     font-size: 2.5vw;
     text-align: center;
 }
-#buscador{
-    border-radius: 5vw;
-    padding: 0.6vw;
-    border: 0.2rem solid black;
-    width: 90%;
-}
+
 
 #filtros{
     display: grid; /* Cambiamos a Grid para alineación responsiva */
@@ -36,7 +31,9 @@ main{
 }
 
 #filtros #buscador{
-    color: black;
+    border-radius: 5vw;
+    padding: 0.6vw;
+    border: 0.2rem solid black;
     font-size: 1.5vw;
     width: 100%;
     box-sizing: border-box;
@@ -100,11 +97,11 @@ main{
     height: auto;
     box-shadow: 0px 0px 10px 0px #0000006e;
 }
-#catalogo{
+#catalogo {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-    gap: 2vw;
-    width: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); /* Ajusta el ancho mínimo */
+    gap: 2vw; /* Espaciado entre productos */
+    width: 100%; /* Ocupa todo el ancho */
     padding: 0 20px;
 }
 .producto {
@@ -177,7 +174,7 @@ main{
 }
 
 .paginacion{
-    grid-column: 1/5;
+    grid-column: 1/2;
 
 }
 .paginacion a{
@@ -324,7 +321,7 @@ svg{
 
 /* Estilo para los botones azules */
 .blue-btn {
-    background-color: #fbb72c;
+    background-color: #e3b326;
     color: white;
     transition: background-color 0.3s;
 }
@@ -362,5 +359,11 @@ svg{
     .user-info-img {
         max-width: 80%;
     }
+    svg{
+        width: 10vw;
+        margin: 0 auto;
+    }
+    .titulo {
+        font-size: 5vw; /* Reducir tamaño del título en pantallas pequeñas */
+    }
 }
-

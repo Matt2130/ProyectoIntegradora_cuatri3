@@ -110,11 +110,11 @@ body {
     align-items: flex-start;
     padding: 1rem;
     margin-left: 2rem; /* Espaciado desde la izquierda */
-    max-width: 400px; /* Controlar el ancho de la sección */
+    width: 60%; /* Controlar el ancho de la sección */
 }
 
 #nuevocomentario {
-    width: 100%;
+    width: 60%;
     background-color: #f9f9f9;
     padding: 1rem;
     border: 1px solid #ddd;
@@ -129,13 +129,21 @@ body {
     color: #333;
 }
 
+.rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    font-size: 2vw;
+    margin-bottom: 1rem;
+    cursor: default;
+}
 .rating:not(:checked) > input {
     position: absolute;
     appearance: none;
+    opacity: 0;
 }
 .rating:not(:checked) > label {
     float: right;
-    white-space: nowrap;
     cursor: pointer;
     font-size: 2vw;
     color: #ddd;
@@ -161,7 +169,19 @@ body {
 .rating > input:checked ~ label{
     color: #ffdd00;
 }
+.estrellas {
+    display: inline-flex;
+}
 
+.estrella {
+    font-size: 1.5rem;
+    color: gray;
+    margin-right: 0.2rem;
+}
+
+.estrella.llena {
+    color: gold;
+}
 #nuevo-comentario {
     width: 100%;
     height: 80px;
@@ -190,9 +210,6 @@ body {
 }
 
 /* Sección de comentarios */
-.comentario {
-    width: 100%;
-}
 
 .comentario h1 {
     font-size: 1.5rem;
@@ -203,10 +220,27 @@ body {
 
 .comentario {
     border: 0.1vw solid #ddd;
+    width: 100%;
     border-radius: 0.5rem;
     padding: 1rem;
     box-shadow: 0 0 .5vw rgba(0, 0, 0, 0.1);
+}
+.comentario-disp hr{
+    width : 90%;
+    margin: 0.5vw auto;
 
+}
+.comentario h4 {
+    font-size: 1.2rem;
+    color: #0056b3;
+    margin-bottom: 0.5rem;
+}
+
+.comentario-disp{
+    margin-bottom: 1rem;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    padding: 1vw;
 }
 
 .comentario-usuario p {
@@ -217,6 +251,10 @@ body {
 .comentario-texto p {
     color: #555;
 }
+.puntuacion{
+    cursor: default;
+}
+
 
 footer {
     display: grid;
@@ -252,9 +290,6 @@ footer p {
         font-size: 0.9em;
     }
 
-    .rating label {
-        font-size: 1.5vw;
-    }
 }
 
 @media (max-width: 480px) {
@@ -269,4 +304,212 @@ footer p {
     .rating label {
         font-size: 1.2rem;
     }
+}
+.modal button {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.modal button:hover {
+    background-color: #0056b3;
+}
+.eliminar {
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Sombra pequeña alrededor del botón */
+    background-color: #007BFF; /* Fondo amarillo */
+    border: none;
+    padding: 10px;
+    border-radius: 4px; /* Opcional: bordes redondeados */
+    display: inline-block;
+    align-items: center;
+    justify-content: center;
+    width: 5vw;
+}
+.editar{
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Sombra pequeña alrededor del botón */
+    border: none;
+    padding: 10px;
+    border-radius: 4px; /* Opcional: bordes redondeados */
+    display: inline-block;
+    align-items: center;
+    justify-content: center;
+    width: 5vw;
+}
+.icon-edit{
+    fill: #007BFF; /* Color del icono blanco */
+}
+.icon-del{
+    fill: white; /* Color del icono blanco */
+}
+.comentario-disp button svg
+{
+    width: 1vw;
+    margin: 0 auto;
+}
+.arriba{
+    display: flex;
+    position: sticky;
+}
+.arriba div{
+    width: 80%;
+    padding: 0.5vw;
+}
+.arriba .buscador input{
+    border-radius: 5vw;
+    padding: 0.6vw;
+    border: 0.2rem solid black;
+    width: 90%;
+}
+#abrirModal {
+    background-color: #dc3545;
+    text-decoration: none;
+    border-radius: 0.5vw;
+    text-align: center;
+    width: 8%;
+    font-size: 1vw;
+    margin-top: auto;
+    margin-bottom: auto;
+    display: flex;
+    padding: 1vw;
+    margin: 12% auto;
+}
+#abrirModal:hover {
+    transform: scale(1.1);
+}
+#abrirModal:active {
+    transform: scale(0.9);
+}
+
+.toda_tabla{
+    width: 80%;
+}
+/*///////////////////////////////////////*/
+.modal textarea{
+    width: 80%;
+    height: 10vw;
+    resize: none;
+    padding: 1vw;
+    border: 1px solid black;
+    border-radius: 0.5vw;
+    margin: 1vw 0;
+    text-align: center;
+}
+.modal input[type="text"] {
+    width: 60%;
+    padding: 1vw;
+    margin: 1vw 0;
+    border: none;
+    border-bottom: 0.2vw solid black;
+    font-size: 1vw;
+}
+.modal {
+    display: none;
+    position: fixed; 
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow: auto; 
+}
+
+.modal-contenido {
+    background-color: #d4d7dc;
+    margin: 5% auto;
+    padding: 2vw;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 80%;
+    text-align: center;
+    border-radius: 1vw;
+    min-height: 80%;
+}
+
+.cerrar {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.cerrar:hover {
+    color: #000000;
+}
+
+.modal #registrar {
+    background-color: #e3b326;
+    color: white;
+    text-decoration: none;
+    border-radius: 0.5vw;
+    width: 30%;
+    padding: 1vw;
+    margin: 0 auto;
+    text-align: center;
+}
+.modal #registrar:hover {
+    transform: scale(1.1);
+}
+.moadal #registrar:active {
+    transform: scale(0.9);
+}
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+    }
+    header #menu ul {
+        flex-direction: column;
+        align-items: center;
+    }
+    .modal-contenido button {
+        width: 100%; /* Botones ocupan todo el ancho */
+        font-size: 1rem; /* Tamaño adecuado */
+    }
+    #comentarios, .comentario-disp {
+        width: 100%; /* Expandir al ancho del contenedor */
+        margin: 0.5rem 0;
+    }
+
+    #comentarios h1, .comentario-disp h4 {
+        font-size: 1.2rem; /* Ajustar tamaño de texto */
+    }
+    .rating label {
+        font-size: 5vw; /* Aumentar en dispositivos pequeños */
+    }
+    #menu img, #iconmenu, .cerrar {
+        height: 25px;
+        width: 25px;
+    }
+    .comentario-disp {
+        padding: 0.8rem;
+    }
+
+    .comentario-usuario h4 {
+        font-size: 1rem;
+    }
+
+    .estrellas .estrella {
+        font-size: 1.2rem;
+    }
+
+    .comentario-texto #comentario {
+        font-size: 0.9rem;
+    }
+
+    .comentario-disp button {
+        width: 100%; /* Botones a todo el ancho */
+        font-size: 0.8rem;
+        margin-top: 0.5rem;
+    }
+    
+    .comentario-disp button svg {
+        width: 4vw;
+        height: 4vw;
+    }
+    label::before {
+        font-size: 1.5rem;
+    }   
 }

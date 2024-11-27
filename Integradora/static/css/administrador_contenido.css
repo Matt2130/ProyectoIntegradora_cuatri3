@@ -555,6 +555,9 @@ svg{
         min-height: 3.5vw; 
         min-width: 3.5vw; 
     }
+    .eliminar svg, .editar svg{
+        width: 2.5vw; 
+    }
 }
 
 @media (max-width: 480px) {
