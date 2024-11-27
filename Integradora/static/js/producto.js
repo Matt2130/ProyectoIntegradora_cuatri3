@@ -35,8 +35,13 @@ function registrarcomentario() {
 
     const id = urlParams.get('id');
     let comentario = document.getElementById('nuevo-comentario').value.trim();
-    let calif = document.getElementById('califa').value;
-
+     // Obtención de la calificación seleccionada
+    let calif = null;
+    document.querySelectorAll('.rating input').forEach((input) => {
+        if (input.checked) {
+            calif = input.value;
+        }
+    });
     // Validación de campos
     if (!calif) {
         Swal.fire({
@@ -226,7 +231,8 @@ window.onclick = function(event) {
 //////////////////////////////////////////////////////////////////////
 function editarsqlcomentario(id_comentario) {
     const comentario = document.getElementById('comentariod').value;
-    const calif = document.getElementById('califad').value;
+    const calif = document.querySelector('input[name="rate"]:checked')?.value; // Captura el valor de las estrellas seleccionadas
+
 
     if (!calif) {
         Swal.fire({
@@ -276,7 +282,7 @@ function editarsqlcomentario(id_comentario) {
                 popup: 'mi-alerta-redondeada'
             }
         }).then(() => {
-            ActualizarProducto(); // Llamar la función tras el éxito
+            window.location.reload(); // Llamar la función tras el éxito
         });
     })
     .catch(error => {
