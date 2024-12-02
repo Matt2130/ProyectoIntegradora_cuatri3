@@ -80,74 +80,80 @@
         </section>
         <section id="administracion-tabla">
             <div class="container">
-                <div class="box best-rated">
-                    
-                    <div class="img-rated">
-                        <h3>Mejor Calificado</h3>
-                        <!-- Mostrar la imagen -->
-                        <img src="{{ url_for('static', filename='image/imagenes_productos/' + producto_mejor_calificado[2]) }}" alt="Producto mejor calificado">
-                    
-                        <!-- Mostrar el nombre del producto, si quieres -->
-                        <p>{{ producto_mejor_calificado[0]}}</p>  <!-- Suponiendo que el nombre del producto está en [0] -->
+                <div class="trescubitostexto">
+                    <div class="box">
+                        <h3>Último comentario</h3>
+                        <div class="comment-table">
+                            {% if ultimo_comentario_registrado %}
+                                <p>Puntuación del comentario:</p>
+                                {{ ultimo_comentario_registrado[0] }}
+                                
+                                {% if ultimo_comentario_registrado[1] %}
+                                    <p>Comentó:</p>
+                                    {{ ultimo_comentario_registrado[1] }}
+                                {% endif %}
+    
+                                <p>Producto:</p>
+                                {{ ultimo_comentario_registrado[2] }}
+    
+                                <br>
+                                <a href="/producto?id={{ ultimo_comentario_registrado[3] }}">
+                                    <button>Ver producto</button>
+                                </a>
+                            {% else %}
+                                <p>No hay comentarios registrados.</p>
+                            {% endif %}
+                        </div>
                     </div>
-                    <h3>Calificación</h3>
-                    {{producto_mejor_calificado[3]}}
-                    <br>
-                    <a href="/producto?id={{ producto_mejor_calificado[1] }}">
-                        <button>Ver producto</button>
-                    </a>
+                    <div class="box">
+                        <h3>Cantidad de Productos</h3>
+                        <p> <span class="numero" id="numero-pro">0</span> <br>Productos</p>
+                        <a href="/administrador_productos">
+                            <button>Ver productos</button>
+                        </a>
+                    </div>
+                    <div class="box">
+                        <h3>Cantidad de Clientes</h3>
+                        <p> <span class="numero" id="numero-clie"> 0</span> <br> Clientes</p>
+                        <a href="/administrador_user">
+                            <button>Ver usuarios</button>
+                        </a>
+                    </div>
                 </div>
-                <div class="box product-count">
-                    <h3>Cantidad de Productos</h3>
-                    <p> <span class="numero" id="numero-pro">0</span> <br>Productos</p>
-                    <a href="/administrador_productos">
-                        <button>Ver productos</button>
-                    </a>
-                </div>
-                <div class="box client-count">
-                    <h3>Cantidad de Clientes</h3>
-                    <p> <span class="numero" id="numero-clie"> 0</span> <br> Clientes</p>
-                    <a href="/administrador_user">
-                        <button>Ver usuarios</button>
-                    </a>
-                </div>
-                <div class="box products">
-                    <h3>Último producto registrado</h3>
-                    <div class="comment-table">
-                        <img src="{{ url_for('static', filename='image/imagenes_productos/' + ultimo_producto_registrado[1]) }}" alt="Producto mejor calificado">
+                <div class="doscubitosconimagenes">
+                    <div class="box">
+                        <h3>Último producto registrado</h3>
+                        <div class="comment-table">
+                            <img src="{{ url_for('static', filename='image/imagenes_productos/' + ultimo_producto_registrado[1]) }}" alt="Producto mejor calificado">
+                            <br>
+                            {{ ultimo_producto_registrado[0] }}
+                        </div>
+                    </div>
+    
+                    <div class="box">
+                        <div class="img-rated">
+                            <h3>Mejor Calificado</h3>
+                            <!-- Mostrar la imagen -->
+                            <img src="{{ url_for('static', filename='image/imagenes_productos/' + producto_mejor_calificado[2]) }}" alt="Producto mejor calificado">
+                        
+                            <!-- Mostrar el nombre del producto, si quieres -->
+                            <p>{{ producto_mejor_calificado[0]}}</p>  <!-- Suponiendo que el nombre del producto está en [0] -->
+                        </div>
+                        <h3>Calificación</h3>
+                        {{producto_mejor_calificado[3]}}
                         <br>
-                        {{ ultimo_producto_registrado[0] }}
+                        <a href="/producto?id={{ producto_mejor_calificado[1] }}">
+                            <button>Ver producto</button>
+                        </a>
                     </div>
                 </div>
-                <div class="box graph">
+
+                <div class="box">
                     <h3>Gráfica de calificaciones</h3>
                     <div class="graph-container">
-                        <canvas id="myChart" width="100%" height="50%"></canvas>
+                        <canvas id="myChart"></canvas>
                     </div>
-                </div>
-                <div class="box last-comment">
-                    <h3>Último comentario</h3>
-                    <div class="comment-table">
-                        {% if ultimo_comentario_registrado %}
-                            <p>Puntuación del comentario:</p>
-                            {{ ultimo_comentario_registrado[0] }}
-                            
-                            {% if ultimo_comentario_registrado[1] %}
-                                <p>Comentó:</p>
-                                {{ ultimo_comentario_registrado[1] }}
-                            {% endif %}
-
-                            <p>Producto:</p>
-                            {{ ultimo_comentario_registrado[2] }}
-
-                            <br>
-                            <a href="/producto?id={{ ultimo_comentario_registrado[3] }}">
-                                <button>Ver producto</button>
-                            </a>
-                        {% else %}
-                            <p>No hay comentarios registrados.</p>
-                        {% endif %}
-                    </div>
+                    
                 </div>
             </div>
         </section>
