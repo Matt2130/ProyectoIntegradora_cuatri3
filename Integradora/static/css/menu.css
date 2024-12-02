@@ -102,11 +102,11 @@ nav button:active {
 
 header #iniciar {
     color: black;
-    background-color: #FFCFCF;
+    background-color: #f0f0f0;
 }
 header #registrarse {
     color: white;
-    background-color: black;
+    background-color: #2e4595;
 }
 header #logo{
     width: auto;
@@ -116,7 +116,7 @@ header #iconmenu{
     width: auto;
     height: 5vW;
 }
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 1210px) {
     header #logo{
         width: auto;
         height: 10vW;
@@ -145,6 +145,7 @@ header #iconmenu{
         justify-content: center;
         transform: translateX(-100%);
         background-color: #BFBFBF;
+        overflow: auto;
     }
 
     nav ul {

@@ -64,7 +64,7 @@ function PantallaeliminacionProducto(id) {
     })
     .catch(error => {
         console.error('Error:', error);
-        document.getElementById('miModal2').querySelector('.modal-contenido').innerText = 'Error en la edición';
+        document.getElementById('miModal2').querySelector('.modal-contenido').innerText = 'Error en la solicida de datos para la eliminacion de administrador';
     });
 }
 
