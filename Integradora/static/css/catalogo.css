@@ -129,7 +129,7 @@ main{
     height: auto; /* Ajustar proporción */
     border-radius: 10%; /* Redondear bordes */
     background: #f0f0f0; /* Fondo gris claro */
-    object-fit: cover; /
+    object-fit: cover; 
 }
 
 
