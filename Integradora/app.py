@@ -1880,31 +1880,38 @@ def buscador_season_delete():
 
             if contenido is None:
                 return Response("No se encontró contenido", mimetype='text/html')
-
+            
             # Consulta para obtener todas las temporadas
             sql_all = """
                 SELECT season_specification.Id_season, season_specification.season 
-                FROM season_specification;
+                FROM season_specification WHERE season_specification.Id_season != :id;
             """
-            temporadas = connection.execute(text(sql_all)).fetchall()
+            temporadas = connection.execute(text(sql_all), {"id": id_contenido}).fetchall()
+            if not temporadas:
+                html = f"""
+                <span class="cerrar" onclick="cerrarModal()">&times;</span>
+                    <h1>Eliminación de temporada</h1>
+                    <br>
+                    <h2>Por favor, registre una nueva temporada</h2>
+                 """
+            else:
+                # Construcción del HTML
+                html = f"""
+                <span class="cerrar" onclick="cerrarModal()">&times;</span>
+                    <h1>Eliminación de temporada</h1>
+                    <br>
+                    <h2>Selecciona una temporada para remplazar la temporada a los productos</h2>
+                    <select id="temporadaeli">
+                """
+                for info in temporadas:
+                    if id_contenido != info[0]:  # Excluir la temporada actual
+                        html += f'<option value="{info[0]}">{info[1]}</option>'
 
-            # Construcción del HTML
-            html = f"""
-            <span class="cerrar" onclick="cerrarModal()">&times;</span>
-                <h1>Eliminación de temporada</h1>
-                <br>
-                <h2>Selecciona una temporada para remplazar la temporada a los productos</h2>
-                <select id="temporadaeli">
-            """
-            for info in temporadas:
-                if id_contenido != info[0]:  # Excluir la temporada actual
-                    html += f'<option value="{info[0]}">{info[1]}</option>'
-
-            html += f"""
-                </select>
-                <br>
-                <button id="registrar" onclick="eliminarProducto({contenido[1]})">Eliminar</button>
-            """
+                html += f"""
+                    </select>
+                    <br>
+                    <button id="registrar" onclick="eliminarProducto({contenido[1]})">Eliminar</button>
+                """
             
             return Response(html, mimetype='text/html')
     except Exception as e:
@@ -1933,28 +1940,29 @@ def buscador_users_delete():
 
             # Verificar si hay otros administradores
             if not contenido:
-                return Response(
-                    "No se encontró otro administrador para heredar los productos",
-                    mimetype='text/html',
-                    status=400
-                )
+                html = """
+                <span class="cerrar" onclick="cerrarModal()">&times;</span>
+                    <h1>Eliminación de Usuarios</h1>
+                    <br>
+                    <h2>Por favor, registre un nuevo administrador</h2>
+                    """
+            else:
+                # Construcción del HTML
+                html = """
+                <span class="cerrar" onclick="cerrarModal()">&times;</span>
+                    <h1>Eliminación de Usuarios</h1>
+                    <br>
+                    <h2>Selecciona otro administrador para reasignar los productos:</h2>
+                    <select id="administradorEli">
+                """
+                for admin in contenido:
+                    html += f'<option value="{admin.Id_user}">{admin.User}</option>'
 
-            # Construcción del HTML
-            html = """
-            <span class="cerrar" onclick="cerrarModal()">&times;</span>
-                <h1>Eliminación de Usuarios</h1>
-                <br>
-                <h2>Selecciona otro administrador para reasignar los productos:</h2>
-                <select id="administradorEli">
-            """
-            for admin in contenido:
-                html += f'<option value="{admin.Id_user}">{admin.User}</option>'
-
-            html += f"""
-                </select>
-                <br>
-                <button id="registrar" onclick="eliminarProducto({id_contenido})">Actualizar</button>
-            """
+                html += f"""
+                    </select>
+                    <br>
+                    <button id="registrar" onclick="eliminarProducto({id_contenido})">Actualizar</button>
+                """
 
             return Response(html, mimetype='text/html', status=200)
 
